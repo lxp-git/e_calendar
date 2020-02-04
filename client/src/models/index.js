@@ -1,5 +1,7 @@
-import eventModel from '../pages/event/model';
+import event from '../pages/event/model';
+import global from './global';
 
 export default [
-  eventModel,
+  event,
+  global,
 ];

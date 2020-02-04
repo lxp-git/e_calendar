@@ -1,8 +1,6 @@
 import Taro, {Component, Config} from '@tarojs/taro'
 import {Text, View} from '@tarojs/components'
 import styles from './index.module.scss';
-import {AtListItem} from "taro-ui";
-import application from "../../utils/Application";
 import moment, {Moment} from "moment";
 import {calendar, LunarCalendar} from "../../utils/calendar";
 

@@ -10,11 +10,11 @@ import {AtFab, AtIcon} from "taro-ui";
 import {ITouchEvent} from "@tarojs/components/types/common";
 import assets from '../../assets';
 import application from "../../utils/Application";
+import {connect} from "@tarojs/redux";
+import ThemePage from "../ThemePage";
 
 const systemInfo = Taro.getSystemInfoSync();
 const gridItemWidth = (systemInfo.screenWidth - 10) / 7;
-const primaryColor = '#07C160';
-const holidayColor = '#07C160';
 const textPrimaryColor = '#333333';
 const DATA_KEY = 'holidays';
 const Event = {
@@ -40,7 +40,7 @@ moment.updateLocale("zh", { week: {
     dow: 1, // 星期的第一天是星期一
     // doy: 7  // 年份的第一周必须包含1月1日 (7 + 1 - 1)
   }});
-export default class Index extends Component {
+export default class Index extends ThemePage {
 
   /**
    * 指定config的类型声明为: Taro.Config
@@ -51,7 +51,7 @@ export default class Index extends Component {
    */
   config: Config = {
     navigationBarTitleText: '一个日历',
-    navigationBarBackgroundColor: '#1AAD19',
+    // navigationBarBackgroundColor: '#1AAD19',
     navigationBarTextStyle: 'white',
     backgroundColor: '#f4f4f4',
   }
@@ -201,7 +201,6 @@ export default class Index extends Component {
             }).catch((error) => console.log("error",error));
             _auntFloMap[mapKey] = data;
           } else {
-            console.log('_auntFloMap[mapKey]', _auntFloMap[mapKey]);
             Taro.cloud.callFunction({
               data: {
                 id: _auntFloMap[mapKey]._id,
@@ -280,6 +279,7 @@ export default class Index extends Component {
   }
 
   render() {
+    const { global: { themePrimary }} = this.props;
     const {_table, _selectedMoment, _holidaysMap} = this.state;
     const _selectedLunarCalendar = this._momentToLunarCalendar(_selectedMoment);
     return (
@@ -298,7 +298,7 @@ export default class Index extends Component {
         <View className={styles.header}>
           {WEEK_DAY_CHINESE.map(itemString =>
             <Text style={{
-              color: (itemString == '六' || itemString == '日') ? holidayColor : textPrimaryColor,
+              color: (itemString == '六' || itemString == '日') ? themePrimary : textPrimaryColor,
             }} key={itemString} className={styles.headerItem}>{itemString}</Text>)}
         </View>
         <View
@@ -332,11 +332,11 @@ export default class Index extends Component {
                 /// 日期的颜色
                 let dateColor = textPrimaryColor;
                 if (dayMoment.weekday() == 5 || dayMoment.weekday() == 6) {
-                  dateColor = holidayColor;
+                  dateColor = themePrimary;
                 }
                 if (holiday) {
                   if (holiday['event'] == Event.HOLIDAY) {
-                    // dateColor = holidayColor;
+                    // dateColor = themePrimary;
                   }
                   /// 工作日的权重比选中的日低
                   if (holiday['event'] == Event.WORKING_DAY) {
@@ -364,7 +364,7 @@ export default class Index extends Component {
                       width: gridItemWidth + 'px',
                       height: gridItemWidth + 'px',
                       opacity: dayMoment.month() == _selectedMoment.month() ? 1 : 0.3,
-                      background: isSelectedDay ? primaryColor : 'white',
+                      background: isSelectedDay ? themePrimary : 'white',
                     }}
                     onClick={() => this._onDayClick(dayMoment)}
                   >
@@ -383,7 +383,7 @@ export default class Index extends Component {
                     {holiday && holiday['event'] == 'HOLIDAY'
                     && (
                       <Text className={styles.holiday}
-                        style={{ color: isSelectedDay ? 'white' : holidayColor }}>
+                        style={{ color: isSelectedDay ? 'white' : themePrimary }}>
                         休
                       </Text>
                     )}
@@ -431,10 +431,8 @@ export default class Index extends Component {
         {/*<Text>{"firstDayOfCurrentMonth:" + firstDayOfCurrentMonth.toDate().toLocaleString()}</Text>*/}
         {/*<Text>{"firstDayOfCurrentMonth.week:" + firstDayOfCurrentMonth.week()}</Text>*/}
         {/*<Text>{"firstDayOfCurrentMonth.weekday:" + firstDayOfCurrentMonth.weekday()}</Text>*/}
-        <View className={styles.rightBottom} onClick={() => Taro.navigateTo({ url: '/pages/setting/index' })}>
-          <AtFab>
-            <AtIcon value='settings' color='white' />
-          </AtFab>
+        <View style={{ background: themePrimary }} className={styles.rightBottom} onClick={() => Taro.navigateTo({ url: '/pages/setting/index' })}>
+          <AtIcon value='settings' color='white' />
         </View>
       </View>
     )

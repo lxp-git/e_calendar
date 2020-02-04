@@ -17,7 +17,6 @@ export default class AppButton extends Component {
     return (
       <AtForm
         onSubmit={(event) => {
-          console.log('event', event);
           // "the formId is no longer available in develop or trial version of this mini program"
           if (event.detail.formId !== 'the formId is no longer available in develop or trial version of this mini program') {
             Taro.cloud.callFunction({

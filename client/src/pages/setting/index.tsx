@@ -3,9 +3,13 @@ import {Button, Text, View} from '@tarojs/components'
 import styles from './index.module.scss';
 import {AtListItem, AtModal, AtModalContent} from "taro-ui";
 import application from "../../utils/Application";
+import {connect} from "@tarojs/redux";
+import ThemePage from "../ThemePage";
 const systemInfo = Taro.getSystemInfoSync();
 const gridItemWidth = (systemInfo.screenWidth - 10) / 7;
-export default class Index extends Component {
+
+@connect(({ global }) => ({ global }))
+export default class Index extends ThemePage {
 
   /**
    * 指定config的类型声明为: Taro.Config
@@ -16,12 +20,11 @@ export default class Index extends Component {
    */
   config: Config = {
     navigationBarTitleText: '一个日历 | 设置',
-    navigationBarBackgroundColor: '#1AAD19',
     navigationBarTextStyle: 'white',
   }
 
   state = {
-    _open: false,
+    _isThemeModelOpened: false,
   }
 
   _fetch = () => {
@@ -30,6 +33,9 @@ export default class Index extends Component {
 
   _onThemeSelected = (color: string) => {
     application.setting.themePrimary = color;
+    this.setState({
+      _isThemeModelOpened: false,
+    });
   }
 
   componentWillMount() {
@@ -42,13 +48,9 @@ export default class Index extends Component {
   componentWillUnmount() {
   }
 
-  componentDidShow() {
-  }
-
-  componentDidHide() {
-  }
-
   render() {
+    const { _isThemeModelOpened } = this.state;
+    const { global: { themePrimary }} = this.props;
     return (
       <View className={styles.index}>
         <AtListItem
@@ -64,7 +66,11 @@ export default class Index extends Component {
           switchColor='#07C160'
           note='开启之后，长按选择日历的某一天可以标记'
         />
-        {/*<AtListItem title='切换主题色' note='可以更改全局的主色调' onClick={() => this.setState({is})} />*/}
+        <AtListItem
+          title='切换主题色'
+          note='可以更改全局的主色调'
+          onClick={() => this.setState({_isThemeModelOpened: !this.state._isThemeModelOpened})}
+        />
         <Button openType='contact' className={styles.customerService}>
           <AtListItem title='联系我们' note='有什么问题或者建议都可以联系我们🥳' />
         </Button>
@@ -77,21 +83,22 @@ export default class Index extends Component {
           `4. 左/右滑动日历：切换上一个/下一个月\n` +
             `5. 床头钟模式如何返回：点右上角三个点然后选择回到首页\n`}</Text>
         </View>
-        {/*<AtModal isOpened>*/}
-        {/*  <AtModalContent>*/}
-        {/*    <View className={styles.themeModel}>*/}
-        {/*      {['#F44336', '#E91E63', '#9C27B0', '#673AB7', '#3F51B5', '#2196F3',*/}
-        {/*        '#03A9F4', '#00BCD4', '#009688', '#4CAF50', '#8BC34A', '#CDDC39',*/}
-        {/*        '#FFEB3B', '#FFC107', '#FF9800', '#FF5722', '#795548', '#9E9E9E', '#607D8B', '#000000'].map((item) => (*/}
-        {/*        <View*/}
-        {/*          onClick={() => this._onThemeSelected(item)}*/}
-        {/*          className={styles.themeItem}*/}
-        {/*          style={{ background: item, width: gridItemWidth + 'px', height: gridItemWidth + 'px' }}*/}
-        {/*        />*/}
-        {/*      ))}*/}
-        {/*    </View>*/}
-        {/*  </AtModalContent>*/}
-        {/*</AtModal>*/}
+        <AtModal isOpened={_isThemeModelOpened}>
+          <AtModalContent>
+            <View className={styles.themeModel}>
+              {['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3',
+                '#03a9f4', '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39',
+                '#ffeb3b', '#ffc107', '#ff9800', '#ff5722', '#795548', '#9e9e9e', '#607d8b', '#000000'].map((item) => (
+                <View
+                  key={item}
+                  onClick={() => this._onThemeSelected(item)}
+                  className={styles.themeItem}
+                  style={{ background: item, width: gridItemWidth + 'px', height: gridItemWidth + 'px' }}
+                >{item.toLowerCase() === themePrimary ? '✓' : ''}</View>
+              ))}
+            </View>
+          </AtModalContent>
+        </AtModal>
       </View>
     )
   }

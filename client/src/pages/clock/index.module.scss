@@ -1,0 +1,66 @@
+.index {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: black;
+  color: white;
+  line-height: 1;
+  .date {
+    line-height: 1;
+    font-size: 28px;
+  }
+  .center {
+    font-size: 180px;
+    line-height: 1;
+    display: flex;
+    flex-direction: row;
+
+    .smallSplit {
+      //margin-bottom: 40px;
+      display: flex;
+      line-height: 1;
+      font-size: 100px;
+      align-self: flex-end;
+    }
+    .bigSplit {
+      line-height: 1;
+      display: flex;
+      align-self: flex-end;
+    }
+    .hour {
+      line-height: 1;
+    }
+    .minute {
+      line-height: 1;
+      .minute1 {
+        line-height: 1;
+        width: 90px;
+      }
+      .minute2 {
+        line-height: 1;
+        width: 90px;
+      }
+    }
+    .second {
+      display: flex;
+      flex-direction: row;
+      align-self: flex-end;
+      font-size: 80px;
+      line-height: 1;
+      width: 100px;
+      margin-bottom: 10px;
+      margin-left: 10px;
+      .second1 {
+        width: 50px;
+        line-height: 1;
+      }
+      .second2 {
+        width: 50px;
+        line-height: 1;
+      }
+    }
+  }
+}

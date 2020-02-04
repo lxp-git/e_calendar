@@ -1,0 +1,51 @@
+@-webkit-keyframes animal {
+  0%{
+    transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+  }
+  100%{
+    transform: rotate(-360deg);
+    -ms-transform: rotate(-360deg);
+    -webkit-transform: rotate(-360deg);
+  }
+}
+
+.index {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  flex-direction: column;
+
+  .guidelines {
+    padding: 32px;
+    color: #333333;
+    display: flex;
+    flex-direction: column;
+    .title {
+
+    }
+    .body {
+      font-size: 24px;
+    }
+  }
+  .themeModel {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    .themeItem {
+      width: 25%;
+      margin: 4px;
+      height: 0px;
+    }
+  }
+  .customerService {
+    display: block;
+    width: 100%;
+    text-align: start;
+    background: white;
+  }
+}

@@ -38,8 +38,12 @@
     align-items: center;
     .themeItem {
       width: 25%;
-      margin: 4px;
+      margin: 8px;
       height: 0px;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
   .customerService {

@@ -63,7 +63,6 @@ export default class Index extends Component<{
     const {_text} = this.state;
     /// 标题栏高度：安卓：48px，iOS：44px  - systemInfo.statusBarHeight - (systemInfo.platform === 'ios' ? 44 : 48)
     const height = (systemInfo.windowHeight) * systemInfo.pixelRatio;
-    console.log('Taro.pxTransform(height)', Taro.pxTransform(height));
     return (
       <View className={styles.index}>
         <View className={styles.eventRow}>

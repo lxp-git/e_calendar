@@ -10,8 +10,8 @@ import {AtFab, AtIcon} from "taro-ui";
 import {ITouchEvent} from "@tarojs/components/types/common";
 import assets from '../../assets';
 import application from "../../utils/Application";
-import {connect} from "@tarojs/redux";
 import ThemePage from "../ThemePage";
+import * as service from './service';
 
 const systemInfo = Taro.getSystemInfoSync();
 const gridItemWidth = (systemInfo.screenWidth - 10) / 7;
@@ -97,11 +97,12 @@ export default class Index extends ThemePage {
       const table = [[
         selectedNewMoment,
       ]];
+      const indexMoment = this._firstRowStart.clone();
       for (let week = 0; week < 5; week++) {
         table[week] = [];
         for (let day = 0; day < 7; day++) {
-          table[week][day] = this._firstRowStart.clone();
-          this._firstRowStart.add(1, 'day')
+          table[week][day] = indexMoment.clone();
+          indexMoment.add(1, 'day')
         }
       }
       this.setState({
@@ -109,13 +110,28 @@ export default class Index extends ThemePage {
       });
 
       if (application.setting.isAuntFloEnabled) {
-        Taro.cloud.callFunction({
-          name: "event",
-          data: {
-            start: this._firstRowStart.toISOString(),
-            end: this.state._selectedMoment.endOf('month').toISOString(),
-          }
-        }).then(({ result: { data }}) => {
+        // Taro.cloud.callFunction({
+        //   name: "event",
+        //   data: {
+        //     start: this._firstRowStart.toISOString(),
+        //     end: this.state._selectedMoment.endOf('month').toISOString(),
+        //   }
+        // }).then(({ result: { data }}) => {
+        //   const { _auntFloMap } = this.state;
+        //   data.forEach(item => {
+        //     const dayMoment = moment(item['notify_at']);
+        //     const mapKey = `${dayMoment.year()}-${dayMoment.month() + 1}-${dayMoment.date()}`;
+        //     _auntFloMap[mapKey] = item;
+        //   });
+        //   // Taro.setStorageSync(EVENT_DATA_KEY, auntFloMap);
+        //   this.setState({
+        //     _auntFloMap: _auntFloMap,
+        //   });
+        // });
+        service.event.fetch({
+          "start": this._firstRowStart.toISOString(),
+          "end": this.state._selectedMoment.endOf('month').toISOString()
+        }).then((data) => {
           const { _auntFloMap } = this.state;
           data.forEach(item => {
             const dayMoment = moment(item['notify_at']);
@@ -126,7 +142,7 @@ export default class Index extends ThemePage {
           this.setState({
             _auntFloMap: _auntFloMap,
           });
-        });
+        })
       }
     }
   }
@@ -187,13 +203,21 @@ export default class Index extends ThemePage {
               status: 'done',
               notify_at: dayMoment.toISOString(),
             };
-            Taro.cloud.callFunction({
-              data,
-              name: "postEvent"
-            }).then(({result,errMsg}) => {
+            // Taro.cloud.callFunction({
+            //   data,
+            //   name: "postEvent"
+            // }).then(({result,errMsg}) => {
+            //   _auntFloMap[mapKey] = {
+            //     ...data,
+            //     _id: result._id,
+            //   };
+            //   this.setState({
+            //     _auntFloMap,
+            //   });
+            // }).catch((error) => console.log("error",error));
+            service.event.post(data).then((result) => {
               _auntFloMap[mapKey] = {
-                ...data,
-                _id: result._id,
+                ...result,
               };
               this.setState({
                 _auntFloMap,
@@ -201,14 +225,15 @@ export default class Index extends ThemePage {
             }).catch((error) => console.log("error",error));
             _auntFloMap[mapKey] = data;
           } else {
-            Taro.cloud.callFunction({
-              data: {
-                id: _auntFloMap[mapKey]._id,
-              },
-              name: "deleteEvent"
-            }).then(({result,errMsg}) => {
-
-            }).catch((error) => console.log("error",error));
+            // Taro.cloud.callFunction({
+            //   data: {
+            //     _id: _auntFloMap[mapKey]._id,
+            //   },
+            //   name: "deleteEvent"
+            // }).then(({result,errMsg}) => {
+            //
+            // }).catch((error) => console.log("error",error));
+            service.event.delete(_auntFloMap[mapKey].id);
             _auntFloMap[mapKey] = null;
           }
           this.setState({
@@ -224,10 +249,20 @@ export default class Index extends ThemePage {
   }
 
   _fetch = () => {
-    Taro.cloud.callFunction({
-      name: "holidays",
-      data: {}
-    }).then(({ result: { data }}) => {
+    // Taro.cloud.callFunction({
+    //   name: "holidays",
+    //   data: {}
+    // }).then(({ result: { data }}) => {
+    //   const holidaysMap = {};
+    //   data.forEach(item => {
+    //     holidaysMap[`${item['year']}-${item['month']}-${item['date']}`] = item;
+    //   });
+    //   Taro.setStorageSync(DATA_KEY, holidaysMap);
+    //   this.setState({
+    //     _holidaysMap: holidaysMap,
+    //   });
+    // })
+    service.fetchHolidays().then((data) => {
       const holidaysMap = {};
       data.forEach(item => {
         holidaysMap[`${item['year']}-${item['month']}-${item['date']}`] = item;
@@ -236,7 +271,7 @@ export default class Index extends ThemePage {
       this.setState({
         _holidaysMap: holidaysMap,
       });
-    })
+    });
   }
 
   _login = () => {

@@ -1,4 +1,4 @@
-// import Taro from "@tarojs/taro";
+import * as service from './service'
 
 export default {
   namespace: 'event',
@@ -8,12 +8,16 @@ export default {
 
   effects: {
     * fetch({ payload }, { call, put, select, take }) {
-      yield call(Taro.cloud.callFunction, {
-        data: {
-          start: (new Date()).toISOString(),
-          end: (new Date()).toISOString(),
-        },
-        name: "event"
+      // yield call(Taro.cloud.callFunction, {
+      //   data: {
+      //     start: (new Date()).toISOString(),
+      //     end: (new Date()).toISOString(),
+      //   },
+      //   name: "event"
+      // });
+      yield call(service.fetch, {
+        start: (new Date()).toISOString(),
+        end: (new Date()).toISOString(),
       });
     },
     * post({ payload }, { call, put, select, take }) {

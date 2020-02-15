@@ -6,12 +6,14 @@ import styles from './index.module.scss';
 import moment, {Moment} from "moment";
 import TimerComponent from "./timer_component";
 import {calendar, LunarCalendar} from "../../utils/calendar";
-import {AtFab, AtIcon} from "taro-ui";
+import {AtIcon} from "taro-ui";
 import {ITouchEvent} from "@tarojs/components/types/common";
 import assets from '../../assets';
-import application from "../../utils/Application";
+import application, {User} from "../../utils/Application";
 import ThemePage from "../ThemePage";
 import * as service from './service';
+import {connect} from "@tarojs/redux";
+import {createAction} from "../../utils";
 
 const systemInfo = Taro.getSystemInfoSync();
 const gridItemWidth = (systemInfo.screenWidth - 10) / 7;
@@ -40,6 +42,8 @@ moment.updateLocale("zh", { week: {
     dow: 1, // 星期的第一天是星期一
     // doy: 7  // 年份的第一周必须包含1月1日 (7 + 1 - 1)
   }});
+
+@connect(({ home }) => ({ home }))
 export default class Index extends ThemePage {
 
   /**
@@ -109,41 +113,7 @@ export default class Index extends ThemePage {
         _table: table,
       });
 
-      if (application.setting.isAuntFloEnabled) {
-        // Taro.cloud.callFunction({
-        //   name: "event",
-        //   data: {
-        //     start: this._firstRowStart.toISOString(),
-        //     end: this.state._selectedMoment.endOf('month').toISOString(),
-        //   }
-        // }).then(({ result: { data }}) => {
-        //   const { _auntFloMap } = this.state;
-        //   data.forEach(item => {
-        //     const dayMoment = moment(item['notify_at']);
-        //     const mapKey = `${dayMoment.year()}-${dayMoment.month() + 1}-${dayMoment.date()}`;
-        //     _auntFloMap[mapKey] = item;
-        //   });
-        //   // Taro.setStorageSync(EVENT_DATA_KEY, auntFloMap);
-        //   this.setState({
-        //     _auntFloMap: _auntFloMap,
-        //   });
-        // });
-        service.event.fetch({
-          "start": this._firstRowStart.toISOString(),
-          "end": this.state._selectedMoment.endOf('month').toISOString()
-        }).then((data) => {
-          const { _auntFloMap } = this.state;
-          data.forEach(item => {
-            const dayMoment = moment(item['notify_at']);
-            const mapKey = `${dayMoment.year()}-${dayMoment.month() + 1}-${dayMoment.date()}`;
-            _auntFloMap[mapKey] = item;
-          });
-          // Taro.setStorageSync(EVENT_DATA_KEY, auntFloMap);
-          this.setState({
-            _auntFloMap: _auntFloMap,
-          });
-        })
-      }
+      this._fetchEvent();
     }
   }
 
@@ -248,6 +218,44 @@ export default class Index extends ThemePage {
     // });
   }
 
+  _fetchEvent = () => {
+    if (application.setting.isAuntFloEnabled && application.loginUser) {
+      // Taro.cloud.callFunction({
+      //   name: "event",
+      //   data: {
+      //     start: this._firstRowStart.toISOString(),
+      //     end: this.state._selectedMoment.endOf('month').toISOString(),
+      //   }
+      // }).then(({ result: { data }}) => {
+      //   const { _auntFloMap } = this.state;
+      //   data.forEach(item => {
+      //     const dayMoment = moment(item['notify_at']);
+      //     const mapKey = `${dayMoment.year()}-${dayMoment.month() + 1}-${dayMoment.date()}`;
+      //     _auntFloMap[mapKey] = item;
+      //   });
+      //   // Taro.setStorageSync(EVENT_DATA_KEY, auntFloMap);
+      //   this.setState({
+      //     _auntFloMap: _auntFloMap,
+      //   });
+      // });
+      service.event.fetch({
+        "start": this._firstRowStart.toISOString(),
+        "end": this.state._selectedMoment.endOf('month').toISOString()
+      }).then((data) => {
+        const { _auntFloMap } = this.state;
+        data.forEach(item => {
+          const dayMoment = moment(item['notify_at']);
+          const mapKey = `${dayMoment.year()}-${dayMoment.month() + 1}-${dayMoment.date()}`;
+          _auntFloMap[mapKey] = item;
+        });
+        // Taro.setStorageSync(EVENT_DATA_KEY, auntFloMap);
+        this.setState({
+          _auntFloMap: _auntFloMap,
+        });
+      })
+    }
+  }
+
   _fetch = () => {
     // Taro.cloud.callFunction({
     //   name: "holidays",
@@ -275,15 +283,19 @@ export default class Index extends ThemePage {
   }
 
   _login = () => {
-    Taro.cloud.callFunction({
-      name: "login",
-      data: {}
-    }).then(({result}) => {
-      Taro.setStorageSync('loginUser', result);
-    })
-    // Taro.login().then(({ code }) => {
-    //   console.log('code', code);
+    // Taro.cloud.callFunction({
+    //   name: "login",
+    //   data: {}
+    // }).then(({result}) => {
+    //   application.loginUser = result as User;
     // });
+    const { dispatch } = this.props;
+    dispatch(createAction('home/login')({
+      callback: (loginUser) => {
+        console.log('loginUser', loginUser);
+        this._fetchEvent();
+      },
+    }));
   }
 
   componentWillMount() {

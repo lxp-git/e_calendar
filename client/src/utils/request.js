@@ -98,7 +98,6 @@ export default function request(url, option) {
   //   .sha256()
   //   .update(fingerprint)
   //   .digest('hex');
-
   const defaultOptions = {
     // credentials: 'include',
     mode: 'cors',
@@ -109,6 +108,15 @@ export default function request(url, option) {
       // 'x-app-version': config.version,
     },
   };
+  if (application.cookiesMap) {
+    let cookieString = '';
+    for(let key in application.cookiesMap) {
+      cookieString = `${cookieString}${key}=${application.cookiesMap[key]}; `;
+    }
+    if (cookieString) {
+      defaultOptions.headers['Cookie'] = cookieString;
+    }
+  }
   // if (token) {
     // defaultOptions.headers['x-access-token'] = token;
   // }
@@ -164,6 +172,21 @@ export default function request(url, option) {
       // }
       // const responseJson = response.json();
       // return responseJson;
+      // Cache-Control: "no-store, no-cache, must-revalidate"
+      // Connection: "keep-alive"
+      // Content-Type: "application/json; charset=utf-8"
+      // Date: "Sat, 15 Feb 2020 12:26:13 GMT"
+      // Expires: "Thu, 19 Nov 1981 08:52:00 GMT"
+      // Pragma: "no-cache"
+      // Server: "Tengine"
+      // Set-Cookie: "PHPSESSID=2i4qdrhbf50j75nmqguh1elpcn; path=/; HttpOnly"
+      // Transfer-Encoding: "chunked"
+      if (response.header['Set-Cookie']) {
+        const cookiesMap = application.cookiesMap;
+        const PHPSESSID = response.header['Set-Cookie'].split(';')[0].split('=')[1];
+        cookiesMap['PHPSESSID'] = PHPSESSID;
+        application.cookiesMap = cookiesMap;
+      }
       const { statusCode, data } = response;
       if (statusCode === 401 || statusCode === 403) {
         global.dvaApp._store.dispatch(createAction('user/save')({

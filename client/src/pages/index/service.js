@@ -18,3 +18,9 @@ export const event = {
     method: 'DELETE',
   }),
 }
+
+export const user = {
+  login: ({code}) => {
+    return request(`/user/login?wechat_miniprogram_code=${code}`);
+  },
+}

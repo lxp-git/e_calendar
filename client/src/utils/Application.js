@@ -36,6 +36,18 @@ class Application {
       return Taro.getStorageSync('themePrimary') || '#07C160';
     },
   }
+  set loginUser(newLoginUser) {
+    Taro.setStorageSync('loginUser', newLoginUser);
+  }
+  get loginUser() {
+    return Taro.getStorageSync('loginUser');
+  }
+  set cookiesMap(newCookiesMap) {
+    Taro.setStorageSync('cookiesMap', newCookiesMap);
+  }
+  get cookiesMap() {
+    return Taro.getStorageSync('cookiesMap') || {};
+  }
   baseUrl = 'https://app.liuxuanping.com/public/api.php/calendar';
 }
 

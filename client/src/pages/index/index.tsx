@@ -308,7 +308,11 @@ export default class Index extends ThemePage {
     });
     this._fetch();
     this._login();
-
+    const { dispatch } = this.props;
+    const { params: { scene = '' }} = this.$router;
+    dispatch(createAction('global/handleQrCode')({
+      scene,
+    }));
     /// debug
     // Taro.navigateTo({ url: '/pages/setting/index' });
     // Taro.navigateTo({ url: '/pages/event/index' });

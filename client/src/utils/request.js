@@ -188,7 +188,10 @@ export default function request(url, option) {
         application.cookiesMap = cookiesMap;
       }
       const { statusCode, data } = response;
-      if (statusCode === 401 || statusCode === 403) {
+      if (statusCode === 401) {
+        console.log('statusCode', statusCode);
+        application.loginUser = null;
+        application.cookiesMap = null;
         global.dvaApp._store.dispatch(createAction('user/save')({
           token: '',
           profile: {},

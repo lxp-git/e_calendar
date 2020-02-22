@@ -219,7 +219,7 @@ export default class Index extends ThemePage {
   }
 
   _fetchEvent = () => {
-    if (application.setting.isAuntFloEnabled && application.loginUser) {
+    if (application.setting.isAuntFloEnabled && application.loginUser && application.loginUser.id) {
       // Taro.cloud.callFunction({
       //   name: "event",
       //   data: {
@@ -256,20 +256,17 @@ export default class Index extends ThemePage {
     }
   }
 
+  _qrCodeLogin = () => {
+    if (application.loginUser && application.loginUser.id) {
+      const { params: { scene = '' }} = this.$router;
+      const { dispatch } = this.props;
+      dispatch(createAction('global/handleQrCode')({
+        scene,
+      }));
+    }
+  }
+
   _fetch = () => {
-    // Taro.cloud.callFunction({
-    //   name: "holidays",
-    //   data: {}
-    // }).then(({ result: { data }}) => {
-    //   const holidaysMap = {};
-    //   data.forEach(item => {
-    //     holidaysMap[`${item['year']}-${item['month']}-${item['date']}`] = item;
-    //   });
-    //   Taro.setStorageSync(DATA_KEY, holidaysMap);
-    //   this.setState({
-    //     _holidaysMap: holidaysMap,
-    //   });
-    // })
     service.fetchHolidays().then((data) => {
       const holidaysMap = {};
       data.forEach(item => {
@@ -283,17 +280,12 @@ export default class Index extends ThemePage {
   }
 
   _login = () => {
-    // Taro.cloud.callFunction({
-    //   name: "login",
-    //   data: {}
-    // }).then(({result}) => {
-    //   application.loginUser = result as User;
-    // });
     const { dispatch } = this.props;
     dispatch(createAction('home/login')({
       callback: (loginUser) => {
         console.log('loginUser', loginUser);
         this._fetchEvent();
+        this._qrCodeLogin();
       },
     }));
   }
@@ -308,11 +300,7 @@ export default class Index extends ThemePage {
     });
     this._fetch();
     this._login();
-    const { dispatch } = this.props;
-    const { params: { scene = '' }} = this.$router;
-    dispatch(createAction('global/handleQrCode')({
-      scene,
-    }));
+    this._qrCodeLogin();
     /// debug
     // Taro.navigateTo({ url: '/pages/setting/index' });
     // Taro.navigateTo({ url: '/pages/event/index' });

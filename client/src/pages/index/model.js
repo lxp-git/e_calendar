@@ -11,7 +11,7 @@ export default {
 
   effects: {
     * login({ payload: { callback } }, { call, put, select, take }) {
-      if (application.loginUser) {
+      if (application.loginUser.id) {
         return;
       }
       const { code }  = yield call(Taro.login);

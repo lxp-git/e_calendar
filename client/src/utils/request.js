@@ -110,7 +110,7 @@ export default function request(url, option) {
   };
   if (application.cookiesMap) {
     let cookieString = '';
-    for(let key in application.cookiesMap) {
+    for(const key in application.cookiesMap) {
       cookieString = `${cookieString}${key}=${application.cookiesMap[key]}; `;
     }
     if (cookieString) {
@@ -206,14 +206,16 @@ export default function request(url, option) {
         //   window.location.reload();
         // }
       }
+      if (statusCode >= 400) {
+        throw { statusCode, data };
+      }
       return data;
 
     }).catch((e) => {
-      console.log('e', e);
       // e.response.text().then((response) => {
       //   console.log(url, response);
       // });
-      const status = e.name;
+      const status = e.statusCode;
       if (status === 401) {
         // @HACK
         /* eslint-disable no-underscore-dangle */
@@ -234,5 +236,6 @@ export default function request(url, option) {
       if (status >= 404 && status < 422) {
         // router.push('/exception/404');
       }
+      throw e;
     });
 }

@@ -40,6 +40,7 @@ class App extends Component {
       'pages/setting/index',
       'pages/event/index',
       'pages/clock/index',
+      'pages/token/index',
     ],
     window: {
       backgroundTextStyle: 'light',

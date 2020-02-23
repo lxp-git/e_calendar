@@ -71,6 +71,9 @@ export default class Index extends ThemePage {
           note='可以更改全局的主色调'
           onClick={() => this.setState({_isThemeModelOpened: !this.state._isThemeModelOpened})}
         />
+        <Button openType='getUserInfo' className={styles.customerService}>
+          <AtListItem title='绑定用户信息' note='仅仅为了在合适的地方展示一个你的漂亮微信头像😝' />
+        </Button>
         <Button openType='contact' className={styles.customerService}>
           <AtListItem title='联系我们' note='有什么问题或者建议都可以联系我们🥳' />
         </Button>

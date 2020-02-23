@@ -1,13 +1,16 @@
 import Taro, {Component, Config} from '@tarojs/taro'
 import {View, Text, Picker, Button, Image} from '@tarojs/components'
-import styles from './index.module.scss';
-
-import ThemePage from "../ThemePage";
 import {connect} from "@tarojs/redux";
+
+import styles from './index.module.scss';
+import ThemePage from "../ThemePage";
+import application from "../../utils/Application";
+import { createAction } from '../../utils';
+import {AtActivityIndicator} from "taro-ui";
 
 const systemInfo = Taro.getSystemInfoSync();
 
-@connect(({ home }) => ({ home }))
+@connect(({ home, loading }) => ({ home, loading }))
 export default class Index extends ThemePage {
 
   /**
@@ -24,20 +27,86 @@ export default class Index extends ThemePage {
     backgroundColor: '#f4f4f4',
   }
 
+  state = {
+    second: 3,
+    loading: true,
+  }
+
   componentWillMount() {
   }
 
+  _login = () => {
+    const { dispatch } = this.props;
+    dispatch(createAction('home/login')({
+      callback: (loginUser) => {
+        this._qrCodeLogin();
+      },
+    }));
+  }
+
+  _qrCodeLogin = () => {
+    const { params: { scene = '0000000000000' }} = this.$router;
+    const { dispatch } = this.props;
+    dispatch(createAction('global/handleQrCode')({
+      scene,
+      callback: (loginUser) => {
+        if (!loginUser) {
+          return;
+        }
+        this.setState({
+          loading: false,
+          second: 10,
+        });
+        const timer = setInterval(() => {
+          const { second } = this.state;
+          if (second === 1) {
+            clearInterval(timer);
+            Taro.navigateTo({
+              url: '/pages/index/index',
+            });
+          }
+          this.setState({
+            loading: false,
+            second: second - 1,
+          });
+        }, 1000);
+      }
+    }));
+  }
+
   componentDidMount() {
+    if (application.loginUser && application.loginUser.id) {
+      this._qrCodeLogin();
+    } else {
+      this._login();
+    }
   }
 
   render() {
-    const { global: { themePrimary }} = this.props;
-    const {_table, _selectedMoment, _holidaysMap} = this.state;
-    const _selectedLunarCalendar = this._momentToLunarCalendar(_selectedMoment);
-    return (
-      <View className={styles.index}>
-        登录成功
+    // const { loading: { models: { global = true }} } = this.props;
+    const { second, loading } = this.state;
+
+    return loading ? (
+      <View
+        style={{
+          display: 'flex', justifyContent: 'center', alignItems: 'center',
+          width: '100%', height: '100%',
+        }}
+      >
+        <View
+          style={{
+            display: 'flex', flexDirection: 'column',
+            justifyContent: 'center', alignItems: 'center',
+          }}
+        >
+          <AtActivityIndicator size={80} />
+          <View style={{ marginTop: Taro.pxTransform(40) }}>正在登录</View>
+        </View>
       </View>
-    )
+    ) : (
+      <View className={styles.index}>
+        登录成功，{second}秒后回到首页
+      </View>
+    );
   }
 }

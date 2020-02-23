@@ -305,7 +305,7 @@ export default class Index extends ThemePage {
     // Taro.navigateTo({ url: '/pages/setting/index' });
     // Taro.navigateTo({ url: '/pages/event/index' });
     // Taro.navigateTo({ url: '/pages/clock/index' });
-    Taro.navigateTo({ url: '/pages/token/index' });
+    // Taro.navigateTo({ url: '/pages/token/index' });
   }
 
   componentWillUnmount() {

@@ -1,0 +1,14 @@
+.index {
+  .card {
+    margin: 10px;
+    background: white;
+    //min-height: 100px;
+  }
+  .selectedDetail {
+    display: flex;
+    flex-direction: column;
+    //justify-content: center;
+    //align-items: center;
+    padding: 20px;
+  }
+}

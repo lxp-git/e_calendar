@@ -20,6 +20,12 @@ class Application {
     '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107',
     '#ff9800', '#ff5722', '#795548', '#9e9e9e', '#607d8b', '#000000'];
   setting = {
+    set isReviewWordsEnabled(isReviewWordsEnabled) {
+      Taro.setStorageSync('isReviewWordsEnabled', isReviewWordsEnabled);
+    },
+    get isReviewWordsEnabled() {
+      return Taro.getStorageSync('isReviewWordsEnabled') || false;
+    },
     set isAuntFloEnabled(isAuntFloEnabled) {
       Taro.setStorageSync('isAuntFloEnabled', isAuntFloEnabled);
     },
@@ -48,7 +54,7 @@ class Application {
   get cookiesMap() {
     return Taro.getStorageSync('cookiesMap') || {};
   }
-  baseUrl = 'https://app.liuxuanping.com/public/api.php/calendar';
+  baseUrl = 'https://app.liuxuanping.com/public/api.php';
 }
 
 export default new Application();

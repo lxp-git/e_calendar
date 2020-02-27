@@ -1,0 +1,17 @@
+.eventBody {
+  display: flex;
+  width: 100%;
+  background: white;
+  margin-top: 10px;
+  flex-direction: column;
+  .eventRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 20px 40px;
+
+    .text {
+      text-decoration: line-through;
+    }
+  }
+}

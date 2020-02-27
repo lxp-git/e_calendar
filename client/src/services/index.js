@@ -4,3 +4,10 @@ export const qrLogin = (queryParamsObject) => request('/calendar/user/miniProgra
   method: 'POST',
   body: queryParamsObject,
 });
+
+export const user = {
+  put: (data) => request('/calendar/user', {
+    method: 'PUT',
+    body: data,
+  }),
+}

@@ -70,7 +70,7 @@ export default class Index extends ThemePage {
 
   render() {
     const { _isThemeModelOpened } = this.state;
-    const { global: { themePrimary }} = this.props;
+    const { global: { themePrimary }, dispatch } = this.props;
     return (
       <View className={styles.index}>
         <AtListItem
@@ -106,7 +106,13 @@ export default class Index extends ThemePage {
           note='可以更改全局的主色调'
           onClick={() => this.setState({_isThemeModelOpened: !this.state._isThemeModelOpened})}
         />
-        <Button openType='getUserInfo' className={styles.customerService}>
+        <Button
+          openType='getUserInfo' className={styles.customerService}
+          onGetUserInfo={({ detail: { userInfo }}) => {
+            // const { avatarUrl, city, country, gender, nickName, province } = userInfo;
+            dispatch(createAction('user/put')(userInfo));
+          }}
+        >
           <AtListItem title='绑定用户信息' note='仅仅为了在合适的地方展示一个你的漂亮微信头像😝' />
         </Button>
         <Button openType='contact' className={styles.customerService}>

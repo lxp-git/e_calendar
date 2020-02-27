@@ -1,14 +1,11 @@
 import Taro, {Component, Config} from '@tarojs/taro'
 import {View, Text, Picker, Button, Image} from '@tarojs/components'
 import {connect} from "@tarojs/redux";
+import {AtActivityIndicator} from "taro-ui";
 
 import styles from './index.module.scss';
 import ThemePage from "../ThemePage";
-import application from "../../utils/Application";
 import { createAction } from '../../utils';
-import {AtActivityIndicator} from "taro-ui";
-
-const systemInfo = Taro.getSystemInfoSync();
 
 @connect(({ home, loading }) => ({ home, loading }))
 export default class Index extends ThemePage {
@@ -75,11 +72,7 @@ export default class Index extends ThemePage {
   }
 
   componentDidMount() {
-    if (application.loginUser && application.loginUser.id) {
-      this._qrCodeLogin();
-    } else {
-      this._login();
-    }
+    this._qrCodeLogin();
   }
 
   render() {

@@ -1,15 +1,26 @@
-import Taro, { Component } from '@tarojs/taro'
-import {View, Button} from '@tarojs/components'
+import Taro, { Component } from '@tarojs/taro';
+import {View, Button} from '@tarojs/components';
+import moment from "moment";
+import {ITouchEvent} from "@tarojs/components/types/common";
+
 import styles from './index.module.scss';
 
-import moment from "moment";
+interface State {
+  _nowLocaleString: string,
+}
 
-export default class TimerComponent extends Component {
+interface Props {
+  onClick?: (event: ITouchEvent) => any,
+}
+
+export default class TimerComponent extends Component<Props, State> {
 
   state = {
     _nowLocaleString: moment().format('YYYY/MM/DD HH:mm:ss'),
   }
+
   timer;
+
   componentWillMount () { }
 
   componentDidMount () {
@@ -36,11 +47,14 @@ export default class TimerComponent extends Component {
     const { onClick } = this.props;
     const { _nowLocaleString } = this.state;
     return (
-      <Button onLongPress={(event) => {
-        Taro.navigateTo({
-          url: '/pages/clock/index',
-        });
-      }} onClick={onClick} style={{ background: 'white' }}>
+      <Button
+        onLongPress={() => {
+          Taro.navigateTo({
+            url: '/pages/clock/index',
+          });
+        }}
+        onClick={onClick} style={{ background: 'white' }}
+      >
         <View className={styles.index}>{_nowLocaleString}</View>
       </Button>
     )

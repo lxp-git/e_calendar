@@ -1,10 +1,13 @@
-import Taro, {Component, Config} from '@tarojs/taro'
+import Taro, {Config} from '@tarojs/taro'
 import {Button, Text, View} from '@tarojs/components'
-import styles from './index.module.scss';
-import {AtListItem, AtModal, AtModalContent} from "taro-ui";
-import application from "../../utils/Application";
 import {connect} from "@tarojs/redux";
+import {AtListItem, AtModal, AtModalContent} from "taro-ui";
+
+import styles from './index.module.scss';
+import application from "../../utils/Application";
 import ThemePage from "../ThemePage";
+import {createAction} from "../../utils";
+
 const systemInfo = Taro.getSystemInfoSync();
 const gridItemWidth = (systemInfo.screenWidth - 10) / 7;
 
@@ -48,6 +51,23 @@ export default class Index extends ThemePage {
   componentWillUnmount() {
   }
 
+  _fetchWords = () => {
+    const { dispatch } = this.props;
+    dispatch(createAction('words/fetch')({}));
+  }
+
+  _fetchEvents = () => {
+    const { dispatch } = this.props;
+    dispatch(createAction('home/fetchEvent')({}));
+  }
+
+  _login = (callback) => {
+    const { dispatch } = this.props;
+    dispatch(createAction('home/login')({
+      callback: callback,
+    }));
+  }
+
   render() {
     const { _isThemeModelOpened } = this.state;
     const { global: { themePrimary }} = this.props;
@@ -59,12 +79,27 @@ export default class Index extends ThemePage {
           switchIsCheck={application.setting.isAuntFloEnabled}
           onSwitchChange={(event) => {
             application.setting.isAuntFloEnabled = event.detail.value;
+            this._fetchEvents();
           }}
           onClick={(event) => {
             console.log('onClick', event);
           }}
           switchColor='#07C160'
           note='开启之后，长按选择日历的某一天可以标记'
+        />
+        <AtListItem
+          title='单词本'
+          isSwitch
+          switchIsCheck={application.setting.isReviewWordsEnabled}
+          onSwitchChange={(event) => {
+            application.setting.isReviewWordsEnabled = event.detail.value;
+            this._fetchWords();
+          }}
+          onClick={(event) => {
+            console.log('onClick', event);
+          }}
+          switchColor='#07C160'
+          note='开启之后，首页会显示一个您查过的单词'
         />
         <AtListItem
           title='切换主题色'

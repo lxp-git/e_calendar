@@ -2,6 +2,7 @@ import Taro from '@tarojs/taro'
 import * as qs from "qs";
 import application from '../utils/Application';
 import * as services from '../services';
+import {createAction} from "../utils";
 
 export default {
   namespace: 'global',
@@ -14,6 +15,10 @@ export default {
 
     },
     * handleQrCode({ payload: { scene, callback }}, { call, put, select, take }) {
+      if (!(application.loginUser && application.loginUser.id)) {
+        yield put(createAction('home/login')());
+        yield take('home/login/@@end');
+      }
       let loginUser;
       try {
         if (scene) {

@@ -41,6 +41,7 @@ class App extends Component {
       'pages/event/index',
       'pages/clock/index',
       'pages/token/index',
+      'pages/words/index',
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -69,7 +70,7 @@ class App extends Component {
     // return (<Index/>);
     return (
       <Provider store={store}>
-        <Index/>
+        <Index />
       </Provider>
     );
   }

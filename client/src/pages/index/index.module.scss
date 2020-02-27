@@ -107,18 +107,6 @@ page {
       }
     }
   }
-  .card {
-    margin: 10px;
-    background: white;
-    //min-height: 100px;
-  }
-  .selectedDetail {
-    display: flex;
-    flex-direction: column;
-    //justify-content: center;
-    //align-items: center;
-    padding: 20px;
-  }
   .rightBottom {
     position: absolute;
     bottom: 40px;
@@ -132,23 +120,5 @@ page {
     justify-content: center;
     align-items: center;
     box-shadow: 0 6px 10px -2px rgba(0, 0, 0, 0.2), 0 12px 20px 0 rgba(0, 0, 0, 0.14), 0 2px 36px 0 rgba(0, 0, 0, 0.12);
-  }
-
-  .eventBody {
-    display: flex;
-    width: 100%;
-    background: white;
-    margin-top: 10px;
-    flex-direction: column;
-    .eventRow {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      padding: 20px 40px;
-
-      .text {
-        text-decoration: line-through;
-      }
-    }
   }
 }

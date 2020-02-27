@@ -1,0 +1,54 @@
+.index {
+  width: 100%;
+  padding: 0 10px 10px 10px;
+  background: black;
+  box-sizing: border-box;
+  color: #f4f4f4;
+
+  .card {
+    background: #212121;
+    //min-height: 100px;
+
+    box-shadow: 0px 2px 1px -1px rgba(0,0,0,0.2), 0px 1px 1px 0px rgba(0,0,0,0.14), 0px 1px 3px 0px rgba(0,0,0,0.12);
+    padding: 10px;
+    box-sizing: border-box;
+
+    .title {
+      width: 100%;
+      font-size: 28px;
+    }
+    .row {
+      display: flex;
+      width: 100%;
+      flex-direction: row;
+      box-sizing: border-box;
+      margin-top: 10px;
+      justify-content: flex-start;
+      align-items: flex-start;
+      .start {
+        display: flex;
+        align-self: flex-start;
+      }
+      .longest {
+        display: flex;
+        margin: 0 40px;
+        height: auto;
+        flex: 1;
+        width: 0;
+        flex-wrap: wrap;
+        white-space: pre-line;
+        word-break:break-all;
+        align-self: flex-start;
+        //text-overflow:ellipsis;
+      }
+      .end {
+        display: flex;
+        align-self: flex-start;
+      }
+      .frequency {
+        font-style: oblique;
+        font-size: 26px;
+      }
+    }
+  }
+}

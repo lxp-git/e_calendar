@@ -1,19 +1,20 @@
-import Taro, {Component, Config} from '@tarojs/taro'
+import Taro, {Config} from '@tarojs/taro'
 import {View, Text, Picker, Button, Image} from '@tarojs/components'
-import styles from './index.module.scss';
-
-// import Login from '../../components/login/index'
 import moment, {Moment} from "moment";
-import TimerComponent from "./timer_component";
-import {calendar, LunarCalendar} from "../../utils/calendar";
 import {AtIcon} from "taro-ui";
 import {ITouchEvent} from "@tarojs/components/types/common";
+import {connect} from "@tarojs/redux";
+
+import styles from './index.module.scss';
+import TimerComponent from "./timer_component";
+import {calendar, LunarCalendar} from "../../utils/calendar";
 import assets from '../../assets';
-import application, {User} from "../../utils/Application";
+import application from "../../utils/Application";
 import ThemePage from "../ThemePage";
 import * as service from './service';
-import {connect} from "@tarojs/redux";
 import {createAction} from "../../utils";
+import DateDetail from "./DateDetail";
+import WordCard from "../../components/WordCard";
 
 const systemInfo = Taro.getSystemInfoSync();
 const gridItemWidth = (systemInfo.screenWidth - 10) / 7;
@@ -38,12 +39,13 @@ const ZODIAC_SIGNS = {
   "狗": ['🐶','🐕'],
   "猪": ['🐷','🐖'],
 };
+
 moment.updateLocale("zh", { week: {
     dow: 1, // 星期的第一天是星期一
     // doy: 7  // 年份的第一周必须包含1月1日 (7 + 1 - 1)
   }});
 
-@connect(({ home }) => ({ home }))
+@connect(({ home, words }) => ({ home, words }))
 export default class Index extends ThemePage {
 
   /**
@@ -62,19 +64,17 @@ export default class Index extends ThemePage {
 
   state = {
     _table: [],
-    _selectedMoment: moment(),
     _holidaysMap: Taro.getStorageSync(DATA_KEY) || {},
     _auntFloMap: {}, /// Taro.getStorageSync(EVENT_DATA_KEY) || {},
   }
   _timer;
   _touchStartEvent;
-  _firstDayOfCurrentMonth;
-  _firstRowStart;
 
   _onDayClick = (dayMoment) => {
-    this.setState({
-      _selectedMoment: dayMoment,
-    });
+    const { dispatch } = this.props;
+    dispatch(createAction('home/save')({
+      selectedMoment: dayMoment,
+    }));
     Taro.vibrateShort();
   }
 
@@ -88,33 +88,8 @@ export default class Index extends ThemePage {
   }
 
   _onSelectYearAndMonth = (date) => {
-    if (date.type === 'change') {
-      const yearMonthDay = date.detail.value.split('-');
-      const selectedNewMoment = moment().year(parseInt(yearMonthDay[0]))
-        .month(parseInt(yearMonthDay[1]) - 1)
-        .date(parseInt(yearMonthDay[2]));
-      this._onDayClick(selectedNewMoment);
-
-      this._firstDayOfCurrentMonth = selectedNewMoment.clone().startOf('month');
-      const dayInMonth = this._firstDayOfCurrentMonth.clone().weekday();
-      this._firstRowStart = this._firstDayOfCurrentMonth.clone().subtract(dayInMonth, 'day');
-      const table = [[
-        selectedNewMoment,
-      ]];
-      const indexMoment = this._firstRowStart.clone();
-      for (let week = 0; week < 5; week++) {
-        table[week] = [];
-        for (let day = 0; day < 7; day++) {
-          table[week][day] = indexMoment.clone();
-          indexMoment.add(1, 'day')
-        }
-      }
-      this.setState({
-        _table: table,
-      });
-
-      this._fetchEvent();
-    }
+    const { dispatch } = this.props;
+    dispatch(createAction('home/selectYearAndMonth')({ date }));
   }
 
   _onCalendarBodyTouchStart = (event: ITouchEvent) => {
@@ -134,13 +109,14 @@ export default class Index extends ThemePage {
       const startX = this._touchStartEvent.changedTouches[0].clientX;
       const endX = event.changedTouches[0].clientX;
       if (Math.abs(startX - endX) > 50) {
+        const { home: { selectedMoment }} = this.props;
         if (startX > endX) {
-          const newMoment = this.state._selectedMoment.clone();
+          const newMoment = selectedMoment.clone();
           newMoment.add(1, 'month');
           this._onSelectYearAndMonth({ type: 'change', detail: {
             value: newMoment.format('YYYY-MM-DD') }});
         } else {
-          const newMoment = this.state._selectedMoment.clone();
+          const newMoment = selectedMoment.clone();
           newMoment.subtract(1, 'month');
           this._onSelectYearAndMonth({ type: 'change', detail: {
               value: newMoment.format('YYYY-MM-DD') }});
@@ -158,33 +134,21 @@ export default class Index extends ThemePage {
       '大姨妈来了'
     ];
     const mapKey = `${dayMoment.year()}-${dayMoment.month() + 1}-${dayMoment.date()}`;
-    const { _auntFloMap } = this.state;
+    const { home: { auntFloMap: _auntFloMap } } = this.props;
     if (_auntFloMap && _auntFloMap[mapKey]) {
       actionList[0] = "大姨妈没来";
     }
     if (actionList.length > 0) {
       Taro.showActionSheet({
         itemList: actionList,
-        success: ({tapIndex,errMsg}) => {
-          const { _auntFloMap } = this.state;
+        success: ({ tapIndex, errMsg}: { tapIndex: number, errMsg: string }) => {
+          console.log('errMsg', errMsg);
           if (actionList[tapIndex] === "大姨妈来了") {
             const data = {
               content: '大姨妈来了',
               status: 'done',
-              notify_at: dayMoment.toISOString(),
+              'notify_at': dayMoment.toISOString(),
             };
-            // Taro.cloud.callFunction({
-            //   data,
-            //   name: "postEvent"
-            // }).then(({result,errMsg}) => {
-            //   _auntFloMap[mapKey] = {
-            //     ...data,
-            //     _id: result._id,
-            //   };
-            //   this.setState({
-            //     _auntFloMap,
-            //   });
-            // }).catch((error) => console.log("error",error));
             service.event.post(data).then((result) => {
               _auntFloMap[mapKey] = {
                 ...result,
@@ -195,14 +159,6 @@ export default class Index extends ThemePage {
             }).catch((error) => console.log("error",error));
             _auntFloMap[mapKey] = data;
           } else {
-            // Taro.cloud.callFunction({
-            //   data: {
-            //     _id: _auntFloMap[mapKey]._id,
-            //   },
-            //   name: "deleteEvent"
-            // }).then(({result,errMsg}) => {
-            //
-            // }).catch((error) => console.log("error",error));
             service.event.delete(_auntFloMap[mapKey].id);
             _auntFloMap[mapKey] = null;
           }
@@ -211,59 +167,25 @@ export default class Index extends ThemePage {
           });
         },
       });
-      // Taro.setStorageSync(EVENT_DATA_KEY, auntFloMap);
     }
-    // Taro.navigateTo({
-    //   url: '/pages/event/index',
-    // });
   }
 
   _fetchEvent = () => {
-    if (application.setting.isAuntFloEnabled && application.loginUser && application.loginUser.id) {
-      // Taro.cloud.callFunction({
-      //   name: "event",
-      //   data: {
-      //     start: this._firstRowStart.toISOString(),
-      //     end: this.state._selectedMoment.endOf('month').toISOString(),
-      //   }
-      // }).then(({ result: { data }}) => {
-      //   const { _auntFloMap } = this.state;
-      //   data.forEach(item => {
-      //     const dayMoment = moment(item['notify_at']);
-      //     const mapKey = `${dayMoment.year()}-${dayMoment.month() + 1}-${dayMoment.date()}`;
-      //     _auntFloMap[mapKey] = item;
-      //   });
-      //   // Taro.setStorageSync(EVENT_DATA_KEY, auntFloMap);
-      //   this.setState({
-      //     _auntFloMap: _auntFloMap,
-      //   });
-      // });
-      service.event.fetch({
-        "start": this._firstRowStart.toISOString(),
-        "end": this.state._selectedMoment.endOf('month').toISOString()
-      }).then((data) => {
-        const { _auntFloMap } = this.state;
-        data.forEach(item => {
-          const dayMoment = moment(item['notify_at']);
-          const mapKey = `${dayMoment.year()}-${dayMoment.month() + 1}-${dayMoment.date()}`;
-          _auntFloMap[mapKey] = item;
-        });
-        // Taro.setStorageSync(EVENT_DATA_KEY, auntFloMap);
-        this.setState({
-          _auntFloMap: _auntFloMap,
-        });
-      })
-    }
+    const { dispatch } = this.props;
+    dispatch(createAction('home/fetchEvent')({}));
   }
 
   _qrCodeLogin = () => {
-    if (application.loginUser && application.loginUser.id) {
-      const { params: { scene = '' }} = this.$router;
-      const { dispatch } = this.props;
-      dispatch(createAction('global/handleQrCode')({
-        scene,
-      }));
-    }
+    const { dispatch } = this.props;
+    const { params: { scene }} = this.$router;
+    dispatch(createAction('global/handleQrCode')({
+      scene,
+    }));
+  }
+
+  _fetchWords = () => {
+    const { dispatch } = this.props;
+    dispatch(createAction('words/fetch')({}));
   }
 
   _fetch = () => {
@@ -282,8 +204,7 @@ export default class Index extends ThemePage {
   _login = () => {
     const { dispatch } = this.props;
     dispatch(createAction('home/login')({
-      callback: (loginUser) => {
-        console.log('loginUser', loginUser);
+      callback: () => {
         this._fetchEvent();
         this._qrCodeLogin();
       },
@@ -299,19 +220,24 @@ export default class Index extends ThemePage {
       detail: {value: moment().format('YYYY-MM-DD')},
     });
     this._fetch();
-    this._login();
+    // this._login();
+    this._fetchEvent();
     this._qrCodeLogin();
+    this._fetchWords();
     /// debug
     // Taro.navigateTo({ url: '/pages/setting/index' });
     // Taro.navigateTo({ url: '/pages/event/index' });
     // Taro.navigateTo({ url: '/pages/clock/index' });
     // Taro.navigateTo({ url: '/pages/token/index' });
+    // Taro.navigateTo({ url: '/pages/words/index' });
   }
 
   componentWillUnmount() {
     clearInterval(this._timer);
   }
+
   onShareAppMessage(obj: Taro.ShareAppMessageObject): Taro.ShareAppMessageReturn {
+    console.log('obj.from', obj.from);
     return {
       path: 'pages/index/index',
       title: '一个日历，有一些简单的节假日，记事，和大姨妈功能',
@@ -319,16 +245,17 @@ export default class Index extends ThemePage {
   }
 
   render() {
-    const { global: { themePrimary }} = this.props;
-    const {_table, _selectedMoment, _holidaysMap} = this.state;
-    const _selectedLunarCalendar = this._momentToLunarCalendar(_selectedMoment);
+    const { global: { themePrimary }, words, home } = this.props;
+    const { selectedMoment, auntFloMap, table: _table = [] } = home;
+    const {_holidaysMap} = this.state;
+    const _selectedLunarCalendar = this._momentToLunarCalendar(selectedMoment);
     return (
       <View className={styles.index}>
         <View className={styles.firstRow}>
-          <Picker mode='date' onChange={this._onSelectYearAndMonth} value={_selectedMoment.format('YYYY-MM-DD')}>
+          <Picker mode='date' onChange={this._onSelectYearAndMonth} value={selectedMoment.format('YYYY-MM-DD')}>
             <View className={styles.left} onClick={this._onSelectYearAndMonth}>
-              <View>{_selectedMoment.format('YYYY年MM月')}</View>
-              <AtIcon value='chevron-right' size={20} className={styles.rightIcon}/>
+              <View>{selectedMoment.format('YYYY年MM月')}</View>
+              <AtIcon value='chevron-right' size={20} className={styles.rightIcon} />
             </View>
           </Picker>
           <TimerComponent
@@ -337,9 +264,13 @@ export default class Index extends ThemePage {
         </View>
         <View className={styles.header}>
           {WEEK_DAY_CHINESE.map(itemString =>
-            <Text style={{
-              color: (itemString == '六' || itemString == '日') ? themePrimary : textPrimaryColor,
-            }} key={itemString} className={styles.headerItem}>{itemString}</Text>)}
+            <Text
+              style={{
+                color: (itemString == '六' || itemString == '日') ? themePrimary : textPrimaryColor,
+              }}
+              key={itemString}
+              className={styles.headerItem}
+            >{itemString}</Text>)}
         </View>
         <View
           className={styles.body}
@@ -351,7 +282,7 @@ export default class Index extends ThemePage {
             <View className={styles.bodyRow} key={"week" + weekIndex}>
               {row.map((dayMoment: Moment, dayIndex) => {
                 const lunarCalendar: LunarCalendar = this._momentToLunarCalendar(dayMoment);
-                const isSelectedDay = _selectedMoment.isSame(dayMoment, 'day');
+                const isSelectedDay = selectedMoment.isSame(dayMoment, 'day');
                 /// 优先显示节日，再显示农历日期
                 let bottomText = '';
                 if (lunarCalendar.IDayCn) {
@@ -387,11 +318,6 @@ export default class Index extends ThemePage {
                   dateColor = 'white';
                 }
 
-                const { _auntFloMap } = this.state;
-                if (_auntFloMap && _auntFloMap[mapKey]) {
-                  // console.log('_auntFloMap[mapKey]', _auntFloMap[mapKey]);
-                }
-
                 return (
                   <Button
                     onLongClick={(event) => {
@@ -403,7 +329,7 @@ export default class Index extends ThemePage {
                     style={{
                       width: gridItemWidth + 'px',
                       height: gridItemWidth + 'px',
-                      opacity: dayMoment.month() == _selectedMoment.month() ? 1 : 0.3,
+                      opacity: dayMoment.month() == selectedMoment.month() ? 1 : 0.3,
                       background: isSelectedDay ? themePrimary : 'white',
                     }}
                     onClick={() => this._onDayClick(dayMoment)}
@@ -422,19 +348,17 @@ export default class Index extends ThemePage {
                     </View>
                     {holiday && holiday['event'] == 'HOLIDAY'
                     && (
-                      <Text className={styles.holiday}
-                        style={{ color: isSelectedDay ? 'white' : themePrimary }}>
+                      <Text className={styles.holiday} style={{ color: isSelectedDay ? 'white' : themePrimary }}>
                         休
                       </Text>
                     )}
                     {holiday && holiday['event'] == 'WORKING_DAY'
                     && (
-                      <Text className={styles.holiday}
-                            style={{ color: isSelectedDay ? 'white' : textPrimaryColor }}>
+                      <Text className={styles.holiday} style={{ color: isSelectedDay ? 'white' : textPrimaryColor }}>
                         班
                       </Text>
                     )}
-                    {_auntFloMap && _auntFloMap[mapKey] && (
+                    {auntFloMap && auntFloMap[mapKey] && (
                       <Image
                         src={isSelectedDay ? assets.images.iconHeartWhite : assets.images.iconHeartPick}
                         className={styles.eventAuntFlo}
@@ -446,31 +370,16 @@ export default class Index extends ThemePage {
             </View>
           ))}
         </View>
-        <View className={styles.card}>
-          <View className={styles.selectedDetail}>
-            <Text>{_selectedLunarCalendar.gzYear}{ZODIAC_SIGNS[_selectedLunarCalendar.Animal][0]}年{_selectedLunarCalendar.gzMonth}月{_selectedLunarCalendar.gzDay}日 {_selectedLunarCalendar.astro} {_selectedLunarCalendar.IMonthCn}{_selectedLunarCalendar.IDayCn} 第{_selectedMoment.format('ww')}周</Text>
-            <Text></Text>
-          </View>
-        </View>
-        {/*<View className={styles.eventBody}>*/}
-        {/*  <View className={styles.eventRow}>*/}
-        {/*    <Checkbox*/}
-        {/*      checked*/}
-        {/*      value='大姨妈来了'*/}
-        {/*    />*/}
-        {/*    <Text className={styles.text}>大姨妈来了</Text>*/}
-        {/*  </View>*/}
-        {/*  <View className={styles.eventRow}>*/}
-        {/*    <Checkbox*/}
-        {/*      checked*/}
-        {/*      value='大姨妈来了'*/}
-        {/*    />*/}
-        {/*    <Text className={styles.text}>大姨妈来了</Text>*/}
-        {/*  </View>*/}
-        {/*</View>*/}
-        {/*<Text>{"firstDayOfCurrentMonth:" + firstDayOfCurrentMonth.toDate().toLocaleString()}</Text>*/}
-        {/*<Text>{"firstDayOfCurrentMonth.week:" + firstDayOfCurrentMonth.week()}</Text>*/}
-        {/*<Text>{"firstDayOfCurrentMonth.weekday:" + firstDayOfCurrentMonth.weekday()}</Text>*/}
+        <DateDetail>
+          {_selectedLunarCalendar.gzYear}{ZODIAC_SIGNS[_selectedLunarCalendar.Animal][0]}年{_selectedLunarCalendar.gzMonth}月{_selectedLunarCalendar.gzDay}日 {_selectedLunarCalendar.astro} {_selectedLunarCalendar.IMonthCn}{_selectedLunarCalendar.IDayCn} 第{selectedMoment.format('ww')}周
+        </DateDetail>
+        {words && words.list && words.list.length > 0 && (
+          <WordCard
+            onClick={(event) => { event.preventDefault();event.stopPropagation(); Taro.navigateTo({ url: '/pages/words/index' }) }}
+            wordCard={words.list[0]}
+            style={{}}
+          />
+        )}
         <View style={{ background: themePrimary }} className={styles.rightBottom} onClick={() => Taro.navigateTo({ url: '/pages/setting/index' })}>
           <AtIcon value='settings' color='white' />
         </View>

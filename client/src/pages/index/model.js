@@ -42,7 +42,6 @@ export default {
         yield put(createAction('save')({
           selectedMoment: selectedNewMoment,
         }));
-
         const firstDayOfCurrentMonth = selectedNewMoment.clone().startOf('month');
         const dayInMonth = firstDayOfCurrentMonth.clone().weekday();
         const firstRowStart = firstDayOfCurrentMonth.clone().subtract(dayInMonth, 'day');
@@ -69,7 +68,7 @@ export default {
         const { firstRowStart, selectedMoment } = yield select(state => state.home);
         const data = yield call(service.event.fetch, {
           "start": firstRowStart.toISOString(),
-          "end": selectedMoment.endOf('month').toISOString()
+          "end": selectedMoment.clone().endOf('month').toISOString()
         });
         const { auntFloMap } = yield select(state => state.home);
         data.forEach(item => {

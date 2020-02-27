@@ -88,6 +88,7 @@ export default class Index extends ThemePage {
   }
 
   _onSelectYearAndMonth = (date) => {
+    console.log('date', date);
     const { dispatch } = this.props;
     dispatch(createAction('home/selectYearAndMonth')({ date }));
   }

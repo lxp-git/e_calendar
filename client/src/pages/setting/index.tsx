@@ -11,6 +11,7 @@ import TaroButton from "../../components/TaroButton";
 
 const colorItemWidth = (Taro.getSystemInfoSync().screenWidth - 100) / 4;
 
+@connect(({ global, setting }) => ({ global, setting }))
 class Index extends ThemePage {
 
   /**
@@ -80,7 +81,8 @@ class Index extends ThemePage {
   }
 
   render() {
-    const { global: { themePrimary }, dispatch, setting: { isThemeModelOpened, isContactModalOpened } } = this.props;
+    const { global: { themePrimary }, dispatch, setting = {} } = this.props;
+    const { isThemeModelOpened = false, isContactModalOpened = false } = setting;
     return (
       <View
         style={{
@@ -140,14 +142,17 @@ class Index extends ThemePage {
           }}
           onGetUserInfo={({ detail: { userInfo }}) => {
             // const { avatarUrl, city, country, gender, nickName, province } = userInfo;
-            dispatch(createAction('user/put')(userInfo));
+            if (userInfo) {
+              dispatch(createAction('user/put')(userInfo));
+            }
           }}
+          onClick={() => {}}
         >
           <ListItem title='绑定用户信息' note='仅仅为了在合适的地方展示一个你的漂亮微信头像😝' />
         </TaroButton>}
         <TaroButton
           style={{
-            display: "flex",
+            display: "relative",
             width: "100%",
             textAlign: "start",
             backgroundColor: "white",
@@ -210,7 +215,7 @@ class Index extends ThemePage {
         <Modal isOpened={isThemeModelOpened}>
           <View
             onClick={() => { dispatch(createAction('setting/save')({ isThemeModelOpened: false })) }}
-            style={{ backgroundColor: '#99999999', flex: 1, width: "100%", height: "100%", justifyContent: "center",
+            style={{ display: 'flex', backgroundColor: '#99999999', flex: 1, width: "100%", height: "100%", justifyContent: "center",
               alignItems: "center", paddingLeft: Taro.pxTransform(100), paddingRight: Taro.pxTransform(100) }}
           >
             <View
@@ -221,8 +226,6 @@ class Index extends ThemePage {
                 width: "100%",
                 justifyContent: "center",
                 alignItems: "center",
-                paddingTop: Taro.pxTransform(32),
-                paddingBottom: Taro.pxTransform(32),
               }}
             >
               {application.themes0.map((item) => (
@@ -231,12 +234,16 @@ class Index extends ThemePage {
                   style={{
                     width: "25%",
                     padding: Taro.pxTransform(8),
+                    boxSizing: 'border-box',
                     height: Taro.pxTransform(colorItemWidth * 2),
                     display: 'flex',
+                    opacity: 1,
                   }}
                 >
                   <View
                     style={{
+                      display: 'flex',
+                      opacity: 1,
                       flex: 1,
                       color: "white",
                       justifyContent: "center",
@@ -257,8 +264,7 @@ class Index extends ThemePage {
     )
   }
 }
-const ConnectIndex = connect(({ global, setting }) => ({ global, setting }))(Index);
-ConnectIndex.navigationOptions =  ({ navigation }) => {
+Index.navigationOptions =  ({ navigation }) => {
   return ({
     title: 'Home',
     headerStyle: {
@@ -272,4 +278,4 @@ ConnectIndex.navigationOptions =  ({ navigation }) => {
     // },
   });
 }
-export default ConnectIndex;
+export default Index;

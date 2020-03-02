@@ -7,11 +7,11 @@ export default function Modal({ children, isOpened }) {
       style={{
         position: 'absolute',
         left: 0, right: 0, top: 0, bottom: 0,
-        opacity: 0.7,
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
         flex: 1,
+        zIndex: 999999,
       }}
     >
       {children}

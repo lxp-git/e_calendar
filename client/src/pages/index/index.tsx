@@ -13,7 +13,8 @@ import * as service from './service';
 import {createAction} from "../../utils";
 import DateDetail from "./DateDetail";
 import WordCard from "../../components/WordCard";
-import TaroButton from "../../components/TaroButton/TaroButton";
+import TaroButton from "../../components/TaroButton";
+import styles from './index.module.scss';
 
 const systemInfo = Taro.getSystemInfoSync();
 const gridItemWidth = (systemInfo.screenWidth - 10) / 7;
@@ -28,7 +29,7 @@ moment.updateLocale("zh", { week: {
     // doy: 7  // 年份的第一周必须包含1月1日 (7 + 1 - 1)
   }});
 
-// @connect(({ global, home, words }) => ({ global, home, words }))
+@connect(({ global, home, words }) => ({ global, home, words }))
 class Index extends ThemePage {
 
   /**
@@ -71,7 +72,6 @@ class Index extends ThemePage {
   }
 
   _onSelectYearAndMonth = (date) => {
-    console.log('_onSelectYearAndMonth', date);
     date.type = "change";
     const { dispatch } = this.props;
     dispatch(createAction('home/selectYearAndMonth')({ date }));
@@ -233,8 +233,8 @@ class Index extends ThemePage {
   }
 
   render() {
-    const { global: { themePrimary }, words, home } = this.props;
-    const { selectedMoment, auntFloMap, table: _table = [] } = home;
+    const { global: { themePrimary }, words, home = {} } = this.props;
+    const { selectedMoment = moment(), auntFloMap, table: _table = [] } = home;
     const {_holidaysMap} = this.state;
     const _selectedLunarCalendar = this._momentToLunarCalendar(selectedMoment);
     return (
@@ -262,29 +262,31 @@ class Index extends ThemePage {
         >
           <Picker
             mode='date'
-            // onChange={this._onSelectYearAndMonth}
-            // value={selectedMoment.format('YYYY-MM-DD')}
-            // start='1950-01-01'
-            // end='2099-12-31'
+            onChange={this._onSelectYearAndMonth}
+            value={selectedMoment.format('YYYY-MM-DD')}
+            start='1950-01-01'
+            end='2099-12-31'
           >
-            <TaroButton
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: 'center',
-                "paddingTop": Taro.pxTransform(32),
-                "paddingRight": Taro.pxTransform(32),
-                "paddingBottom": Taro.pxTransform(32),
-                "paddingLeft": Taro.pxTransform(32),
-                "fontWeight": "bold",
-                "color": "#444444"
-              }}
-            >
-              <Text>{selectedMoment.format('YYYY年MM月')}</Text>
-              <Image
-                src='https://cdn.liuxuanping.com/baseline_keyboard_arrow_down_white_18dp.png'
-                style={{ width: 16, height: 16, tintColor: '#333333' }}
-              />
+            <TaroButton on>
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: 'center',
+                  "paddingTop": Taro.pxTransform(32),
+                  "paddingRight": Taro.pxTransform(32),
+                  "paddingBottom": Taro.pxTransform(32),
+                  "paddingLeft": Taro.pxTransform(32),
+                  "fontWeight": "bold",
+                  "color": "#444444"
+                }}
+              >
+                <Text>{selectedMoment.format('YYYY年MM月')}</Text>
+                <Image
+                  src='https://cdn.liuxuanping.com/baseline_keyboard_arrow_down_black_18dp.png'
+                  style={{ width: Taro.pxTransform(32), height: Taro.pxTransform(32), tintColor: '#333333' }}
+                />
+              </View>
             </TaroButton>
           </Picker>
           <TimerComponent
@@ -498,6 +500,7 @@ class Index extends ThemePage {
             alignItems: "center",
             //box-shadow: 0 6px 10px -2px rgba(0, 0, 0, 0.2), 0 12px 20px 0 rgba(0, 0, 0, 0.14), 0 2px 36px 0 rgba(0, 0, 0, 0.12);
             backgroundColor: themePrimary || "#07C160" }}
+          className={styles.rightBottom}
           onClick={() => Taro.navigateTo({ url: '/pages/setting/index' })}
         >
           <Image
@@ -514,20 +517,4 @@ class Index extends ThemePage {
     )
   }
 }
-// export default Index;
-const ConnectIndex = connect(({ global, home, words }) => ({ global, home, words }))(Index);
-ConnectIndex.navigationOptions =  ({ navigation }) => {
-  return ({
-    title: 'Home',
-    headerStyle: {
-      backgroundColor: application.setting.themePrimary,
-      elevation: 0,
-    },
-    headerTintColor: '#fff',
-    // headerTitleStyle: {
-    //   fontWeight: 'bold',
-    //   color: '#000',
-    // },
-  });
-}
-export default ConnectIndex;
+export default Index;

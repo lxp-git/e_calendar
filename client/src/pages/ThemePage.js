@@ -9,7 +9,6 @@ class ThemePage extends Component {
     // super.componentWillReceiveProps(nextProps, nextContext);
     const { global: { themePrimary: nextThemePrimary }} = nextProps;
     const { global: { themePrimary: thisThemePrimary }} = this.props;
-    console.log('nextThemePrimary', nextThemePrimary);
     if (nextThemePrimary && thisThemePrimary != nextThemePrimary) {
       Taro.setNavigationBarColor({
         // frontColor: nextThemePrimary >= '#fce15c' ? '#000000' : '#ffffff', // application.setting.themePrimary
@@ -26,7 +25,6 @@ class ThemePage extends Component {
   }
 
   componentDidShow() {
-    console.log('application.setting.themePrimary', application.setting.themePrimary);
     Taro.setNavigationBarColor({
       // frontColor: application.setting.themePrimary >= '#fce15c' ? '#000000' : '#ffffff', // application.setting.themePrimary
       frontColor: '#ffffff',

@@ -37,7 +37,6 @@ export default class TimerComponent extends Component<Props, State> {
   componentDidShow () {
     clearInterval(this.timer);
     this.timer = setInterval(() => {
-      console.log(moment().format('YYYY/MM/DD HH:mm:ss'));
       this.setState({
         _nowLocaleString: moment().format('YYYY/MM/DD HH:mm:ss'),
       });

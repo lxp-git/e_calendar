@@ -1,7 +1,7 @@
 import Taro, {Component, Config} from '@tarojs/taro'
-import {View, Text, Picker, Button, Image} from '@tarojs/components'
+import {View} from '@tarojs/components'
 import {connect} from "@tarojs/redux";
-import {AtActivityIndicator} from "taro-ui";
+// import {AtActivityIndicator} from "taro-ui";
 
 import styles from './index.module.scss';
 import ThemePage from "../ThemePage";
@@ -92,7 +92,7 @@ export default class Index extends ThemePage {
             justifyContent: 'center', alignItems: 'center',
           }}
         >
-          <AtActivityIndicator size={80} />
+          {/*<AtActivityIndicator size={80} />*/}
           <View style={{ marginTop: Taro.pxTransform(40) }}>正在登录</View>
         </View>
       </View>

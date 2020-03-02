@@ -1,11 +1,9 @@
 import Taro, {Config} from '@tarojs/taro'
 import {View, Text, Picker, Button, Image} from '@tarojs/components'
 import moment, {Moment} from "moment";
-import {AtIcon} from "taro-ui";
 import {ITouchEvent} from "@tarojs/components/types/common";
 import {connect} from "@tarojs/redux";
 
-import styles from './index.module.scss';
 import TimerComponent from "./timer_component";
 import {calendar, LunarCalendar} from "../../utils/calendar";
 import assets from '../../assets';
@@ -15,38 +13,23 @@ import * as service from './service';
 import {createAction} from "../../utils";
 import DateDetail from "./DateDetail";
 import WordCard from "../../components/WordCard";
+import TaroButton from "../../components/TaroButton/TaroButton";
 
 const systemInfo = Taro.getSystemInfoSync();
 const gridItemWidth = (systemInfo.screenWidth - 10) / 7;
 const textPrimaryColor = '#333333';
-const DATA_KEY = 'holidays';
 const Event = {
   HOLIDAY: 'HOLIDAY',
   WORKING_DAY: 'WORKING_DAY',
 }
-const WEEK_DAY_CHINESE = ['一', '二', '三', '四', '五', '六', '日'];
-const ZODIAC_SIGNS = {
-  "鼠": ['🐭','🐁','🐀'],
-  "牛": ['🐮','🐃','🐂','🐄'],
-  "虎": ['🐯','🐅'],
-  "兔": ['🐰','🐇'],
-  "龙": ['🐲','🐉'],
-  "蛇": ['🐍'],
-  "马": ['🐴','🐎'],
-  "羊": ['🐏','🐑','🐐'],
-  "猴": ['🐵','🐒'],
-  "鸡": ['🐔','🐓'],
-  "狗": ['🐶','🐕'],
-  "猪": ['🐷','🐖'],
-};
 
 moment.updateLocale("zh", { week: {
     dow: 1, // 星期的第一天是星期一
     // doy: 7  // 年份的第一周必须包含1月1日 (7 + 1 - 1)
   }});
 
-@connect(({ home, words }) => ({ home, words }))
-export default class Index extends ThemePage {
+// @connect(({ global, home, words }) => ({ global, home, words }))
+class Index extends ThemePage {
 
   /**
    * 指定config的类型声明为: Taro.Config
@@ -64,7 +47,7 @@ export default class Index extends ThemePage {
 
   state = {
     _table: [],
-    _holidaysMap: Taro.getStorageSync(DATA_KEY) || {},
+    _holidaysMap: {}, // Taro.getStorageSync(DATA_KEY) ||
     _auntFloMap: {}, /// Taro.getStorageSync(EVENT_DATA_KEY) || {},
   }
   _timer;
@@ -88,7 +71,8 @@ export default class Index extends ThemePage {
   }
 
   _onSelectYearAndMonth = (date) => {
-    console.log('date', date);
+    console.log('_onSelectYearAndMonth', date);
+    date.type = "change";
     const { dispatch } = this.props;
     dispatch(createAction('home/selectYearAndMonth')({ date }));
   }
@@ -177,6 +161,7 @@ export default class Index extends ThemePage {
   }
 
   _qrCodeLogin = () => {
+    if (Taro.getEnv() !== Taro.ENV_TYPE.WEAPP) return;
     const { dispatch } = this.props;
     const { params: { scene }} = this.$router;
     dispatch(createAction('global/handleQrCode')({
@@ -195,7 +180,7 @@ export default class Index extends ThemePage {
       data.forEach(item => {
         holidaysMap[`${item['year']}-${item['month']}-${item['date']}`] = item;
       });
-      Taro.setStorageSync(DATA_KEY, holidaysMap);
+      // Taro.setStorageSync(DATA_KEY, holidaysMap);
       this.setState({
         _holidaysMap: holidaysMap,
       });
@@ -216,6 +201,8 @@ export default class Index extends ThemePage {
   }
 
   componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch(createAction('global/save')({ themePrimary: application.setting.themePrimary }));
     this._onSelectYearAndMonth({
       type: 'change',
       detail: {value: moment().format('YYYY-MM-DD')},
@@ -251,36 +238,111 @@ export default class Index extends ThemePage {
     const {_holidaysMap} = this.state;
     const _selectedLunarCalendar = this._momentToLunarCalendar(selectedMoment);
     return (
-      <View className={styles.index}>
-        <View className={styles.firstRow}>
-          <Picker mode='date' onChange={this._onSelectYearAndMonth} value={selectedMoment.format('YYYY-MM-DD')}>
-            <View className={styles.left} onClick={this._onSelectYearAndMonth}>
-              <View>{selectedMoment.format('YYYY年MM月')}</View>
-              <AtIcon value='chevron-right' size={20} className={styles.rightIcon} />
-            </View>
+      <View
+        style={{
+          "display": "flex",
+          "width": "100%",
+          "height": "100%",
+          "flexDirection": "column",
+          backgroundColor: '#f4f4f4',
+        }}
+      >
+        <View
+          style={{
+            "display": "flex",
+            "flexDirection": "row",
+            "justifyContent": "space-between",
+            "paddingTop": 0,
+            "paddingRight": 0,
+            "paddingBottom": 0,
+            "paddingLeft": 0,
+            "alignItems": "center",
+            "backgroundColor": "white"
+          }}
+        >
+          <Picker
+            mode='date'
+            // onChange={this._onSelectYearAndMonth}
+            // value={selectedMoment.format('YYYY-MM-DD')}
+            // start='1950-01-01'
+            // end='2099-12-31'
+          >
+            <TaroButton
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: 'center',
+                "paddingTop": Taro.pxTransform(32),
+                "paddingRight": Taro.pxTransform(32),
+                "paddingBottom": Taro.pxTransform(32),
+                "paddingLeft": Taro.pxTransform(32),
+                "fontWeight": "bold",
+                "color": "#444444"
+              }}
+            >
+              <Text>{selectedMoment.format('YYYY年MM月')}</Text>
+              <Image
+                src='https://cdn.liuxuanping.com/baseline_keyboard_arrow_down_white_18dp.png'
+                style={{ width: 16, height: 16, tintColor: '#333333' }}
+              />
+            </TaroButton>
           </Picker>
           <TimerComponent
             onClick={this._backToToday}
           />
         </View>
-        <View className={styles.header}>
-          {WEEK_DAY_CHINESE.map(itemString =>
+        <View style={{
+          "backgroundColor": "white",
+          "width": "100%",
+          "display": "flex",
+          "flexDirection": "row",
+          "justifyContent": "center",
+          "alignItems": "center",
+          paddingLeft: Taro.pxTransform(10),
+          paddingRight: Taro.pxTransform(10),
+        }}
+        >
+          {application.constants.WEEK_DAY_CHINESE.map(itemString =>
             <Text
               style={{
+                "display": "flex",
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "flexBasis": 0,
+                "textAlign": "center",
+                "justifyContent": "center",
                 color: (itemString == '六' || itemString == '日') ? themePrimary : textPrimaryColor,
               }}
               key={itemString}
-              className={styles.headerItem}
             >{itemString}</Text>)}
         </View>
         <View
-          className={styles.body}
+          style={{
+            "display": "flex",
+            "flexDirection": "column",
+            "justifyContent": "center",
+            "alignItems": "center",
+            "backgroundColor": "white",
+            "paddingTop": Taro.pxTransform(10),
+            "paddingRight": Taro.pxTransform(10),
+            "paddingBottom": Taro.pxTransform(10),
+            "paddingLeft": Taro.pxTransform(10)
+          }}
           onTouchStart={this._onCalendarBodyTouchStart}
           onTouchMove={this._onCalendarBodyTouchMove}
           onTouchEnd={this._onCalendarBodyTouchEnd}
         >
           {_table.map((row, weekIndex) => (
-            <View className={styles.bodyRow} key={"week" + weekIndex}>
+            <View
+              style={{
+                "width": "100%",
+                "display": "flex",
+                "flexDirection": "row",
+                "justifyContent": "center",
+                "alignItems": "center"
+              }}
+              key={"week" + weekIndex}
+            >
               {row.map((dayMoment: Moment, dayIndex) => {
                 const lunarCalendar: LunarCalendar = this._momentToLunarCalendar(dayMoment);
                 const isSelectedDay = selectedMoment.isSame(dayMoment, 'day');
@@ -326,43 +388,83 @@ export default class Index extends ThemePage {
                     }}
                     onLongPress={() => this._onLongPressCalendar(dayMoment)}
                     key={"day" + dayIndex}
-                    className={styles.bodyItem}
                     style={{
-                      width: gridItemWidth + 'px',
-                      height: gridItemWidth + 'px',
+                      "display": "flex",
+                      "flexDirection": "column",
+                      "textAlign": "center",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "borderRadius": Taro.pxTransform(8),
+                      "position": "relative",
+                      paddingLeft: 0,
+                      paddingRight: 0,
+                      paddingBottom: 0,
+                      paddingTop: 0,
+                      flex: 1,
+                      // width: Taro.pxTransform(gridItemWidth * 2),
+                      height: Taro.pxTransform(gridItemWidth * 2),
                       opacity: dayMoment.month() == selectedMoment.month() ? 1 : 0.3,
-                      background: isSelectedDay ? themePrimary : 'white',
+                      backgroundColor: isSelectedDay ? themePrimary : 'white',
                     }}
                     onClick={() => this._onDayClick(dayMoment)}
                   >
-                    <View
-                      className={styles.day}
-                      style={{ color: dateColor }}
+                    <Text
+                      selectable
+                      style={{
+                        color: dateColor,
+                        "fontWeight": "bold",
+                        "fontSize": Taro.pxTransform(36)
+                      }}
                     >
                       {dayMoment.date()}
-                    </View>
-                    <View
-                      className={styles.lunar}
-                      style={{color: isSelectedDay ? 'white' : 'black'}}
+                    </Text>
+                    <Text
+                      selectable
+                      style={{
+                        color: isSelectedDay ? 'white' : 'black',
+                        "fontSize": Taro.pxTransform(20),
+                      }}
                     >
                       {bottomText}
-                    </View>
+                    </Text>
                     {holiday && holiday['event'] == 'HOLIDAY'
                     && (
-                      <Text className={styles.holiday} style={{ color: isSelectedDay ? 'white' : themePrimary }}>
+                      <Text
+                        selectable
+                        style={{
+                          "position": "absolute",
+                          "top": Taro.pxTransform(8),
+                          "right": Taro.pxTransform(16),
+                          "fontSize": Taro.pxTransform(20),
+                          color: isSelectedDay ? 'white' : themePrimary }}
+                      >
                         休
                       </Text>
                     )}
                     {holiday && holiday['event'] == 'WORKING_DAY'
                     && (
-                      <Text className={styles.holiday} style={{ color: isSelectedDay ? 'white' : textPrimaryColor }}>
+                      <Text selectable style={{
+                        "position": "absolute",
+                        "top": Taro.pxTransform(8),
+                        "right": Taro.pxTransform(16),
+                        "fontSize": Taro.pxTransform(20),
+                        color: isSelectedDay ? 'white' : textPrimaryColor }}
+                      >
                         班
                       </Text>
                     )}
                     {auntFloMap && auntFloMap[mapKey] && (
                       <Image
                         src={isSelectedDay ? assets.images.iconHeartWhite : assets.images.iconHeartPick}
-                        className={styles.eventAuntFlo}
+                        style={{
+                          "position": "absolute",
+                          "top": Taro.pxTransform(8),
+                          "left": Taro.pxTransform(16),
+                          "fontSize": Taro.pxTransform(20),
+                          "width": Taro.pxTransform(20),
+                          "height": Taro.pxTransform(20),
+                          "color": "#07C160"
+                        }}
                       />
                     )}
                   </Button>
@@ -372,7 +474,7 @@ export default class Index extends ThemePage {
           ))}
         </View>
         <DateDetail>
-          {_selectedLunarCalendar.gzYear}{ZODIAC_SIGNS[_selectedLunarCalendar.Animal][0]}年{_selectedLunarCalendar.gzMonth}月{_selectedLunarCalendar.gzDay}日 {_selectedLunarCalendar.astro} {_selectedLunarCalendar.IMonthCn}{_selectedLunarCalendar.IDayCn} 第{selectedMoment.format('ww')}周
+          {_selectedLunarCalendar.gzYear}{application.constants.ZODIAC_SIGNS[_selectedLunarCalendar.Animal][0]}年{_selectedLunarCalendar.gzMonth}月{_selectedLunarCalendar.gzDay}日 {_selectedLunarCalendar.astro} {_selectedLunarCalendar.IMonthCn}{_selectedLunarCalendar.IDayCn} 第{selectedMoment.format('ww')}周
         </DateDetail>
         {words && words.list && words.list.length > 0 && (
           <WordCard
@@ -381,10 +483,51 @@ export default class Index extends ThemePage {
             style={{}}
           />
         )}
-        <View style={{ background: themePrimary }} className={styles.rightBottom} onClick={() => Taro.navigateTo({ url: '/pages/setting/index' })}>
-          <AtIcon value='settings' color='white' />
+        <View
+          style={{
+            position: "absolute",
+            bottom: Taro.pxTransform(40),
+            right: Taro.pxTransform(40),
+            //animation: animal 20s infinite linear ;
+            // backgroundColor: 'transparent',
+            width: Taro.pxTransform(120),
+            height: Taro.pxTransform(120),
+            borderRadius: Taro.pxTransform(120),
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            //box-shadow: 0 6px 10px -2px rgba(0, 0, 0, 0.2), 0 12px 20px 0 rgba(0, 0, 0, 0.14), 0 2px 36px 0 rgba(0, 0, 0, 0.12);
+            backgroundColor: themePrimary || "#07C160" }}
+          onClick={() => Taro.navigateTo({ url: '/pages/setting/index' })}
+        >
+          <Image
+            src='https://cdn.liuxuanping.com/baseline_settings_white_18dp.png'
+            // source={{ uri: 'https://cdn.liuxuanping.com/baseline_settings_black_18dp.png' }}
+            style={{
+              width: Taro.pxTransform(54),
+              height: Taro.pxTransform(54),
+              // tintColor: 'white',
+            }}
+          />
         </View>
       </View>
     )
   }
 }
+// export default Index;
+const ConnectIndex = connect(({ global, home, words }) => ({ global, home, words }))(Index);
+ConnectIndex.navigationOptions =  ({ navigation }) => {
+  return ({
+    title: 'Home',
+    headerStyle: {
+      backgroundColor: application.setting.themePrimary,
+      elevation: 0,
+    },
+    headerTintColor: '#fff',
+    // headerTitleStyle: {
+    //   fontWeight: 'bold',
+    //   color: '#000',
+    // },
+  });
+}
+export default ConnectIndex;

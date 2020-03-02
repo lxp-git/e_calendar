@@ -4,9 +4,11 @@ import application from '../utils/Application';
 import * as services from '../services';
 import {createAction} from "../utils";
 
+console.log('before global themePrimary', application.setting.themePrimary)
 export default {
   namespace: 'global',
   state: {
+    test: console.log('global themePrimary', application.setting.themePrimary),
     themePrimary: application.setting.themePrimary,
   },
 

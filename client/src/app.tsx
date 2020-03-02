@@ -1,12 +1,13 @@
 import Taro, { Component, Config } from '@tarojs/taro'
-import Index from './pages/index'
-import 'taro-ui/dist/style/index.scss'
+import {Provider} from "@tarojs/redux";
+import { StatusBar } from "react-native";
 
+import Index from './pages/index';
 import './app.scss'
 import dva from "./dva";
-import {Provider} from "@tarojs/redux";
 import models from './models/index';
 import {createAction} from "./utils";
+import application from "./utils/Application";
 
 // 如果需要在 h5 环境中开启 React Devtools
 // 取消以下注释：
@@ -15,7 +16,11 @@ if (process.env.NODE_ENV !== 'production' && process.env.TARO_ENV === 'h5')  {
 }
 
 const dvaApp = dva.createApp({
-  initialState: {},
+  initialState: {
+    global: {
+      themePrimary: application.setting.themePrimary,
+    }
+  },
   models: models,
   onError(e, dispatch) {
     console.log('dva error', e);
@@ -46,15 +51,19 @@ class App extends Component {
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#ffffff',
-      navigationBarTitleText: 'WeChat',
-      navigationBarTextStyle: 'black'
+      navigationBarTitleText: 'Calendar',
+      navigationBarTextStyle: 'white',
     },
-    cloud: true
+    cloud: true,
   }
 
   componentDidMount () {
     if (process.env.TARO_ENV === 'weapp') {
       Taro.cloud.init()
+    }
+    if (Taro.getEnv() === Taro.ENV_TYPE.RN) {
+      StatusBar.setBackgroundColor(application.setting.themePrimary);
+      StatusBar.setBarStyle('light-content');
     }
   }
 
@@ -67,13 +76,11 @@ class App extends Component {
   // 在 App 类中的 render() 函数没有实际作用
   // 请勿修改此函数
   render () {
-    // return (<Index/>);
     return (
-      <Provider store={store}>
-        <Index />
-      </Provider>
+        <Provider store={store}>
+          <Index />
+        </Provider>
     );
   }
 }
-
 Taro.render(<App />, document.getElementById('app'))

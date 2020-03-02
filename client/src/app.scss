@@ -6,11 +6,12 @@ $at-fab-bg-color-active: #07C160 !default;
 $at-fab-bg-color-active: #07C160 !default;
 
 /* 引入 Taro UI 默认样式 */
-@import "~taro-ui/dist/style/index.scss";
+//@import "~taro-ui/dist/style/index.scss";
 
 page {
   width: 100%;
   height: 100%;
+  background: #f4f4f4;
 }
 
 .at-button {

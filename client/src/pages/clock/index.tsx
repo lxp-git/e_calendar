@@ -1,6 +1,5 @@
-import Taro, {Component, Config} from '@tarojs/taro'
-import {Text, View} from '@tarojs/components'
-import styles from './index.module.scss';
+import Taro, {Component, Config} from '@tarojs/taro';
+import {Text, View} from '@tarojs/components';
 import moment, {Moment} from "moment";
 import {calendar, LunarCalendar} from "../../utils/calendar";
 
@@ -85,29 +84,88 @@ export default class Index extends Component {
   render() {
     const { _hour, _minute, _second, _hourMinute } = this.state;
     return (
-      <View className={styles.index}>
-        <View className={styles.date}>{moment().format('YYYY-MM-DD')} 农历{this._lunarCalendar.IMonthCn}{this._lunarCalendar.IDayCn} 星期{weekMap[moment().weekday()]}</View>
-        <View className={styles.center}>
-          <View className={styles.hour}>
+      <View
+        style={{
+          display: "flex",
+          width: "100%",
+          height: "100%",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          background: "black",
+          color: "white",
+          lineHeight: 1,
+        }}
+      >
+        <Text style={{ lineHeight: 1,
+          fontSize: Taro.pxTransform(28) }}
+        >{moment().format('YYYY-MM-DD')} 农历{this._lunarCalendar.IMonthCn}{this._lunarCalendar.IDayCn} 星期{weekMap[moment().weekday()]}</Text>
+        <View
+          style={{
+            fontSize: Taro.pxTransform(180),
+            lineHeight: 1,
+            display: "flex",
+            flexDirection: "row",
+          }}
+        >
+          <Text style={{ lineHeight: Taro.pxTransform(180), fontSize: Taro.pxTransform(180), }}>
             {_hour}
-          </View>
-          <View className={styles.bigSplit}>:</View>
-          <View className={styles.minute}>
-            <Text className={styles.minute1}>
+          </Text>
+          <Text
+            style={{
+              lineHeight: Taro.pxTransform(180),
+              display: "flex",
+              alignSelf: "flex-end",
+              fontSize: Taro.pxTransform(180),
+            }}
+          >:</Text>
+          <View style={{ lineHeight: Taro.pxTransform(180), fontSize: Taro.pxTransform(180), }}>
+            <Text
+              style={{
+                lineHeight: Taro.pxTransform(180),
+                width: Taro.pxTransform(90),
+                fontSize: Taro.pxTransform(180),
+              }}
+            >
               {parseInt((_minute/10))}
             </Text>
-            <Text className={styles.minute2}>
+            <Text
+              style={{
+                lineHeight: 1,
+                width: Taro.pxTransform(90),
+                fontSize: Taro.pxTransform(180),
+              }}
+            >
               {_minute%10}
             </Text>
           </View>
           {/*<View className={styles.smallSplit}></View>*/}
-          <View className={styles.second}>
-            <View className={styles.second1}>
+          <View
+            style={{
+              display: "flex",
+              flexDirection: "row",
+              alignSelf: "flex-end",
+              fontSize: Taro.pxTransform(80),
+              lineHeight: Taro.pxTransform(80),
+              width: Taro.pxTransform(100),
+              marginBottom: Taro.pxTransform(10),
+              marginLeft: Taro.pxTransform(10),
+            }}
+          >
+            <Text style={{
+              width: Taro.pxTransform(50),
+              lineHeight: Taro.pxTransform(50),
+            }}
+            >
               {parseInt((_second/10))}
-            </View>
-            <View className={styles.second2}>
+            </Text>
+            <Text  style={{
+              width: Taro.pxTransform(50),
+              lineHeight: Taro.pxTransform(50),
+            }}
+            >
               {_second%10}
-            </View>
+            </Text>
           </View>
         </View>
       </View>

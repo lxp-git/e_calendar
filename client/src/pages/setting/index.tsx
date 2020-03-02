@@ -35,6 +35,21 @@ class Index extends ThemePage {
     dispatch(createAction('setting/save')({
       isThemeModelOpened: false,
     }));
+    if (Taro.getEnv() === Taro.ENV_TYPE.RN) {
+      Taro.showToast({
+        title: 'App需要重启完全应用主题',
+        icon: 'success',
+      });
+      // Taro.showModal({
+      //   title: '是否重启App？',
+      //   content: 'App需要重启完全应用主题',
+      //   success: (event) => {
+      //     Taro.reLaunch({
+      //       url: '/pages/index/index',
+      //     });
+      //   },
+      // });
+    }
   }
 
   componentWillMount() {

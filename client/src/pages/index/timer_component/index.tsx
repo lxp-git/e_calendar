@@ -3,8 +3,6 @@ import {Text, Button} from '@tarojs/components';
 import moment from "moment";
 import {ITouchEvent} from "@tarojs/components/types/common";
 
-import styles from './index.module.scss';
-
 interface State {
   _nowLocaleString: string,
 }
@@ -37,6 +35,7 @@ export default class TimerComponent extends Component<Props, State> {
   }
 
   componentDidShow () {
+    clearInterval(this.timer);
     this.timer = setInterval(() => {
       console.log(moment().format('YYYY/MM/DD HH:mm:ss'));
       this.setState({
@@ -55,6 +54,11 @@ export default class TimerComponent extends Component<Props, State> {
     return (
       <Button
         onLongPress={() => {
+          Taro.navigateTo({
+            url: '/pages/clock/index',
+          });
+        }}
+        onLongClick={() => {
           Taro.navigateTo({
             url: '/pages/clock/index',
           });

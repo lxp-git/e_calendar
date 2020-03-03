@@ -3,8 +3,8 @@ import {connect} from "@tarojs/redux";
 
 import application from '../utils/Application';
 
-@connect(({ global }) => ({ global }))
-export default class ThemePage extends Component {
+// @connect(({ global }) => ({ global }))
+class ThemePage extends Component {
   componentWillReceiveProps(nextProps, nextContext) {
     // super.componentWillReceiveProps(nextProps, nextContext);
     const { global: { themePrimary: nextThemePrimary }} = nextProps;
@@ -38,3 +38,20 @@ export default class ThemePage extends Component {
     });
   }
 }
+
+const ConnectThemePage = connect(({ global }) => ({ global }))(ThemePage);
+ConnectThemePage.navigationOptions =  ({ navigation }) => {
+  return ({
+    title: 'Home',
+    headerStyle: {
+      backgroundColor: '#07C160',
+      elevation: 0,
+    },
+    headerTintColor: '#fff',
+    // headerTitleStyle: {
+    //   fontWeight: 'bold',
+    //   color: '#000',
+    // },
+  });
+}
+export default ConnectThemePage;

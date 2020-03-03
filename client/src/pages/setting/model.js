@@ -3,7 +3,7 @@ import * as service from './service'
 export default {
   namespace: 'setting',
   state: {
-
+    isThemeModelOpened: false,
   },
 
   effects: {

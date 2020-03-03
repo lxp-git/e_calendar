@@ -1,6 +1,6 @@
 import {Button, Text, View} from "@tarojs/components";
 import Taro from "@tarojs/taro";
-import {AtButton, AtIcon} from "taro-ui";
+// import {AtIcon} from "taro-ui";
 import {ITouchEvent} from "@tarojs/components/types/common";
 
 import styles from './index.module.scss'
@@ -28,7 +28,7 @@ function WordCard({ wordCard = {}, onClick = () => {}, style = { color: 'black' 
             <Button onClick={(event) => { event.preventDefault();event.stopPropagation();playTTS(tts) }}>
               <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', padding: Taro.pxTransform(30) }}>
                 <View className={styles.playIcon} >
-                  <AtIcon value='volume-plus' color={style.color} />
+                  {/*<AtIcon value='volume-plus' color={style.color} />*/}
                 </View>
                 {pronunciation[3] && (<Text style={{ color: style.color }} selectable >[{pronunciation[3]}]</Text>)}
               </View>

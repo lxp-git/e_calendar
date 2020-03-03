@@ -1,6 +1,5 @@
 import Taro, {Config} from '@tarojs/taro';
 import {View, Text, Button} from '@tarojs/components';
-import {AtDivider} from "taro-ui";
 import {connect} from "@tarojs/redux";
 
 import ThemePage from "../ThemePage";
@@ -68,12 +67,12 @@ export default class Index extends ThemePage {
                 Taro.showToast({ icon: 'none', title: '已复制来源网址' }) });
             }}
           />)}
-        <AtDivider customStyle={{ zIndex: 0 }} height={10} lineColor='transparent' />
+        {/*<AtDivider customStyle={{ zIndex: 0 }} height={10} lineColor='transparent' />*/}
         {!!word && (<DefinitionCard wordCard={wordCard} />)}
         {/*<SynonymsCard />*/}
         {!!word && (<ExampleCard wordCard={wordCard} />)}
         {/*<TranslationCard />*/}
-        <AtDivider height={140} customStyle={{ zIndex: 0 }} lineColor='#000' />
+        {/*<AtDivider height={140} customStyle={{ zIndex: 0 }} lineColor='#000' />*/}
         <View style={{ display: 'flex', background: '#212121', fontSize: 12, position: 'fixed', bottom: 0,left: 0, right: 0 }}>
           <Button
             style={{ flex: 1, margin: `${space} 0 ${space} ${space}`, textAlign: 'center', background: 'transparent', color: 'white', fontSize: 12 }}

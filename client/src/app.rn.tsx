@@ -1,12 +1,13 @@
 import Taro, { Component, Config } from '@tarojs/taro'
 import {Provider} from "@tarojs/redux";
-// import { StatusBar } from "react-native";
+import { StatusBar } from "react-native";
 
 import Index from './pages/index';
 import './app.scss'
 import dva from "./dva";
 import models from './models/index';
 import {createAction} from "./utils";
+import application from "./utils/Application";
 
 // 如果需要在 h5 环境中开启 React Devtools
 // 取消以下注释：
@@ -15,7 +16,11 @@ if (process.env.NODE_ENV !== 'production' && process.env.TARO_ENV === 'h5')  {
 }
 
 const dvaApp = dva.createApp({
-  initialState: { },
+  initialState: {
+    global: {
+      themePrimary: application.setting.themePrimary,
+    }
+  },
   models: models,
   onError(e, dispatch) {
     console.log('dva error', e);
@@ -56,10 +61,10 @@ class App extends Component {
     if (process.env.TARO_ENV === 'weapp') {
       Taro.cloud.init()
     }
-    // if (Taro.getEnv() === Taro.ENV_TYPE.RN) {
-    //   StatusBar.setBackgroundColor(application.setting.themePrimary);
-    //   StatusBar.setBarStyle('light-content');
-    // }
+    if (Taro.getEnv() === Taro.ENV_TYPE.RN) {
+      StatusBar.setBackgroundColor(application.setting.themePrimary);
+      StatusBar.setBarStyle('light-content');
+    }
   }
 
   componentDidShow () {}

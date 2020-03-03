@@ -1,5 +1,5 @@
 import Taro, { Component } from "@tarojs/taro"
-import {AtButton, AtForm} from "taro-ui";
+import {Button, Form} from "@tarojs/components";
 
 export default class AppButton extends Component {
 
@@ -15,7 +15,7 @@ export default class AppButton extends Component {
 
   render() {
     return (
-      <AtForm
+      <Form
         onSubmit={(event) => {
           // "the formId is no longer available in develop or trial version of this mini program"
           if (event.detail.formId !== 'the formId is no longer available in develop or trial version of this mini program') {
@@ -28,8 +28,8 @@ export default class AppButton extends Component {
           }
         }}
       >
-        <AtButton formType='submit' {...this.props}>{this.props.children}</AtButton>
-      </AtForm>
+        <Button formType='submit' {...this.props}>{this.props.children}</Button>
+      </Form>
     )
   }
 }

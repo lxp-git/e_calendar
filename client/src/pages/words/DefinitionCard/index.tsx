@@ -17,7 +17,7 @@ function DefinitionCard({ wordCard = {} }: any) {
         <Text className={styles.title}>Definitions of <Text style={{ fontWeight: 'bold', color: '#fff', fontSize: Taro.pxTransform(32) }}>{from}</Text></Text>
         <View>
         {definitionTypes.map(definitionType => (
-          <View>
+          <View key={definitionType[0]}>
             <View className={styles.row} style={{ justifyContent: 'space-between' }}>
               <View style={{ color: '#4285f4' }}>{definitionType[0]}</View>
             </View>

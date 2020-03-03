@@ -108,18 +108,15 @@ export default function request(url, option) {
       // 'x-app-version': config.version,
     },
   };
-  // if (application.cookiesMap) {
-  //   let cookieString = '';
-  //   for(const key in application.cookiesMap) {
-  //     cookieString = `${cookieString}${key}=${application.cookiesMap[key]}; `;
-  //   }
-  //   if (cookieString) {
-  //     defaultOptions.headers['Cookie'] = cookieString;
-  //   }
-  // }
-  // if (token) {
-    // defaultOptions.headers['x-access-token'] = token;
-  // }
+  if (application.cookiesMap) {
+    let cookieString = '';
+    for(const key in application.cookiesMap) {
+      cookieString = `${cookieString}${key}=${application.cookiesMap[key]}; `;
+    }
+    if (cookieString) {
+      defaultOptions.headers['Cookie'] = cookieString;
+    }
+  }
   const newOptions = { ...defaultOptions, ...options };
   if (
     newOptions.method === 'POST'

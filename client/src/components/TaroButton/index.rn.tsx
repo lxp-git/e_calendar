@@ -1,9 +1,11 @@
 import Taro from '@tarojs/taro';
 import {TouchableOpacity} from "react-native";
 
-function TaroButton(props) {
+function TaroButton({ onClick = () => { console.log('TaroButton') }, children, ...other }: any) {
   return (
-    <TouchableOpacity onPress={props.onClick} {...props} />
+    <TouchableOpacity onPress={onClick} {...other} >
+      {children}
+    </TouchableOpacity>
   );
 }
 

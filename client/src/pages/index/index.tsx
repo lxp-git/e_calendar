@@ -517,4 +517,18 @@ class Index extends ThemePage {
     )
   }
 }
+Index.navigationOptions = ({ navigation }) => {
+  return ({
+    title: 'Home',
+    headerStyle: {
+      backgroundColor: application.setting.themePrimary,
+      elevation: 0,
+    },
+    headerTintColor: '#fff',
+    // headerTitleStyle: {
+    //   fontWeight: 'bold',
+    //   color: '#000',
+    // },
+  });
+}
 export default Index;

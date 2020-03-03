@@ -4,7 +4,7 @@ import {CommonEventFunction, ITouchEvent} from "@tarojs/components/types/common"
 import application from "../../utils/Application";
 
 export default function ListItem(
-  { title, isSwitch, switchIsCheck, onSwitchChange, onClick= () => {}, switchColor, note }: {
+  { title, isSwitch, switchIsCheck, onSwitchChange, onClick, switchColor, note }: {
     title?: string, isSwitch?: boolean, switchIsCheck?: boolean,
     onSwitchChange?: CommonEventFunction<{ value: boolean }>,
     onClick?: (event: ITouchEvent) => any, switchColor?: string, note?: string,

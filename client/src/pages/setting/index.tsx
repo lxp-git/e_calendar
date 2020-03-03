@@ -146,13 +146,14 @@ class Index extends ThemePage {
               dispatch(createAction('user/put')(userInfo));
             }
           }}
-          onClick={() => {}}
+          onClick={() => {
+            console.log('绑定用户信息');
+          }}
         >
           <ListItem title='绑定用户信息' note='仅仅为了在合适的地方展示一个你的漂亮微信头像😝' />
         </TaroButton>}
-        <TaroButton
+        <Button
           style={{
-            display: "relative",
             width: "100%",
             textAlign: "start",
             backgroundColor: "white",
@@ -165,7 +166,7 @@ class Index extends ThemePage {
             paddingLeft: 0,
             paddingRight: 0,
           }}
-          onClick={() => {
+          onClick={(data) => {
             if (Taro.getEnv() === Taro.ENV_TYPE.RN) {
               dispatch(createAction('setting/save')({ isContactModalOpened: true }));
             }
@@ -173,10 +174,11 @@ class Index extends ThemePage {
           openType='contact'
         >
           <ListItem title='联系我们' note='有什么问题或者建议都可以联系我们🥳' />
-        </TaroButton>
+        </Button>
         <View
           style={{
             padding: Taro.pxTransform(32),
+            marginTop: Taro.pxTransform(32),
             color: '#333333',
             display: "flex",
             flexDirection: "column",
@@ -193,7 +195,7 @@ class Index extends ThemePage {
         <Modal isOpened={isContactModalOpened}>
           <View
             onClick={() => { dispatch(createAction('setting/save')({ isContactModalOpened: false })) }}
-            style={{ backgroundColor: '#666666', flex: 1, width: "100%", height: "100%", justifyContent: "center", alignItems: "center", }}
+            style={{ backgroundColor: '#66666666', flex: 1, width: "100%", height: "100%", justifyContent: "center", alignItems: "center", }}
           >
             <View
               style={{

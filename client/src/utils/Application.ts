@@ -1,6 +1,6 @@
-import Taro from '@tarojs/taro';
 import dva  from '../dva';
 import {createAction} from "./index";
+import storage from "./storage";
 
 class Application {
   themes = [
@@ -21,40 +21,60 @@ class Application {
     '#ff9800', '#ff5722', '#795548', '#9e9e9e', '#607d8b', '#000000'];
   setting = {
     set isReviewWordsEnabled(isReviewWordsEnabled) {
-      Taro.setStorageSync('isReviewWordsEnabled', isReviewWordsEnabled);
+      storage.setAsync('isReviewWordsEnabled', isReviewWordsEnabled);
     },
     get isReviewWordsEnabled() {
-      return Taro.getStorageSync('isReviewWordsEnabled') || false;
+      return storage.getAsync('isReviewWordsEnabled') || false;
     },
     set isAuntFloEnabled(isAuntFloEnabled) {
-      Taro.setStorageSync('isAuntFloEnabled', isAuntFloEnabled);
+      storage.setAsync('isAuntFloEnabled', isAuntFloEnabled);
     },
     get isAuntFloEnabled() {
-      return Taro.getStorageSync('isAuntFloEnabled') || false;
+      return storage.getAsync('isAuntFloEnabled') || false;
     },
     set themePrimary(themePrimary) {
       dva.getDispatch()(createAction('global/save')({
         themePrimary,
-      }))
-      Taro.setStorageSync('themePrimary', themePrimary);
+      }));
+      storage.setAsync('themePrimary', themePrimary);
     },
     get themePrimary() {
-      return Taro.getStorageSync('themePrimary') || '#07C160';
+      return storage.getAsync('themePrimary') || '#07C160';
     },
   }
   set loginUser(newLoginUser) {
-    Taro.setStorageSync('loginUser', newLoginUser);
+    storage.setAsync('loginUser', newLoginUser);
   }
   get loginUser() {
-    return Taro.getStorageSync('loginUser');
+    return storage.getAsync('loginUser');
   }
   set cookiesMap(newCookiesMap) {
-    Taro.setStorageSync('cookiesMap', newCookiesMap);
+    storage.setAsync('cookiesMap', newCookiesMap);
   }
   get cookiesMap() {
-    return Taro.getStorageSync('cookiesMap') || {};
+    return storage.getAsync('cookiesMap') || {};
   }
+  asyncInit = storage.init;
   baseUrl = 'https://app.liuxuanping.com/public/api.php';
+  constants = {
+    WEEK_DAY_CHINESE: ['一', '二', '三', '四', '五', '六', '日'],
+    ZODIAC_SIGNS: {
+      "鼠": ['🐭','🐁','🐀'],
+      "牛": ['🐮','🐃','🐂','🐄'],
+      "虎": ['🐯','🐅'],
+      "兔": ['🐰','🐇'],
+      "龙": ['🐲','🐉'],
+      "蛇": ['🐍'],
+      "马": ['🐴','🐎'],
+      "羊": ['🐏','🐑','🐐'],
+      "猴": ['🐵','🐒'],
+      "鸡": ['🐔','🐓'],
+      "狗": ['🐶','🐕'],
+      "猪": ['🐷','🐖'],
+    },
+  }
 }
 
-export default new Application();
+const application = new Application();
+
+export default application;

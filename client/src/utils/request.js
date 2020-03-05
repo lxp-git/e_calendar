@@ -117,9 +117,6 @@ export default function request(url, option) {
       defaultOptions.headers['Cookie'] = cookieString;
     }
   }
-  // if (token) {
-    // defaultOptions.headers['x-access-token'] = token;
-  // }
   const newOptions = { ...defaultOptions, ...options };
   if (
     newOptions.method === 'POST'

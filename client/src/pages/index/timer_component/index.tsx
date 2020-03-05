@@ -1,9 +1,7 @@
 import Taro, { Component } from '@tarojs/taro';
-import {View, Button} from '@tarojs/components';
+import {Text, Button} from '@tarojs/components';
 import moment from "moment";
 import {ITouchEvent} from "@tarojs/components/types/common";
-
-import styles from './index.module.scss';
 
 interface State {
   _nowLocaleString: string,
@@ -24,7 +22,12 @@ export default class TimerComponent extends Component<Props, State> {
   componentWillMount () { }
 
   componentDidMount () {
-
+    clearInterval(this.timer);
+    this.timer = setInterval(() => {
+      this.setState({
+        _nowLocaleString: moment().format('YYYY/MM/DD HH:mm:ss'),
+      });
+    }, 1000);
   }
 
   componentWillUnmount () {
@@ -32,6 +35,7 @@ export default class TimerComponent extends Component<Props, State> {
   }
 
   componentDidShow () {
+    clearInterval(this.timer);
     this.timer = setInterval(() => {
       this.setState({
         _nowLocaleString: moment().format('YYYY/MM/DD HH:mm:ss'),
@@ -53,9 +57,30 @@ export default class TimerComponent extends Component<Props, State> {
             url: '/pages/clock/index',
           });
         }}
-        onClick={onClick} style={{ background: 'white' }}
+        onLongClick={() => {
+          Taro.navigateTo({
+            url: '/pages/clock/index',
+          });
+        }}
+        onClick={onClick} style={{ backgroundColor: '#ffffff' }}
       >
-        <View className={styles.index}>{_nowLocaleString}</View>
+        <Text
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            paddingLeft: Taro.pxTransform(32),
+            paddingRight: Taro.pxTransform(32),
+            paddingTop: Taro.pxTransform(32),
+            paddingBottom: Taro.pxTransform(32),
+            margin: 0,
+            backgroundColor: 'white',
+            fontSize: Taro.pxTransform(32),
+            color: "#444444",
+            borderRadius: 0,
+          }}
+        >{_nowLocaleString}</Text>
       </Button>
     )
   }

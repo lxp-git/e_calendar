@@ -1,4 +1,5 @@
-import {AppRegistry, Text, YellowBox} from 'react-native';
+import {AppRegistry, YellowBox, View} from 'react-native';
+// import logo from './assets/images/logo.png';
 
 import App from './app';
 import {name as appName} from './app.json';
@@ -13,7 +14,7 @@ function Root() {
   }, []);
   return asyncInit ? (
     // eslint-disable-next-line react/react-in-jsx-scope
-    <Text>Loading...</Text>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'transparent' }} />
   ) : (
     // eslint-disable-next-line react/react-in-jsx-scope
     <App />

@@ -267,7 +267,7 @@ class Index extends ThemePage {
             start='1950-01-01'
             end='2099-12-31'
           >
-            <TaroButton on>
+            <TaroButton>
               <View
                 style={{
                   display: "flex",
@@ -516,6 +516,12 @@ class Index extends ThemePage {
       </View>
     )
   }
+}
+Index.config = {
+  navigationBarTitleText: '一个日历',
+  // navigationBarBackgroundColor: '#1AAD19',
+  navigationBarTextStyle: 'white',
+  backgroundColor: '#f4f4f4',
 }
 Index.navigationOptions = ({ navigation }) => {
   return ({

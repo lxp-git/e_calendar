@@ -107,12 +107,24 @@ class Index extends ThemePage {
           note='开启之后，长按选择日历的某一天可以标记'
         />
         <ListItem
+          title='记事本'
+          isSwitch
+          switchIsCheck={application.setting.isNoteBookEnabled}
+          onSwitchChange={(event) => {
+            application.setting.isNoteBookEnabled = event.detail.value;
+            this._fetchWords();
+          }}
+          onClick={(event) => {
+            console.log('onClick', "记事本");
+          }}
+          note='开启之后，点击当日的详细可以记事'
+        />
+        <ListItem
           title='单词本'
           isSwitch
           switchIsCheck={application.setting.isReviewWordsEnabled}
           onSwitchChange={(event) => {
             application.setting.isReviewWordsEnabled = event.detail.value;
-            this._fetchWords();
           }}
           onClick={(event) => {
             console.log('onClick', "单词本");
@@ -185,7 +197,7 @@ class Index extends ThemePage {
           }}
         >
           <Text style={{}}>简易说明</Text>
-          <Text style={{ fontSize: Taro.pxTransform(24) }}>
+          <Text style={{ fontSize: Taro.pxTransform(24), whiteSpace: 'pre' }}>
             {`1. 程序所有数据均保存在微信云开发服务器，不用作其他用途\n` +
           `2. 点击日历右上角的时间：日历回到本月并选中今天\n` +
           `3. 长按日历右上角的时间：床头钟\n` +

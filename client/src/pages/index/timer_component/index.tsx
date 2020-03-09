@@ -66,8 +66,6 @@ export default class TimerComponent extends Component<Props, State> {
       >
         <Text
           style={{
-            display: "flex",
-            flexDirection: "column",
             justifyContent: "center",
             alignItems: "center",
             paddingLeft: Taro.pxTransform(32),

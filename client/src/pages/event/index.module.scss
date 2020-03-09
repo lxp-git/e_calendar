@@ -8,6 +8,7 @@ page {
   height: 100%;
   flex-direction: column;
   flex: 1;
+  background: white;
 
   .eventRow {
     display: flex;
@@ -25,4 +26,15 @@ page {
     //min-height: 100%;
     //flex: 1;
   }
+}
+
+@keyframes moreAnimation
+{
+  from {left:0px;}
+  to {left:200px;}
+}
+
+
+.morePanel {
+  animation: moreAnimation ease-in-out;
 }

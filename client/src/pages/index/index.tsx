@@ -10,7 +10,7 @@ import assets from '../../assets';
 import application from "../../utils/Application";
 import ThemePage from "../ThemePage";
 import * as service from './service';
-import {createAction} from "../../utils";
+import {createAction, isLogin} from "../../utils";
 import DateDetail from "./DateDetail";
 import WordCard from "../../components/WordCard";
 import TaroButton from "../../components/TaroButton";
@@ -30,7 +30,7 @@ moment.updateLocale("zh", { week: {
   }});
 
 @connect(({ global, home, words }) => ({ global, home, words }))
-class Index extends ThemePage {
+class WrapComponent extends ThemePage {
 
   /**
    * 指定config的类型声明为: Taro.Config
@@ -116,19 +116,19 @@ class Index extends ThemePage {
       return;
     }
     const actionList = [
-      '大姨妈来了'
+      '✅大姨妈来了'
     ];
     const mapKey = `${dayMoment.year()}-${dayMoment.month() + 1}-${dayMoment.date()}`;
     const { home: { auntFloMap: _auntFloMap } } = this.props;
     if (_auntFloMap && _auntFloMap[mapKey]) {
-      actionList[0] = "大姨妈没来";
+      actionList[0] = "❌大姨妈没来";
     }
     if (actionList.length > 0) {
       Taro.showActionSheet({
         itemList: actionList,
         success: ({ tapIndex, errMsg}: { tapIndex: number, errMsg: string }) => {
           console.log('errMsg', errMsg);
-          if (actionList[tapIndex] === "大姨妈来了") {
+          if (actionList[tapIndex] === "✅大姨妈来了") {
             const data = {
               content: '大姨妈来了',
               status: 'done',
@@ -187,16 +187,6 @@ class Index extends ThemePage {
     });
   }
 
-  _login = () => {
-    const { dispatch } = this.props;
-    dispatch(createAction('home/login')({
-      callback: () => {
-        this._fetchEvent();
-        this._qrCodeLogin();
-      },
-    }));
-  }
-
   componentWillMount() {
   }
 
@@ -207,14 +197,18 @@ class Index extends ThemePage {
       type: 'change',
       detail: {value: moment().format('YYYY-MM-DD')},
     });
+    if (!isLogin()) {
+      dispatch(createAction('home/login')({}));
+    }
     this._fetch();
-    // this._login();
     this._fetchEvent();
     this._qrCodeLogin();
     this._fetchWords();
     /// debug
     // Taro.navigateTo({ url: '/pages/setting/index' });
-    // Taro.navigateTo({ url: '/pages/event/index' });
+    // setTimeout(() => {
+    //   Taro.navigateTo({ url: '/pages/event/index?date=2020-3-7' });
+    // }, 1000);
     // Taro.navigateTo({ url: '/pages/clock/index' });
     // Taro.navigateTo({ url: '/pages/token/index' });
     // Taro.navigateTo({ url: '/pages/words/index' });
@@ -284,7 +278,7 @@ class Index extends ThemePage {
                 <Text>{selectedMoment.format('YYYY年MM月')}</Text>
                 <Image
                   src='https://cdn.liuxuanping.com/baseline_keyboard_arrow_down_black_18dp.png'
-                  style={{ width: Taro.pxTransform(32), height: Taro.pxTransform(32), tintColor: '#333333' }}
+                  style={{ width: Taro.pxTransform(32), height: Taro.pxTransform(32) }}
                 />
               </View>
             </TaroButton>
@@ -313,6 +307,7 @@ class Index extends ThemePage {
                 "flexBasis": 0,
                 "textAlign": "center",
                 "justifyContent": "center",
+                fontSize: Taro.pxTransform(32),
                 color: (itemString == '六' || itemString == '日') ? themePrimary : textPrimaryColor,
               }}
               key={itemString}
@@ -469,13 +464,33 @@ class Index extends ThemePage {
                         }}
                       />
                     )}
+                    {auntFloMap && auntFloMap[mapKey] && (
+                      <Image
+                        src={isSelectedDay ? assets.images.iconHeartWhite : assets.images.iconHeartPick}
+                        style={{
+                          "position": "absolute",
+                          "top": Taro.pxTransform(8),
+                          "left": Taro.pxTransform(16),
+                          "fontSize": Taro.pxTransform(20),
+                          "width": Taro.pxTransform(20),
+                          "height": Taro.pxTransform(20),
+                          "color": "#07C160"
+                        }}
+                      />
+                    )}
                   </Button>
                 );
               })}
             </View>
           ))}
         </View>
-        <DateDetail>
+        <DateDetail
+          onClick={() => {
+            if (application.setting.isNoteBookEnabled) {
+              Taro.navigateTo({ url: `/pages/event/index?date=${selectedMoment.year()}-${selectedMoment.month() + 1}-${selectedMoment.date()}` })
+            }
+          }}
+        >
           {_selectedLunarCalendar.gzYear}{application.constants.ZODIAC_SIGNS[_selectedLunarCalendar.Animal][0]}年{_selectedLunarCalendar.gzMonth}月{_selectedLunarCalendar.gzDay}日 {_selectedLunarCalendar.astro} {_selectedLunarCalendar.IMonthCn}{_selectedLunarCalendar.IDayCn} 第{selectedMoment.format('ww')}周
         </DateDetail>
         {words && words.list && words.list.length > 0 && (
@@ -517,13 +532,12 @@ class Index extends ThemePage {
     )
   }
 }
-Index.config = {
-  navigationBarTitleText: '一个日历',
-  // navigationBarBackgroundColor: '#1AAD19',
-  navigationBarTextStyle: 'white',
-  backgroundColor: '#f4f4f4',
-}
-Index.navigationOptions = ({ navigation }) => {
+// const Index = connect(({ global, home, words }) => ({ global, home, words }))(WrapComponent)
+// Index.config = {};
+// Index.config['navigationBarTitleText'] = "一个日历";
+// Index.config['navigationBarTextStyle'] = "white";
+// Index.config['backgroundColor'] = "#f4f4f4";
+WrapComponent.navigationOptions = ({ navigation }) => {
   return ({
     title: 'Home',
     headerStyle: {
@@ -537,4 +551,4 @@ Index.navigationOptions = ({ navigation }) => {
     // },
   });
 }
-export default Index;
+export default WrapComponent;

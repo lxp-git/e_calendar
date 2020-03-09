@@ -16,15 +16,35 @@ class Application {
     { themePrimary: '#ffeb3b' }, { themePrimary: '#ffc107' }, { themePrimary: '#ff9800' }, { themePrimary: '#ff5722' },
     { themePrimary: '#795548' }, { themePrimary: '#9e9e9e' }, { themePrimary: '#607d8b' }, { themePrimary: '#000000' },
   ];
+  themes1 = [
+    {themePrimary: '#e9eaed', name: ''},
+    {themePrimary: '#e59086', name: ''}, {themePrimary: '#f2bd42', name: ''},
+    {themePrimary: '#fef388', name: ''},{themePrimary: '#d7fc9d', name: ''},
+    {themePrimary: '#bbfdec', name: ''},{themePrimary: '#d2eff7', name: ''},
+    {themePrimary: '#b3cbf6', name: ''},{themePrimary: '#d0b1f6', name: ''},
+    {themePrimary: '#f6d1e7', name: ''},{themePrimary: '#e2caac', name: ''},
+  ];
   colors = ['#f44336', '#e91e63', '#9c27b0', '#673ab7', '#3f51b5', '#2196f3', '#03a9f4',
     '#00bcd4', '#009688', '#4caf50', '#8bc34a', '#cddc39', '#ffeb3b', '#ffc107',
     '#ff9800', '#ff5722', '#795548', '#9e9e9e', '#607d8b', '#000000'];
   setting = {
+    set noteBackgroundColor(noteBackgroundColor) {
+      storage.setAsync('noteBackgroundColor', noteBackgroundColor);
+    },
+    get noteBackgroundColor() {
+      return storage.getAsync('noteBackgroundColor') || '#e9eaed';
+    },
     set isReviewWordsEnabled(isReviewWordsEnabled) {
       storage.setAsync('isReviewWordsEnabled', isReviewWordsEnabled);
     },
     get isReviewWordsEnabled() {
       return storage.getAsync('isReviewWordsEnabled') || false;
+    },
+    set isNoteBookEnabled(isNoteBookEnabled) {
+      storage.setAsync('isNoteBookEnabled', isNoteBookEnabled);
+    },
+    get isNoteBookEnabled() {
+      return storage.getAsync('isNoteBookEnabled') || false;
     },
     set isAuntFloEnabled(isAuntFloEnabled) {
       storage.setAsync('isAuntFloEnabled', isAuntFloEnabled);
@@ -40,6 +60,11 @@ class Application {
     },
     get themePrimary() {
       return storage.getAsync('themePrimary') || '#07C160';
+    },
+  }
+  caches = {
+    get reduxPersist() {
+      return storage.getAsync('cache-root');
     },
   }
   set loginUser(newLoginUser) {

@@ -3,13 +3,14 @@ import moment from "moment";
 
 import * as service from './service';
 import application from "../../utils/Application";
-import {createAction} from "../../utils";
+import {createAction, isLogin} from "../../utils";
 
 export default {
   namespace: 'home',
   state: {
     firstRowStart: undefined,
     auntFloMap: {},
+    eventMap: {},
     selectedMoment: moment(),
   },
 
@@ -63,21 +64,28 @@ export default {
         yield put(createAction('fetchEvent')({}));
       }
     },
-    * fetchEvent({ payload }, { call, put, select, take }) {
-      if (application.setting.isAuntFloEnabled && application.loginUser && application.loginUser.id) {
+    * fetchEvent({ payload }, { call, put, select, take, takeLatest }) {
+      if (application.setting.isAuntFloEnabled) {
+        if (!isLogin()) {
+          yield take('home/login/@@end');
+        }
         const { firstRowStart, selectedMoment } = yield select(state => state.home);
         const data = yield call(service.event.fetch, {
           "start": firstRowStart.toISOString(),
           "end": selectedMoment.clone().endOf('month').toISOString()
         });
-        const { auntFloMap } = yield select(state => state.home);
+        const { auntFloMap, eventMap } = yield select(state => state.home);
         data.forEach(item => {
           const dayMoment = moment(item['notify_at']);
           const mapKey = `${dayMoment.year()}-${dayMoment.month() + 1}-${dayMoment.date()}`;
-          auntFloMap[mapKey] = item;
+          if (item.content === '大姨妈来了') {
+            auntFloMap[mapKey] = item;
+          } else if (typeof item.content === "string") {
+            eventMap[mapKey] = item;
+          }
         });
         yield put(createAction('save')({
-          auntFloMap,
+          auntFloMap, eventMap,
         }));
       }
     }
@@ -85,6 +93,9 @@ export default {
 
   reducers: {
     save(state, { payload }) {
+      // if (payload['eventMap']) {
+      //   Taro.setStorageSync('eventMap', payload['eventMap']);
+      // }
       return { ...state, ...payload };
     },
   },

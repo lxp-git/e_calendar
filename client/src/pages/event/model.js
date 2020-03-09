@@ -1,4 +1,6 @@
 import * as service from './service'
+import {createAction} from "../../utils";
+import moment from "moment";
 
 export default {
   namespace: 'event',
@@ -20,14 +22,20 @@ export default {
         end: (new Date()).toISOString(),
       });
     },
-    * post({ payload }, { call, put, select, take }) {
-      yield call(Taro.cloud.callFunction, {
-        data: {
-          content: '大姨妈来了',
-          status: 'done',
-        },
-        name: "postEvent"
-      });
+    * post({ payload: { selectedDate, background, content }}, { call, put, select, take }) {
+      const { home: { eventMap }} = yield select(state => state);
+      const mapKey = selectedDate;
+      const body = {
+        background,
+        "notify_at": (new Date(selectedDate)).toISOString(),
+        content,
+      };
+      if (eventMap[mapKey]) {
+        body.id = eventMap[mapKey].id;
+      }
+      const result = yield call(service.post, body);
+      eventMap[mapKey] = result;
+      yield put(createAction('home/save')({ eventMap }));
     },
   },
 

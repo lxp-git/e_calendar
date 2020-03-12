@@ -6,7 +6,7 @@ import { persistReducer, persistStore } from 'redux-persist'
 import autoMergeLevel from 'redux-persist/es/stateReconciler/autoMergeLevel2';
 import storage from "./utils/storage";
 // import application from "./utils/Application";
-import { PersistGate } from 'redux-persist/es/integration/react'
+// import { PersistGate } from 'redux-persist/es/integration/react'
 
 let app;
 let store;
@@ -16,7 +16,7 @@ const persistConfig = {
   key: 'root',
   keyPrefix: 'cache-',
   debug: true,
-  blacklist: ['dva', '@@dva'],
+  blacklist: ['dva', '@@dva', 'home.selectedMoment'],
   storage: {
     getItem(key) {
       // return new Promise(resolve => )

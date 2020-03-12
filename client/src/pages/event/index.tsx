@@ -1,5 +1,5 @@
 import Taro, {Component, Config} from '@tarojs/taro'
-import {Button, Image, Text, Textarea, View} from '@tarojs/components'
+import {Button, Editor, Image, RichText, Text, Textarea, View} from '@tarojs/components'
 import {connect} from "@tarojs/redux";
 
 import styles from './index.module.scss';
@@ -35,7 +35,6 @@ export default class Index extends Component<any, any> {
     const state = {
       lastEditedAt: new Date(),
       _text: "",
-      selectedBackground: application.setting.noteBackgroundColor,
     };
     if (eventMap[date]) {
       state['lastEditedAt'] = new Date(eventMap[date]['update_time'] * 1000);
@@ -49,10 +48,8 @@ export default class Index extends Component<any, any> {
   }
 
   _changeBackground = (selectedBackground) => {
-    this.setState({
-      selectedBackground,
-    });
-    application.setting.noteBackgroundColor = selectedBackground;
+    const { dispatch } = this.props;
+    dispatch(createAction('event/save')({ currentBackground: selectedBackground }));
     Taro.setNavigationBarColor({
       backgroundColor: selectedBackground,
       frontColor: '#000000',
@@ -73,10 +70,14 @@ export default class Index extends Component<any, any> {
   }
 
   componentDidMount() {
-    // const { dispatch } = this.props;
-    // dispatch(createAction('event/fetch')({
-    //
-    // }));
+    // const { dispatch, home } = this.props;
+    // const { eventMap } = home;
+    // const { params: { date }} = this.$router;
+    // if (eventMap[date]) {
+    //   dispatch(createAction('event/save')({
+    //     currentBackground: eventMap[date].background,
+    //   }));
+    // }
   }
 
   componentWillUnmount() {
@@ -85,15 +86,16 @@ export default class Index extends Component<any, any> {
 
   componentDidShow() {
     const { params: { date }} = this.$router;
-    const { home } = this.props;
+    const { home, event } = this.props;
     const { eventMap } = home;
+    const { currentBackground } = event;
     Taro.setNavigationBarTitle({
       title: `记事 | ${date}`,
     });
     if (eventMap[date]) {
       this._changeBackground(eventMap[date].background);
     } else {
-      this._changeBackground(application.themes1[0].themePrimary);
+      this._changeBackground(currentBackground);
     }
   }
 
@@ -102,28 +104,30 @@ export default class Index extends Component<any, any> {
 
   _onPost = () => {
     const { params: { date }} = this.$router;
-    const {_text, selectedBackground} = this.state;
-    const { dispatch, home } = this.props;
+    const {_text} = this.state;
+    const { dispatch, home, event } = this.props;
     const { eventMap } = home;
-    if (eventMap[date] && _text === (eventMap[date].content || '')) {
+    const { currentBackground } = event;
+    if (eventMap[date] && _text === (eventMap[date].content || '') && eventMap[date].background === currentBackground) {
       return;
     }
     dispatch(createAction('event/post')({
       selectedDate: date,
       content: _text,
-      background: selectedBackground,
     }));
   }
 
   render() {
     const { dispatch, event, home } = this.props;
-    const { isMorePanelShowed, isAddPanelShowed } = event;
+    const { isMorePanelShowed, isAddPanelShowed, currentBackground } = event;
     const { eventMap } = home;
-    const {_text, selectedBackground} = this.state;
+    const {_text} = this.state;
     const { params: { date }} = this.$router;
     const eventDetail = eventMap[date];
+    const lastEditedDate = eventDetail ? (new Date(eventDetail['update_time'] * 1000)) : (new Date());
+    const lastEditedAt = `${lastEditedDate.getFullYear()}-${(lastEditedDate.getMonth() + 1) >= 10 ? (lastEditedDate.getMonth() + 1) : ('0'+(lastEditedDate.getMonth()+1))}-${lastEditedDate.getDate()} ${lastEditedDate.getHours()}:${lastEditedDate.getMinutes() >= 10 ? lastEditedDate.getMinutes() : '0' + lastEditedDate.getMinutes()}:${lastEditedDate.getSeconds() >= 10 ? lastEditedDate.getSeconds() : '0' + lastEditedDate.getSeconds()}`;
     return (
-      <View className={styles.index} style={{ backgroundColor: selectedBackground }}>
+      <View className={styles.index} style={{ backgroundColor: currentBackground }}>
         {/*<View className={styles.eventRow}>*/}
         {/*  <Checkbox*/}
         {/*    checked*/}
@@ -132,6 +136,8 @@ export default class Index extends Component<any, any> {
         {/*  />*/}
         {/*  <Text className={styles.text}>大姨妈来了</Text>*/}
         {/*</View>*/}
+        {/*<Editor />*/}
+        {/*<RichText nodes={`<h4>我是大标题</h4>`} space={''} />*/}
         <Textarea
           style={{
             fontSize: Taro.pxTransform(32),
@@ -231,7 +237,12 @@ export default class Index extends Component<any, any> {
           </View>
         )}
         <View
-          style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+          className={styles.safeBottom}
           onClick={() => {
 
           }}
@@ -261,7 +272,7 @@ export default class Index extends Component<any, any> {
               fontSize: Taro.pxTransform(24),
               color: 'grey',
             }}
-          >最后编辑时间: {eventDetail ? (new Date(eventDetail['update_time'] * 1000)).toLocaleString() : (new Date().toLocaleString())}</Text>
+          >最后编辑时间: {lastEditedAt}</Text>
           <Button
             style={{ lineHeight: 1, }}
             onClick={() => {

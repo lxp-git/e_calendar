@@ -1,11 +1,12 @@
 import * as service from './service'
 import {createAction} from "../../utils";
 import moment from "moment";
+import application from "../../utils/Application";
 
 export default {
   namespace: 'event',
   state: {
-
+    currentBackground: application.themes1[1].themePrimary,
   },
 
   effects: {
@@ -22,11 +23,11 @@ export default {
         end: (new Date()).toISOString(),
       });
     },
-    * post({ payload: { selectedDate, background, content }}, { call, put, select, take }) {
-      const { home: { eventMap }} = yield select(state => state);
+    * post({ payload: { selectedDate, content }}, { call, put, select, take }) {
+      const { home: { eventMap }, event: { currentBackground }} = yield select(state => state);
       const mapKey = selectedDate;
       const body = {
-        background,
+        background: currentBackground,
         "notify_at": (new Date(selectedDate)).toISOString(),
         content,
       };

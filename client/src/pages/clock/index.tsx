@@ -6,7 +6,7 @@ import {calendar, LunarCalendar} from "../../utils/calendar";
 const weekMap = [
   "一","二","三","四","五","六","日",
 ];
-const singleMoment = moment();
+let singleMoment = moment();
 export default class Index extends Component {
 
   /**
@@ -25,7 +25,6 @@ export default class Index extends Component {
   }
 
   state = {
-    _open: false,
     _hour: singleMoment.format('HH'),
     _minute: singleMoment.format('mm'),
     _second: singleMoment.format('ss'),
@@ -39,12 +38,12 @@ export default class Index extends Component {
   }
 
   componentWillMount() {
+    singleMoment = moment();
     this._lunarCalendar = this._momentToLunarCalendar(singleMoment);
   }
 
   componentDidMount() {
     this._fetch();
-    const singleMoment = moment();
     calendar.solar2lunar(singleMoment.year(), singleMoment.month() + 1, singleMoment.date())
   }
 
@@ -56,8 +55,8 @@ export default class Index extends Component {
   }
 
   componentDidShow() {
+    singleMoment = moment();
     this.timer = setInterval(() => {
-      const singleMoment = moment();
       this.setState({
         _hour: singleMoment.format('HH'),
         _minute: singleMoment.format('mm'),

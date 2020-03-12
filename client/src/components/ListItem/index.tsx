@@ -1,11 +1,12 @@
-import {Switch, Text, View} from "@tarojs/components";
+import {Switch, Text, View, Image} from "@tarojs/components";
 import Taro from '@tarojs/taro';
 import {CommonEventFunction, ITouchEvent} from "@tarojs/components/types/common";
 import application from "../../utils/Application";
+import assets from "../../assets";
 
 export default function ListItem(
-  { title, isSwitch, switchIsCheck, onSwitchChange, onClick, switchColor, note }: {
-    title?: string, isSwitch?: boolean, switchIsCheck?: boolean,
+  { arrow, title, isSwitch, switchIsCheck, onSwitchChange, onClick, switchColor, note }: {
+    arrow?: 'right'| 'top' | 'bottom', title?: string, isSwitch?: boolean, switchIsCheck?: boolean,
     onSwitchChange?: CommonEventFunction<{ value: boolean }>,
     onClick?: (event: ITouchEvent) => any, switchColor?: string, note?: string,
   }
@@ -33,6 +34,9 @@ export default function ListItem(
         <Text style={{ color: '#666666', fontSize: px28, lineHeight: px42 }}>{note}</Text>
       </View>
       {isSwitch && (<Switch color={switchColor || application.setting.themePrimary} onChange={onSwitchChange} checked={switchIsCheck} />)}
+      {arrow && arrow === 'right' && (<Image style={{ width: px48, height: px48 }} src={assets.images.iconArrowRight} />)}
+      {arrow && arrow === 'top' && (<Image style={{ width: px48, height: px48 }} src={assets.images.iconArrowUp} />)}
+      {arrow && arrow === 'bottom' && (<Image style={{ width: px48, height: px48 }} src={assets.images.iconArrowDown} />)}
     </View>
   );
 }

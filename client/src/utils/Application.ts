@@ -44,7 +44,7 @@ class Application {
       storage.setAsync('isNoteBookEnabled', isNoteBookEnabled);
     },
     get isNoteBookEnabled() {
-      return storage.getAsync('isNoteBookEnabled') || false;
+      return storage.getAsync('isNoteBookEnabled') !== false;
     },
     set isAuntFloEnabled(isAuntFloEnabled) {
       storage.setAsync('isAuntFloEnabled', isAuntFloEnabled);

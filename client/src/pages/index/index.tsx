@@ -56,6 +56,13 @@ class WrapComponent extends ThemePage {
 
   _onDayClick = (dayMoment) => {
     const { dispatch } = this.props;
+    if (application.setting.isNoteBookEnabled) {
+      const { home: { selectedMoment }} = this.props;
+      if (selectedMoment.year() === dayMoment.year() && selectedMoment.month() === dayMoment.month() && selectedMoment.date() === dayMoment.date()) {
+        Taro.navigateTo({ url: `/pages/event/index?date=${selectedMoment.year()}-${selectedMoment.month() + 1}-${selectedMoment.date()}` })
+        return;
+      }
+    }
     dispatch(createAction('home/save')({
       selectedMoment: dayMoment,
     }));
@@ -67,7 +74,7 @@ class WrapComponent extends ThemePage {
         value: moment().format('YYYY-MM-DD') }});
   }
 
-  _momentToLunarCalendar = (dayMoment: Moment): LunarCalendar => {
+  _momentToLunarCalendar = (dayMoment): LunarCalendar => {
     return calendar.solar2lunar(dayMoment.year(), dayMoment.month() + 1, dayMoment.date())
   }
 
@@ -201,7 +208,7 @@ class WrapComponent extends ThemePage {
       dispatch(createAction('home/login')({}));
     }
     this._fetch();
-    this._fetchEvent();
+    // this._fetchEvent(); // 获取大姨妈以及笔记事件，在_onSelectYearAndMonth
     this._qrCodeLogin();
     this._fetchWords();
     /// debug
@@ -228,7 +235,11 @@ class WrapComponent extends ThemePage {
 
   render() {
     const { global: { themePrimary }, words, home = {} } = this.props;
-    const { selectedMoment = moment(), auntFloMap, table: _table = [] } = home;
+    let { selectedMoment = moment() } = home;
+    if (typeof selectedMoment === 'string') {
+      selectedMoment = moment(selectedMoment);
+    }
+    const { auntFloMap, table: _table = [] } = home;
     const {_holidaysMap} = this.state;
     const _selectedLunarCalendar = this._momentToLunarCalendar(selectedMoment);
     return (
@@ -341,6 +352,9 @@ class WrapComponent extends ThemePage {
               key={"week" + weekIndex}
             >
               {row.map((dayMoment: Moment, dayIndex) => {
+                if (typeof dayMoment === 'string') {
+                  dayMoment = moment(dayMoment);
+                }
                 const lunarCalendar: LunarCalendar = this._momentToLunarCalendar(dayMoment);
                 const isSelectedDay = selectedMoment.isSame(dayMoment, 'day');
                 /// 优先显示节日，再显示农历日期

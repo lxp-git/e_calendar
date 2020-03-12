@@ -65,7 +65,7 @@ export default {
       }
     },
     * fetchEvent({ payload }, { call, put, select, take, takeLatest }) {
-      if (application.setting.isAuntFloEnabled) {
+      if (application.setting.isAuntFloEnabled || application.setting.isNoteBookEnabled) {
         if (!isLogin()) {
           yield take('home/login/@@end');
         }

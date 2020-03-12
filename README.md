@@ -61,3 +61,9 @@ where R is retrievability (a measure of how easy it is to retrieve a piece of in
 # Question
  
 1. 这样的话，如何让用户直接体验到想要的功能而不是因为需要手动开启，没有体验就走了？maybe这部分用户并不是我的意向用户？
+
+## 小程序
+通过查阅微信 API ，我们分别通过 wx.getSystemInfoSync 及 wx.getMenuButtonBoundingClientRect 获取到 StatusBarHeight 及 MenuButton 的布局信息。
+NavigationBarPaddingTop = MenuButtonTop - StatusBarHeight
+NavigationBarPaddingBottom = NavigationBarPaddingTop
+NavigationBar = StatusBarHeight + NavigationBarPaddingTop + NavigationBarPaddingBottom + MenuButtonHeight

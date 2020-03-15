@@ -2,7 +2,7 @@ import Taro from '@tarojs/taro';
 
 import * as service from './service';
 import application from "../../utils/Application";
-import {createAction} from "../../utils";
+import {createAction, isLogin} from "../../utils";
 
 export default {
   namespace: 'words',
@@ -12,12 +12,11 @@ export default {
   },
 
   effects: {
-    * fetch({ payload: { callback } }, { call, put, select, take }) {
+    * fetch({ payload: { callback } }, { call, put, select, take, takeLatest }) {
       if (!application.setting.isReviewWordsEnabled) {
         return;
       }
-      if (!application.loginUser) {
-        yield put(createAction('home/login')({}));
+      if (!isLogin()) {
         yield take('home/login/@@end');
       }
       const responseJson  = yield call(service.fetch);

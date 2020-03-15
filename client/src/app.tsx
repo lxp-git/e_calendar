@@ -1,5 +1,7 @@
 import Taro, { Component, Config } from '@tarojs/taro'
 import {Provider} from "@tarojs/redux";
+// import { persistStore, REHYDRATE } from 'redux-persist'
+// import { PersistGate } from 'redux-persist/lib/integration/react'
 // import { StatusBar } from "react-native";
 
 import Index from './pages/index';
@@ -24,7 +26,6 @@ const dvaApp = dva.createApp({
 });
 global.dvaApp = dvaApp;
 const store = global.dvaApp.getStore();
-
 class App extends Component {
 
   /**
@@ -42,6 +43,8 @@ class App extends Component {
       'pages/clock/index',
       'pages/token/index',
       'pages/words/index',
+      'pages/privacy/index',
+      'pages/login/index',
     ],
     window: {
       backgroundTextStyle: 'light',
@@ -53,9 +56,9 @@ class App extends Component {
   }
 
   componentDidMount () {
-    if (process.env.TARO_ENV === 'weapp') {
-      Taro.cloud.init()
-    }
+    // if (process.env.TARO_ENV === 'weapp') {
+    //   Taro.cloud.init()
+    // }
     // if (Taro.getEnv() === Taro.ENV_TYPE.RN) {
     //   StatusBar.setBackgroundColor(application.setting.themePrimary);
     //   StatusBar.setBarStyle('light-content');
@@ -72,9 +75,9 @@ class App extends Component {
   // 请勿修改此函数
   render () {
     return (
-        <Provider store={store}>
-          <Index />
-        </Provider>
+      <Provider store={store}>
+        <Index />
+      </Provider>
     );
   }
 }

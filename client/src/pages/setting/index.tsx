@@ -88,7 +88,7 @@ class Index extends ThemePage {
         style={{
           display: "flex",
           width: "100%",
-          height: "100%",
+          minHeight: "100%",
           flexDirection: "column",
           backgroundColor: "#f4f4f4",
         }}
@@ -106,13 +106,25 @@ class Index extends ThemePage {
           }}
           note='开启之后，长按选择日历的某一天可以标记'
         />
+        {/*<ListItem*/}
+        {/*  title='记事本'*/}
+        {/*  isSwitch*/}
+        {/*  switchIsCheck={application.setting.isNoteBookEnabled}*/}
+        {/*  onSwitchChange={(event) => {*/}
+        {/*    application.setting.isNoteBookEnabled = event.detail.value;*/}
+        {/*    this._fetchWords();*/}
+        {/*  }}*/}
+        {/*  onClick={(event) => {*/}
+        {/*    console.log('onClick', "记事本");*/}
+        {/*  }}*/}
+        {/*  note='开启之后，点击当日的详细可以记事'*/}
+        {/*/>*/}
         <ListItem
           title='单词本'
           isSwitch
           switchIsCheck={application.setting.isReviewWordsEnabled}
           onSwitchChange={(event) => {
             application.setting.isReviewWordsEnabled = event.detail.value;
-            this._fetchWords();
           }}
           onClick={(event) => {
             console.log('onClick', "单词本");
@@ -120,6 +132,7 @@ class Index extends ThemePage {
           note='开启之后，首页会显示一个您查过的单词'
         />
         <ListItem
+          arrow='right'
           title='切换主题色'
           note='可以更改全局的主色调'
           onClick={() => dispatch(createAction('setting/save')({ isThemeModelOpened: true }))}
@@ -150,7 +163,7 @@ class Index extends ThemePage {
             console.log('绑定用户信息');
           }}
         >
-          <ListItem title='绑定用户信息' note='仅仅为了在合适的地方展示一个你的漂亮微信头像😝' />
+          <ListItem arrow='right' title='绑定用户信息' note='仅仅在合适的地方展示一个你的漂亮微信头像😝' />
         </TaroButton>}
         <Button
           style={{
@@ -173,19 +186,20 @@ class Index extends ThemePage {
           }}
           openType='contact'
         >
-          <ListItem title='联系我们' note='有什么问题或者建议都可以联系我们🥳' />
+          <ListItem arrow='right' title='联系我们' note='有什么问题或者建议都可以联系我们🥳' />
         </Button>
         <View
           style={{
-            padding: Taro.pxTransform(32),
             marginTop: Taro.pxTransform(32),
+            marginLeft: Taro.pxTransform(32),
+            marginRight: Taro.pxTransform(32),
             color: '#333333',
             display: "flex",
             flexDirection: "column",
           }}
         >
           <Text style={{}}>简易说明</Text>
-          <Text style={{ fontSize: Taro.pxTransform(24) }}>
+          <Text style={{ fontSize: Taro.pxTransform(24), whiteSpace: 'pre' }}>
             {`1. 程序所有数据均保存在微信云开发服务器，不用作其他用途\n` +
           `2. 点击日历右上角的时间：日历回到本月并选中今天\n` +
           `3. 长按日历右上角的时间：床头钟\n` +

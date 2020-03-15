@@ -2,7 +2,7 @@ import Taro from '@tarojs/taro'
 import * as qs from "qs";
 import application from '../utils/Application';
 import * as services from '../services';
-import {createAction} from "../utils";
+import {createAction, isLogin} from "../utils";
 
 export default {
   namespace: 'global',
@@ -14,9 +14,12 @@ export default {
     * changeTheme({ payload }, { call, put, select, take }) {
 
     },
-    * handleQrCode({ payload: { scene, callback }}, { call, put, select, take }) {
-      if (!(application.loginUser && application.loginUser.id)) {
-        yield put(createAction('home/login')());
+    * fetchConfig({ payload }, { call, put, select, take }) {
+      const apiResponse  = yield call(services.config, { version: application.constants.version });
+      application.setting.isNoteBookEnabled = apiResponse.functions['notebook'];
+    },
+    * handleQrCode({ payload: { scene, callback }}, { call, put, select, take, takeLatest }) {
+      if (!isLogin()) {
         yield take('home/login/@@end');
       }
       let loginUser;
@@ -41,5 +44,11 @@ export default {
     save(state, { payload }) {
       return { ...state, ...payload };
     },
+  },
+
+  subscriptions: {
+    setup({ dispatch, history }, done) {
+      dispatch(createAction('fetchConfig')());
+    }
   },
 };

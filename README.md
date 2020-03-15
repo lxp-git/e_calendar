@@ -12,11 +12,15 @@
 
 2. [x] 节假日功能
 
-3. [ ] 背单词功能
+3. [x] 背单词功能
 
-4. [ ] 生词两大来源之一：Chrome浏览器插件查词功能 question: 普通用户根本不会使用插件，尝试向360,qq等浏览器递交插件
+4. [x] 生词两大来源之一：Chrome浏览器插件查词功能 question: 普通用户根本不会使用插件，尝试向360,qq等浏览器递交插件
 
 5. [ ] 生词两大来源之二：移动App，iOS，Android
+
+6. 番茄钟
+
+7. 自我量化
 
 # 单词功能
 
@@ -61,3 +65,9 @@ where R is retrievability (a measure of how easy it is to retrieve a piece of in
 # Question
  
 1. 这样的话，如何让用户直接体验到想要的功能而不是因为需要手动开启，没有体验就走了？maybe这部分用户并不是我的意向用户？
+
+## 小程序
+通过查阅微信 API ，我们分别通过 wx.getSystemInfoSync 及 wx.getMenuButtonBoundingClientRect 获取到 StatusBarHeight 及 MenuButton 的布局信息。
+NavigationBarPaddingTop = MenuButtonTop - StatusBarHeight
+NavigationBarPaddingBottom = NavigationBarPaddingTop
+NavigationBar = StatusBarHeight + NavigationBarPaddingTop + NavigationBarPaddingBottom + MenuButtonHeight

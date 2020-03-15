@@ -15,10 +15,10 @@ export default {
       //   },
       //   name: "event"
       // });
-      yield call(service.fetch, {
-        start: (new Date()).toISOString(),
-        end: (new Date()).toISOString(),
-      });
+      // yield call(service.fetch, {
+      //   start: (new Date()).toISOString(),
+      //   end: (new Date()).toISOString(),
+      // });
     },
     * post({ payload }, { call, put, select, take }) {
       yield call(Taro.cloud.callFunction, {

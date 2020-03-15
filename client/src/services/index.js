@@ -11,3 +11,5 @@ export const user = {
     body: data,
   }),
 }
+
+export const config = ({ version }) => request(`/calendar/config?version=${version}`);

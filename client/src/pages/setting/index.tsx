@@ -106,19 +106,19 @@ class Index extends ThemePage {
           }}
           note='开启之后，长按选择日历的某一天可以标记'
         />
-        <ListItem
-          title='记事本'
-          isSwitch
-          switchIsCheck={application.setting.isNoteBookEnabled}
-          onSwitchChange={(event) => {
-            application.setting.isNoteBookEnabled = event.detail.value;
-            this._fetchWords();
-          }}
-          onClick={(event) => {
-            console.log('onClick', "记事本");
-          }}
-          note='开启之后，点击当日的详细可以记事'
-        />
+        {/*<ListItem*/}
+        {/*  title='记事本'*/}
+        {/*  isSwitch*/}
+        {/*  switchIsCheck={application.setting.isNoteBookEnabled}*/}
+        {/*  onSwitchChange={(event) => {*/}
+        {/*    application.setting.isNoteBookEnabled = event.detail.value;*/}
+        {/*    this._fetchWords();*/}
+        {/*  }}*/}
+        {/*  onClick={(event) => {*/}
+        {/*    console.log('onClick', "记事本");*/}
+        {/*  }}*/}
+        {/*  note='开启之后，点击当日的详细可以记事'*/}
+        {/*/>*/}
         <ListItem
           title='单词本'
           isSwitch
@@ -163,7 +163,7 @@ class Index extends ThemePage {
             console.log('绑定用户信息');
           }}
         >
-          <ListItem arrow='right' title='绑定用户信息' note='仅仅为了在合适的地方展示一个你的漂亮微信头像😝' />
+          <ListItem arrow='right' title='绑定用户信息' note='仅仅在合适的地方展示一个你的漂亮微信头像😝' />
         </TaroButton>}
         <Button
           style={{
@@ -191,6 +191,8 @@ class Index extends ThemePage {
         <View
           style={{
             marginTop: Taro.pxTransform(32),
+            marginLeft: Taro.pxTransform(32),
+            marginRight: Taro.pxTransform(32),
             color: '#333333',
             display: "flex",
             flexDirection: "column",

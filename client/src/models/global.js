@@ -14,6 +14,10 @@ export default {
     * changeTheme({ payload }, { call, put, select, take }) {
 
     },
+    * fetchConfig({ payload }, { call, put, select, take }) {
+      const apiResponse  = yield call(services.config, { version: application.constants.version });
+      application.setting.isNoteBookEnabled = apiResponse.functions['notebook'];
+    },
     * handleQrCode({ payload: { scene, callback }}, { call, put, select, take, takeLatest }) {
       if (!isLogin()) {
         yield take('home/login/@@end');
@@ -40,5 +44,11 @@ export default {
     save(state, { payload }) {
       return { ...state, ...payload };
     },
+  },
+
+  subscriptions: {
+    setup({ dispatch, history }, done) {
+      dispatch(createAction('fetchConfig')());
+    }
   },
 };

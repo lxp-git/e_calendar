@@ -43,8 +43,8 @@ export default class Index extends Component {
   }
 
   componentDidMount() {
-    this._fetch();
-    calendar.solar2lunar(singleMoment.year(), singleMoment.month() + 1, singleMoment.date())
+    // this._fetch();
+    // calendar.solar2lunar(singleMoment.year(), singleMoment.month() + 1, singleMoment.date())
   }
 
   componentWillUnmount() {
@@ -55,8 +55,8 @@ export default class Index extends Component {
   }
 
   componentDidShow() {
-    singleMoment = moment();
     this.timer = setInterval(() => {
+      singleMoment = moment();
       this.setState({
         _hour: singleMoment.format('HH'),
         _minute: singleMoment.format('mm'),

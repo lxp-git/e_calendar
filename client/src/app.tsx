@@ -51,6 +51,7 @@ class App extends Component {
       navigationBarBackgroundColor: '#ffffff',
       navigationBarTitleText: 'Calendar',
       navigationBarTextStyle: 'white',
+      navigationStyle: "custom",
     },
     cloud: true,
   }

@@ -8,6 +8,7 @@ import {createAction} from "../../utils";
 import ListItem from '../../components/ListItem';
 import Modal from '../../components/Modal';
 import TaroButton from "../../components/TaroButton";
+import PageContainer from '../../components/PageContainer';
 
 const colorItemWidth = (Taro.getSystemInfoSync().screenWidth - 100) / 4;
 
@@ -84,7 +85,7 @@ class Index extends ThemePage {
     const { global: { themePrimary }, dispatch, setting = {} } = this.props;
     const { isThemeModelOpened = false, isContactModalOpened = false } = setting;
     return (
-      <View
+      <PageContainer
         style={{
           display: "flex",
           width: "100%",
@@ -92,6 +93,7 @@ class Index extends ThemePage {
           flexDirection: "column",
           backgroundColor: "#f4f4f4",
         }}
+        title={this.config.navigationBarTitleText}
       >
         <ListItem
           title='大姨妈'
@@ -276,7 +278,7 @@ class Index extends ThemePage {
             </View>
           </View>
         </Modal>
-      </View>
+      </PageContainer>
     )
   }
 }

@@ -15,6 +15,9 @@ import DateDetail from "./DateDetail";
 import WordCard from "../../components/WordCard";
 import TaroButton from "../../components/TaroButton";
 import styles from './index.module.scss';
+import BasePage from "../../components/BasePage";
+import PageContainer from '../../components/PageContainer';
+import NavigationBar from "../../components/NavigationBar";
 
 const systemInfo = Taro.getSystemInfoSync();
 const gridItemWidth = (systemInfo.screenWidth - 10) / 7;
@@ -30,7 +33,7 @@ moment.updateLocale("zh", { week: {
   }});
 
 @connect(({ global, home, words }) => ({ global, home, words }))
-class WrapComponent extends ThemePage {
+class WrapComponent extends BasePage {
 
   /**
    * 指定config的类型声明为: Taro.Config
@@ -243,15 +246,20 @@ class WrapComponent extends ThemePage {
     const {_holidaysMap} = this.state;
     const _selectedLunarCalendar = this._momentToLunarCalendar(selectedMoment);
     return (
-      <View
-        style={{
-          "display": "flex",
-          "width": "100%",
-          "height": "100%",
-          "flexDirection": "column",
-          backgroundColor: '#f4f4f4',
-        }}
-      >
+      <PageContainer>
+        <NavigationBar
+          title={this.config.navigationBarTitleText}
+          isCustomLeftButton
+          renderLeftButton={
+            <Image
+              style={{
+                width: Taro.pxTransform(44),
+                height: Taro.pxTransform(44),
+              }}
+              src={assets.images.iconMenuWhite}
+            />
+          }
+        />
         <View
           style={{
             "display": "flex",
@@ -542,7 +550,7 @@ class WrapComponent extends ThemePage {
             }}
           />
         </View>
-      </View>
+      </PageContainer>
     )
   }
 }

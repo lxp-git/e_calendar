@@ -15,6 +15,10 @@ import DateDetail from "./DateDetail";
 import WordCard from "../../components/WordCard";
 import TaroButton from "../../components/TaroButton";
 import styles from './index.module.scss';
+import BasePage from "../../components/BasePage";
+import PageContainer from '../../components/PageContainer';
+import NavigationBar from "../../components/NavigationBar";
+import Modal from "../../components/Modal";
 
 const systemInfo = Taro.getSystemInfoSync();
 const gridItemWidth = (systemInfo.screenWidth - 10) / 7;
@@ -30,7 +34,7 @@ moment.updateLocale("zh", { week: {
   }});
 
 @connect(({ global, home, words }) => ({ global, home, words }))
-class WrapComponent extends ThemePage {
+class WrapComponent extends BasePage {
 
   /**
    * 指定config的类型声明为: Taro.Config
@@ -47,6 +51,7 @@ class WrapComponent extends ThemePage {
   }
 
   state = {
+    _isFunctionsModalOpened: false,
     _table: [],
     _holidaysMap: {}, // Taro.getStorageSync(DATA_KEY) ||
     _auntFloMap: {}, /// Taro.getStorageSync(EVENT_DATA_KEY) || {},
@@ -212,7 +217,7 @@ class WrapComponent extends ThemePage {
     this._qrCodeLogin();
     this._fetchWords();
     /// debug
-    // Taro.navigateTo({ url: '/pages/setting/index' });
+    Taro.navigateTo({ url: '/pages/pomodoro/index' });
     // setTimeout(() => {
     //   Taro.navigateTo({ url: '/pages/event/index?date=2020-3-7' });
     // }, 1000);
@@ -240,17 +245,27 @@ class WrapComponent extends ThemePage {
       selectedMoment = moment(selectedMoment);
     }
     const { auntFloMap, table: _table = [] } = home;
-    const {_holidaysMap} = this.state;
+    const {_holidaysMap, _isFunctionsModalOpened} = this.state;
     const _selectedLunarCalendar = this._momentToLunarCalendar(selectedMoment);
     return (
-      <View
-        style={{
-          "display": "flex",
-          "width": "100%",
-          "height": "100%",
-          "flexDirection": "column",
-          backgroundColor: '#f4f4f4',
+      <PageContainer
+        isCustomLeftButton
+        onLeftButtonClick={() => {
+          this.setState({ _isFunctionsModalOpened: true });
         }}
+        title='一个日历'
+        renderLeftButton={
+          <Image
+            style={{
+              display: "flex",
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: Taro.pxTransform(44),
+              height: Taro.pxTransform(44),
+            }}
+            src={assets.images.iconMenuWhite}
+          />
+        }
       >
         <View
           style={{
@@ -420,7 +435,6 @@ class WrapComponent extends ThemePage {
                     onClick={() => this._onDayClick(dayMoment)}
                   >
                     <Text
-                      selectable
                       style={{
                         color: dateColor,
                         "fontWeight": "bold",
@@ -430,7 +444,6 @@ class WrapComponent extends ThemePage {
                       {dayMoment.date()}
                     </Text>
                     <Text
-                      selectable
                       style={{
                         color: isSelectedDay ? 'white' : 'black',
                         "fontSize": Taro.pxTransform(20),
@@ -454,7 +467,7 @@ class WrapComponent extends ThemePage {
                     )}
                     {holiday && holiday['event'] == 'WORKING_DAY'
                     && (
-                      <Text selectable style={{
+                      <Text style={{
                         "position": "absolute",
                         "top": Taro.pxTransform(8),
                         "right": Taro.pxTransform(16),
@@ -542,7 +555,36 @@ class WrapComponent extends ThemePage {
             }}
           />
         </View>
-      </View>
+        <Modal isOpened={_isFunctionsModalOpened}>
+          <View
+            onClick={() => this.setState({ _isFunctionsModalOpened: false })}
+            style={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center', height: '100%', width: '100%',
+              background: 'rgba(0,0,0,0.7)'
+            }}
+          >
+            <View style={{ padding: Taro.pxTransform(100), background: 'white', opacity: 1 }}>
+              <Button
+                onClick={() => {
+                  Taro.navigateTo({
+                    url: '/pages/pomodoro/index',
+                  });
+                }}
+              >
+                <View
+                  style={{
+                    padding: Taro.pxTransform(32)
+                  }}
+                >
+                  <Text>番茄钟</Text>
+                </View>
+              </Button>
+            </View>
+          </View>
+        </Modal>
+      </PageContainer>
     )
   }
 }

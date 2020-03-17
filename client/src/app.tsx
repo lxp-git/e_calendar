@@ -45,12 +45,14 @@ class App extends Component {
       'pages/words/index',
       'pages/privacy/index',
       'pages/login/index',
+      'pages/pomodoro/index',
     ],
     window: {
       backgroundTextStyle: 'light',
       navigationBarBackgroundColor: '#ffffff',
       navigationBarTitleText: 'Calendar',
       navigationBarTextStyle: 'white',
+      navigationStyle: "custom",
     },
     cloud: true,
   }

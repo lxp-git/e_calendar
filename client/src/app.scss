@@ -41,6 +41,9 @@ button {
   border-radius: 0;
   background: transparent;
 }
+button:hover {
+  opacity: 0.5;
+}
 button::after {
   width: auto;
   border: none !important;

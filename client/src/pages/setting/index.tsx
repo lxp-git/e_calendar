@@ -202,7 +202,7 @@ class Index extends ThemePage {
         >
           <Text style={{}}>简易说明</Text>
           <Text style={{ fontSize: Taro.pxTransform(24), whiteSpace: 'pre' }}>
-            {`1. 程序所有数据均保存在微信云开发服务器，不用作其他用途\n` +
+            {`1.  程序所有数据均保存在微信云开发服务器，不用作其他用途\n` +
           `2. 点击日历右上角的时间：日历回到本月并选中今天\n` +
           `3. 长按日历右上角的时间：床头钟\n` +
           `4. 左/右滑动日历：切换上一个/下一个月\n` +
@@ -211,7 +211,7 @@ class Index extends ThemePage {
         <Modal isOpened={isContactModalOpened}>
           <View
             onClick={() => { dispatch(createAction('setting/save')({ isContactModalOpened: false })) }}
-            style={{ backgroundColor: '#66666666', flex: 1, width: "100%", height: "100%", justifyContent: "center", alignItems: "center", }}
+            style={{ backgroundColor: 'rgba(0,0,0,0.7)', flex: 1, width: "100%", height: "100%", justifyContent: "center", alignItems: "center", }}
           >
             <View
               style={{
@@ -233,7 +233,7 @@ class Index extends ThemePage {
         <Modal isOpened={isThemeModelOpened}>
           <View
             onClick={() => { dispatch(createAction('setting/save')({ isThemeModelOpened: false })) }}
-            style={{ display: 'flex', backgroundColor: '#99999999', flex: 1, width: "100%", height: "100%", justifyContent: "center",
+            style={{ display: 'flex', backgroundColor: 'rgba(0,0,0,0.7)', flex: 1, width: "100%", height: "100%", justifyContent: "center",
               alignItems: "center", paddingLeft: Taro.pxTransform(100), paddingRight: Taro.pxTransform(100) }}
           >
             <View

@@ -9,17 +9,24 @@ import {connect} from "@tarojs/redux";
 const systemInfo = Taro.getSystemInfoSync();
 
 interface Props {
-  global: any,children: any,title: any,renderLeftButton: any, isCustomLeftButton: boolean,
+  global: any, style: object, children: any,title: any,renderLeftButton: any, onLeftButtonClick: any, isCustomLeftButton: any,
 }
 
 function NavigationBar(props: Props) {
   // { global, children, title,left }: { children?: any, title?: string | Component, left?: any, }
-  const { global, children, title, isCustomLeftButton } = props;
+  const { global, style, children, title, onLeftButtonClick, isCustomLeftButton } = props;
   const { themePrimary } = global;
   const menuButtonBoundingClientRect = Taro.getMenuButtonBoundingClientRect();
   const navigationBarHeight = (menuButtonBoundingClientRect.top - systemInfo.statusBarHeight) * 2 + menuButtonBoundingClientRect.height;
   return (
-    <View>
+    <View
+      style={{
+        display: 'flex',
+        width: '100%',
+        flexDirection: 'column',
+        ...style,
+      }}
+    >
       <View
         style={{
           backgroundColor: themePrimary,
@@ -35,28 +42,31 @@ function NavigationBar(props: Props) {
           color: 'white',
         }}
       >
-        {isCustomLeftButton ? this.props.renderLeftButton : (Taro.getCurrentPages().length > 1 && (
-          <Button
-            onClick={() => {
-              Taro.navigateBack();
+        <Button
+          onClick={onLeftButtonClick || (Taro.getCurrentPages().length > 1 && (() => {
+            Taro.navigateBack();
+          }))}
+          style={{ background: themePrimary }}
+        >
+          <View
+            style={{
+              height: Taro.pxTransform(navigationBarHeight * 2),
+              width: Taro.pxTransform(navigationBarHeight * 2),
+              display: "flex",
+              justifyContent: 'center',
+              alignItems: 'center',
             }}
           >
-            <View
-              style={{
-                height: Taro.pxTransform(navigationBarHeight * 2),
-                width: Taro.pxTransform(navigationBarHeight * 2),
-                display: "flex",
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            >
+            {isCustomLeftButton ? (
+              this.props.renderLeftButton
+            ) : (Taro.getCurrentPages().length > 1 && (
               <Image
                 style={{width:Taro.pxTransform(44), height: Taro.pxTransform(44)}}
                 src='https://cdn.liuxuanping.com/arrow_back_white-24px.svg'
               />
-            </View>
-          </Button>
-        ))}
+            ))}
+          </View>
+        </Button>
         <View
           style={{
             flex: 1,

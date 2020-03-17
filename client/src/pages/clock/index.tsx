@@ -101,27 +101,29 @@ export default class Index extends Component {
         >{moment().format('YYYY-MM-DD')} 农历{this._lunarCalendar.IMonthCn}{this._lunarCalendar.IDayCn} 星期{weekMap[moment().weekday()]}</Text>
         <View
           style={{
-            fontSize: Taro.pxTransform(180),
             lineHeight: 1,
             display: "flex",
             flexDirection: "row",
+            alignItems: 'center',
+            justifyContent: 'center',
+            verticalAlign: 'center',
           }}
         >
-          <Text style={{ lineHeight: Taro.pxTransform(180), fontSize: Taro.pxTransform(180), }}>
+          <Text style={{ lineHeight: 1, fontSize: Taro.pxTransform(180), }}>
             {_hour}
           </Text>
           <Text
             style={{
-              lineHeight: Taro.pxTransform(180),
+              lineHeight: 1,
               display: "flex",
-              alignSelf: "flex-end",
+              alignSelf: "center",
               fontSize: Taro.pxTransform(180),
             }}
           >:</Text>
-          <View style={{ lineHeight: Taro.pxTransform(180), fontSize: Taro.pxTransform(180), }}>
+          <View style={{ lineHeight: 1, fontSize: Taro.pxTransform(180), }}>
             <Text
               style={{
-                lineHeight: Taro.pxTransform(180),
+                lineHeight: 1,
                 width: Taro.pxTransform(90),
                 fontSize: Taro.pxTransform(180),
               }}
@@ -138,30 +140,31 @@ export default class Index extends Component {
               {_minute%10}
             </Text>
           </View>
-          {/*<View className={styles.smallSplit}></View>*/}
           <View
             style={{
               display: "flex",
               flexDirection: "row",
               alignSelf: "flex-end",
+              lineHeight: 1,
               fontSize: Taro.pxTransform(80),
-              lineHeight: Taro.pxTransform(80),
               width: Taro.pxTransform(100),
               marginBottom: Taro.pxTransform(10),
               marginLeft: Taro.pxTransform(10),
             }}
           >
-            <Text style={{
-              width: Taro.pxTransform(50),
-              lineHeight: Taro.pxTransform(50),
-            }}
+            <Text
+              style={{
+                width: Taro.pxTransform(50),
+                lineHeight: 1,
+              }}
             >
               {parseInt((_second/10))}
             </Text>
-            <Text  style={{
-              width: Taro.pxTransform(50),
-              lineHeight: Taro.pxTransform(50),
-            }}
+            <Text
+              style={{
+                width: Taro.pxTransform(50),
+                lineHeight: 1,
+              }}
             >
               {_second%10}
             </Text>

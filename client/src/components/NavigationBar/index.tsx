@@ -18,35 +18,39 @@ function NavigationBar(props: Props) {
   const { themePrimary } = global;
   const menuButtonBoundingClientRect = Taro.getMenuButtonBoundingClientRect();
   const navigationBarHeight = (menuButtonBoundingClientRect.top - systemInfo.statusBarHeight) * 2 + menuButtonBoundingClientRect.height;
+  let color = 'white';
+  let backIconUrl = 'https://cdn.liuxuanping.com/arrow_back_white-24px.svg';
+  if (style && (style.background >= '#999999' || style.backgroundColor >= '#999999')) {
+    color = '#333333';
+    backIconUrl = 'https://cdn.liuxuanping.com/arrow_back_black-24px.svg';
+  }
   return (
     <View
       style={{
         display: 'flex',
         width: '100%',
         flexDirection: 'column',
+        backgroundColor: themePrimary,
+        color,
         ...style,
       }}
     >
       <View
         style={{
-          backgroundColor: themePrimary,
           width: '100%',
           height: Taro.pxTransform(systemInfo.statusBarHeight * 2),
         }}
       />
       <View
         style={{
-          backgroundColor: themePrimary,
           display: "flex",
           flexDirection: 'row',
-          color: 'white',
         }}
       >
         <Button
           onClick={onLeftButtonClick || (Taro.getCurrentPages().length > 1 && (() => {
             Taro.navigateBack();
           }))}
-          style={{ background: themePrimary }}
         >
           <View
             style={{
@@ -61,8 +65,8 @@ function NavigationBar(props: Props) {
               this.props.renderLeftButton
             ) : (Taro.getCurrentPages().length > 1 && (
               <Image
-                style={{width:Taro.pxTransform(44), height: Taro.pxTransform(44)}}
-                src='https://cdn.liuxuanping.com/arrow_back_white-24px.svg'
+                style={{ color: '#000000', width:Taro.pxTransform(44), height: Taro.pxTransform(44)}}
+                src={backIconUrl}
               />
             ))}
           </View>

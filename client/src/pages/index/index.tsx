@@ -217,7 +217,7 @@ class WrapComponent extends BasePage {
     this._qrCodeLogin();
     this._fetchWords();
     /// debug
-    // Taro.navigateTo({ url: '/pages/pomodoro/index' });
+    Taro.navigateTo({ url: '/pages/pomodoro/index' });
     // setTimeout(() => {
     //   Taro.navigateTo({ url: '/pages/event/index?date=2020-3-7' });
     // }, 1000);
@@ -435,7 +435,6 @@ class WrapComponent extends BasePage {
                     onClick={() => this._onDayClick(dayMoment)}
                   >
                     <Text
-                      selectable
                       style={{
                         color: dateColor,
                         "fontWeight": "bold",
@@ -445,7 +444,6 @@ class WrapComponent extends BasePage {
                       {dayMoment.date()}
                     </Text>
                     <Text
-                      selectable
                       style={{
                         color: isSelectedDay ? 'white' : 'black',
                         "fontSize": Taro.pxTransform(20),
@@ -469,7 +467,7 @@ class WrapComponent extends BasePage {
                     )}
                     {holiday && holiday['event'] == 'WORKING_DAY'
                     && (
-                      <Text selectable style={{
+                      <Text style={{
                         "position": "absolute",
                         "top": Taro.pxTransform(8),
                         "right": Taro.pxTransform(16),

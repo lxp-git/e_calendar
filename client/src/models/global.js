@@ -48,7 +48,7 @@ export default {
 
   subscriptions: {
     setup({ dispatch, history }, done) {
-      dispatch(createAction('fetchConfig')());
+      // dispatch(createAction('fetchConfig')());
     }
   },
 };

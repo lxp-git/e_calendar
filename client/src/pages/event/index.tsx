@@ -6,6 +6,7 @@ import styles from './index.module.scss';
 import {createAction} from "../../utils";
 import images from '../../assets/images';
 import application from "../../utils/Application";
+import PageContainer from "../../components/PageContainer";
 
 const systemInfo = Taro.getSystemInfoSync();
 
@@ -127,7 +128,11 @@ export default class Index extends Component<any, any> {
     const lastEditedDate = eventDetail ? (new Date(eventDetail['update_time'] * 1000)) : (new Date());
     const lastEditedAt = `${lastEditedDate.getFullYear()}-${(lastEditedDate.getMonth() + 1) >= 10 ? (lastEditedDate.getMonth() + 1) : ('0'+(lastEditedDate.getMonth()+1))}-${lastEditedDate.getDate()} ${lastEditedDate.getHours()}:${lastEditedDate.getMinutes() >= 10 ? lastEditedDate.getMinutes() : '0' + lastEditedDate.getMinutes()}:${lastEditedDate.getSeconds() >= 10 ? lastEditedDate.getSeconds() : '0' + lastEditedDate.getSeconds()}`;
     return (
-      <View className={styles.index} style={{ backgroundColor: currentBackground }}>
+      <PageContainer
+        navigationBarStyle={{ backgroundColor: currentBackground }}
+        style={{ backgroundColor: currentBackground }}
+        title={`记事 | ${date}`}
+      >
         {/*<View className={styles.eventRow}>*/}
         {/*  <Checkbox*/}
         {/*    checked*/}
@@ -144,6 +149,7 @@ export default class Index extends Component<any, any> {
             padding: Taro.pxTransform(32),
             boxSizing: 'border-box',
             lineHeight: 1.5,
+            flex: 1,
             width: '100%',
             height: '100%',
           }}
@@ -206,7 +212,7 @@ export default class Index extends Component<any, any> {
                 <View
                   key={item.themePrimary} onClick={() => { this._changeBackground(item.themePrimary) }}
                   style={{
-                    width: "10%",
+                    width: Taro.pxTransform(colorItemWidth * 2),
                     padding: Taro.pxTransform(4),
                     // borderRadius: Taro.pxTransform(colorItemWidth * 2),
                     boxSizing: 'border-box',
@@ -221,7 +227,8 @@ export default class Index extends Component<any, any> {
                       opacity: 1,
                       flex: 1,
                       color: "black",
-                      borderRadius: Taro.pxTransform(colorItemWidth * 2),
+                      borderRadius: '100%',
+                      // borderRadius: Taro.pxTransform(colorItemWidth * 2),
                       justifyContent: "center",
                       alignItems: "center",
                       boxSizing: "border-box",
@@ -229,7 +236,7 @@ export default class Index extends Component<any, any> {
                       border: item.themePrimary.toLowerCase() === '#ffffff' ? "#eeeeee 1px solid" : "none",
                     }}
                   >
-                    <Text>{item.themePrimary === selectedBackground ? '✓' : ''}</Text>
+                    <Text>{item.themePrimary === currentBackground ? '✓' : ''}</Text>
                   </View>
                 </View>
               ))}
@@ -292,7 +299,7 @@ export default class Index extends Component<any, any> {
             />
           </Button>
         </View>
-      </View>
+      </PageContainer>
     )
   }
 }

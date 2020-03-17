@@ -108,19 +108,19 @@ class Index extends ThemePage {
           }}
           note='开启之后，长按选择日历的某一天可以标记'
         />
-        {/*<ListItem*/}
-        {/*  title='记事本'*/}
-        {/*  isSwitch*/}
-        {/*  switchIsCheck={application.setting.isNoteBookEnabled}*/}
-        {/*  onSwitchChange={(event) => {*/}
-        {/*    application.setting.isNoteBookEnabled = event.detail.value;*/}
-        {/*    this._fetchWords();*/}
-        {/*  }}*/}
-        {/*  onClick={(event) => {*/}
-        {/*    console.log('onClick', "记事本");*/}
-        {/*  }}*/}
-        {/*  note='开启之后，点击当日的详细可以记事'*/}
-        {/*/>*/}
+        <ListItem
+          title='记事本'
+          isSwitch
+          switchIsCheck={application.setting.isNoteBookEnabled}
+          onSwitchChange={(event) => {
+            application.setting.isNoteBookEnabled = event.detail.value;
+            this._fetchWords();
+          }}
+          onClick={(event) => {
+            console.log('onClick', "记事本");
+          }}
+          note='开启之后，点击当日的详细可以记事'
+        />
         <ListItem
           title='单词本'
           isSwitch

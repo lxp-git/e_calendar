@@ -5,8 +5,9 @@ import {connect} from "@tarojs/redux";
 import application from "../../utils/Application";
 import PageContainer from "../../components/PageContainer";
 
+const taskSeconds = 25 * 60;
 function WrapComponent(props) {
-  const [ seconds, setSeconds ] = Taro.useState(25 * 60);
+  const [ seconds, setSeconds ] = Taro.useState(taskSeconds);
   const [ timer, setTimer ] = Taro.useState();
   // Taro.useEffect(() => {
   //   const timer = setInterval(() => {
@@ -26,8 +27,29 @@ function WrapComponent(props) {
   const minuteString = minute >= 10 ? minute + '' : `0${minute}`;
   const second = parseInt((seconds % 60).toString(), 10);
   const secondString = second >= 10 ? second + '' : `0${second}`;
+
+  const _timerCallback = () => {
+    setSeconds(prevCount => prevCount - 1);
+  }
+
+  const _startTimer = () => {
+    clearInterval(timer);
+    setTimer(prevState => setInterval(_timerCallback, 1000));
+  };
+
+  if (seconds <= 0 && timer) {
+    Taro.showModal({
+      title: '恭喜',
+      content: '完成了一个任务',
+    });
+    Taro.vibrateLong();
+    clearInterval(timer);
+    setSeconds(prevState => taskSeconds);
+    setTimer(() => null);
+  }
+
   return (
-    <PageContainer>
+    <PageContainer title='一个日历 | 番茄钟'>
       <View
         style={{
           width: '100%',
@@ -68,17 +90,7 @@ function WrapComponent(props) {
             opacity: timer ? 0.5 : 1,
           }}
           disabled={timer}
-          onClick={() => {
-            clearTimeout(timer);
-            setTimer({ timer: setInterval(() => {
-                setSeconds(prevCount => prevCount - 1);
-                console.log('seconds', seconds);
-                if (seconds <= 0) {
-                  clearInterval(timer);
-                  setTimer({ timer: null });
-                }
-              }, 1000) });
-          }}
+          onClick={_startTimer}
         >
           <View
             style={{

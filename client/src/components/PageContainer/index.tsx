@@ -2,7 +2,9 @@ import Taro from '@tarojs/taro';
 import {View} from "@tarojs/components";
 import NavigationBar from "../NavigationBar";
 
-function PageContainer({ children, style, title, isCustomLeftButton, renderLeftButton, onLeftButtonClick }: any) {
+function PageContainer({ children, style, title, isCustomLeftButton = false, renderLeftButton, onLeftButtonClick, navigationBarStyle }: {
+  children: any, style?: object, title?: string, isCustomLeftButton?: boolean, renderLeftButton?: React.ReactElement, onLeftButtonClick?: () => void, navigationBarStyle?: object,
+}) {
   return (
     <View
       style={{
@@ -22,9 +24,10 @@ function PageContainer({ children, style, title, isCustomLeftButton, renderLeftB
             {renderLeftButton}
           </View>
         }
+        style={navigationBarStyle}
         onLeftButtonClick={onLeftButtonClick}
       />
-      <View style={{ display: 'flex', flexDirection: "column" }}>
+      <View style={{ display: 'flex', flex: 1, flexDirection: "column" }}>
         {children}
       </View>
     </View>

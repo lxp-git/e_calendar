@@ -3,18 +3,18 @@ import {Button, Image, Text, View} from '@tarojs/components'
 
 import {connect} from "@tarojs/redux";
 import application from "../../utils/Application";
-import ThemePage from "../ThemePage";
 import {createAction} from "../../utils";
 import ListItem from '../../components/ListItem';
 import Modal from '../../components/Modal';
 import TaroButton from "../../components/TaroButton";
 import PageContainer from '../../components/PageContainer';
 import styles from './index.module.scss';
+import BasePage from "../../components/BasePage";
 
 const colorItemWidth = (Taro.getSystemInfoSync().screenWidth - 100) / 4;
 
 @connect(({ global, setting }) => ({ global, setting }))
-class Index extends ThemePage {
+class Index extends BasePage<any, any> {
 
   /**
    * 指定config的类型声明为: Taro.Config
@@ -34,6 +34,10 @@ class Index extends ThemePage {
 
   _onThemeSelected = (color: string) => {
     const { dispatch } = this.props;
+    if (application.setting.themePrimary === color) {
+      application.setting.themePrimary = null;
+      return;
+    }
     application.setting.themePrimary = color;
     dispatch(createAction('setting/save')({
       isThemeModelOpened: false,

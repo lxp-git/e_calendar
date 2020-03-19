@@ -4,11 +4,11 @@ import {connect} from "@tarojs/redux";
 // import {AtActivityIndicator} from "taro-ui";
 
 import styles from './index.module.scss';
-import ThemePage from "../ThemePage";
 import { createAction } from '../../utils';
+import BasePage from "../../components/BasePage";
 
 @connect(({ home, loading }) => ({ home, loading }))
-export default class Index extends ThemePage {
+export default class Index extends BasePage<any, any> {
 
   /**
    * 指定config的类型声明为: Taro.Config

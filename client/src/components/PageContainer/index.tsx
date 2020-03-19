@@ -5,6 +5,7 @@ import NavigationBar from "../NavigationBar";
 function PageContainer({ children, style, title, isCustomLeftButton = false, renderLeftButton, onLeftButtonClick, navigationBarStyle }: {
   children: any, style?: object, title?: string, isCustomLeftButton?: boolean, renderLeftButton?: React.ReactElement, onLeftButtonClick?: () => void, navigationBarStyle?: object,
 }) {
+  console.log('PageContainer refresh');
   return (
     <View
       style={{

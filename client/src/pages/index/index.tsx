@@ -8,7 +8,6 @@ import TimerComponent from "./timer_component";
 import {calendar, LunarCalendar} from "../../utils/calendar";
 import assets from '../../assets';
 import application from "../../utils/Application";
-import ThemePage from "../ThemePage";
 import * as service from './service';
 import {createAction, isLogin} from "../../utils";
 import DateDetail from "./DateDetail";
@@ -17,7 +16,6 @@ import TaroButton from "../../components/TaroButton";
 import styles from './index.module.scss';
 import BasePage from "../../components/BasePage";
 import PageContainer from '../../components/PageContainer';
-import NavigationBar from "../../components/NavigationBar";
 import Modal from "../../components/Modal";
 
 const systemInfo = Taro.getSystemInfoSync();
@@ -30,11 +28,11 @@ const Event = {
 
 moment.updateLocale("zh", { week: {
     dow: 1, // 星期的第一天是星期一
-    // doy: 7  // 年份的第一周必须包含1月1日 (7 + 1 - 1)
+    doy: 7  // 年份的第一周必须包含1月1日 (7 + 1 - 1)
   }});
 
 @connect(({ global, home, words }) => ({ global, home, words }))
-class WrapComponent extends BasePage {
+class WrapComponent extends BasePage<any, any> {
 
   /**
    * 指定config的类型声明为: Taro.Config

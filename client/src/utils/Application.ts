@@ -2,6 +2,18 @@ import dva  from '../dva';
 import {createAction} from "./index";
 import storage from "./storage";
 
+const themes00 = [
+  { themePrimary: '#f44336' }, { themePrimary: '#e91e63' }, { themePrimary: '#9c27b0' }, { themePrimary: '#673ab7' },
+  { themePrimary: '#3f51b5' }, { themePrimary: '#2196f3' }, { themePrimary: '#03a9f4' }, { themePrimary: '#00bcd4' },
+  { themePrimary: '#009688' }, { themePrimary: '#4caf50' }, { themePrimary: '#8bc34a' }, { themePrimary: '#cddc39' },
+  { themePrimary: '#f57f17' }, { themePrimary: '#ffc107' }, { themePrimary: '#ff9800' }, { themePrimary: '#ff5722' },
+  { themePrimary: '#795548' }, { themePrimary: '#9e9e9e' }, { themePrimary: '#607d8b' }, { themePrimary: '#000000' },
+];
+let hitIndex = parseInt(((Math.random() * 20).toString()));
+if (hitIndex === 20) {
+  hitIndex = 19;
+}
+const randomColor = themes00[hitIndex].themePrimary;
 class Application {
   themes = [
     { themePrimary: '#fce15c' }, { themePrimary: '#f9b550' }, { themePrimary: '#d0d958' }, { themePrimary: '#67ac5b' },
@@ -9,13 +21,7 @@ class Application {
     { themePrimary: '#c0b8a3' }, { themePrimary: '#a6926d' }, { themePrimary: '#a590d1' }, { themePrimary: '#6b549a' },
     { themePrimary: '#ffffff' }, { themePrimary: '#999999' }, { themePrimary: '#333333' }, { themePrimary: '#000000' },
   ];
-  themes0 = [
-    { themePrimary: '#f44336' }, { themePrimary: '#e91e63' }, { themePrimary: '#9c27b0' }, { themePrimary: '#673ab7' },
-    { themePrimary: '#3f51b5' }, { themePrimary: '#2196f3' }, { themePrimary: '#03a9f4' }, { themePrimary: '#00bcd4' },
-    { themePrimary: '#009688' }, { themePrimary: '#4caf50' }, { themePrimary: '#8bc34a' }, { themePrimary: '#cddc39' },
-    { themePrimary: '#ffeb3b' }, { themePrimary: '#ffc107' }, { themePrimary: '#ff9800' }, { themePrimary: '#ff5722' },
-    { themePrimary: '#795548' }, { themePrimary: '#9e9e9e' }, { themePrimary: '#607d8b' }, { themePrimary: '#000000' },
-  ];
+  themes0 = themes00;
   themes1 = [
     {themePrimary: '#e9eaed', name: ''},
     {themePrimary: '#e59086', name: ''}, {themePrimary: '#f2bd42', name: ''},
@@ -53,13 +59,17 @@ class Application {
       return storage.getAsync('isAuntFloEnabled') || false;
     },
     set themePrimary(themePrimary) {
-      dva.getDispatch()(createAction('global/save')({
+      themePrimary && dva.getDispatch()(createAction('global/save')({
         themePrimary,
       }));
       storage.setAsync('themePrimary', themePrimary);
     },
     get themePrimary() {
-      return storage.getAsync('themePrimary') || '#07C160';
+      const storageThemePrimary = storage.getAsync('themePrimary');
+      if (storageThemePrimary) {
+        return storageThemePrimary;
+      }
+      return randomColor;
     },
   }
   caches = {

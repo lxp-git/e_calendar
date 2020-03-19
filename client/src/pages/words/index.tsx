@@ -2,17 +2,16 @@ import Taro, {Config} from '@tarojs/taro';
 import {View, Text, Button} from '@tarojs/components';
 import {connect} from "@tarojs/redux";
 
-import ThemePage from "../ThemePage";
 import WordCard from "../../components/WordCard";
-
 import './index.global.scss';
 import DefinitionCard from "./DefinitionCard";
 import ExampleCard from "./ExampleCard";
 import {displayDate} from "../../utils/date_utils";
 import {createAction} from "../../utils";
+import BasePage from "../../components/BasePage";
 
 @connect(({ home, words, loading }) => ({ home, words, loading }))
-export default class Index extends ThemePage {
+export default class Index extends BasePage<any, any> {
 
   /**
    * 指定config的类型声明为: Taro.Config

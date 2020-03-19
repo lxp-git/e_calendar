@@ -40,9 +40,17 @@ button {
   border: none !important;
   border-radius: 0;
   background: transparent;
+
+  &.button-hover {
+    background: rgba(0,0,0,0.3) !important;
+  }
 }
-button:hover {
-  opacity: 0.5;
+button:focus {
+  //opacity: 0.5;
+  background: rgba(0,0,0,0.3);
+}
+button:active {
+  background: rgba(0,0,0,0.3);
 }
 button::after {
   width: auto;

@@ -217,7 +217,7 @@ class WrapComponent extends BasePage {
     this._qrCodeLogin();
     this._fetchWords();
     /// debug
-    Taro.navigateTo({ url: '/pages/pomodoro/index' });
+    // Taro.navigateTo({ url: '/pages/pomodoro/index' });
     // setTimeout(() => {
     //   Taro.navigateTo({ url: '/pages/event/index?date=2020-3-7' });
     // }, 1000);
@@ -560,27 +560,43 @@ class WrapComponent extends BasePage {
             onClick={() => this.setState({ _isFunctionsModalOpened: false })}
             style={{
               display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center', height: '100%', width: '100%',
+              flexDirection: "column",
+              height: '100%', width: '100%',
               background: 'rgba(0,0,0,0.7)'
             }}
+            className={styles.animalMask}
           >
-            <View style={{ padding: Taro.pxTransform(100), background: 'white', opacity: 1 }}>
-              <Button
-                onClick={() => {
-                  Taro.navigateTo({
-                    url: '/pages/pomodoro/index',
-                  });
-                }}
-              >
+            <View className={styles.modalContent} style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <View style={{ flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
                 <View
                   style={{
-                    padding: Taro.pxTransform(32)
+                    borderRadius: Taro.pxTransform(5),
+                    background: 'white', opacity: 1,
                   }}
                 >
-                  <Text>番茄钟</Text>
+                  <Button
+                    onClick={() => {
+                      Taro.navigateTo({
+                        url: '/pages/pomodoro/index',
+                      });
+                    }}
+                  >
+                    <View
+                      style={{
+                        paddingLeft: Taro.pxTransform(32),
+                        paddingTop: Taro.pxTransform(16),
+                        paddingBottom: Taro.pxTransform(16),
+                        paddingRight: Taro.pxTransform(32),
+                      }}
+                    >
+                      <Text style={{ fontWeight: "bold" }}>番茄钟</Text>
+                    </View>
+                  </Button>
                 </View>
-              </Button>
+              </View>
+              <View style={{ width: '100%', marginBottom: Taro.pxTransform(50), display: 'flex', alignItems: "center", justifyContent: "center" }}>
+                <Text style={{ color: '#999999', textAlign: 'center', fontSize: Taro.pxTransform(24) }}>tools</Text>
+              </View>
             </View>
           </View>
         </Modal>

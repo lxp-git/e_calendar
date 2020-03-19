@@ -81,7 +81,7 @@ function NavigationBar(props: Props) {
             alignItems: 'center',
           }}
         >
-          {title && (<Text>{title}</Text>)}
+          {title && (<Text style={{ fontWeight: "bold", fontSize: Taro.pxTransform(36) }}>{title}</Text>)}
         </View>
         {/*<View*/}
         {/*  style={{*/}

@@ -9,6 +9,7 @@ import ListItem from '../../components/ListItem';
 import Modal from '../../components/Modal';
 import TaroButton from "../../components/TaroButton";
 import PageContainer from '../../components/PageContainer';
+import styles from './index.module.scss';
 
 const colorItemWidth = (Taro.getSystemInfoSync().screenWidth - 100) / 4;
 
@@ -210,6 +211,7 @@ class Index extends ThemePage {
         </View>
         <Modal isOpened={isContactModalOpened}>
           <View
+            className={styles.animalMask}
             onClick={() => { dispatch(createAction('setting/save')({ isContactModalOpened: false })) }}
             style={{ backgroundColor: 'rgba(0,0,0,0.7)', flex: 1, width: "100%", height: "100%", justifyContent: "center", alignItems: "center", }}
           >
@@ -232,11 +234,13 @@ class Index extends ThemePage {
         </Modal>
         <Modal isOpened={isThemeModelOpened}>
           <View
+            className={styles.animalMask}
             onClick={() => { dispatch(createAction('setting/save')({ isThemeModelOpened: false })) }}
             style={{ display: 'flex', backgroundColor: 'rgba(0,0,0,0.7)', flex: 1, width: "100%", height: "100%", justifyContent: "center",
               alignItems: "center", paddingLeft: Taro.pxTransform(100), paddingRight: Taro.pxTransform(100) }}
           >
             <View
+              className={styles.modalContent}
               style={{
                 display: "flex",
                 flexDirection: "row",

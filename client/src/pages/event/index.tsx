@@ -112,6 +112,9 @@ export default class Index extends Component<any, any> {
     if (eventMap[date] && _text === (eventMap[date].content || '') && eventMap[date].background === currentBackground) {
       return;
     }
+    if (!eventMap[date] && _text === '') {
+      return;
+    }
     dispatch(createAction('event/post')({
       selectedDate: date,
       content: _text,

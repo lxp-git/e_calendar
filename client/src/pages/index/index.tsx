@@ -322,6 +322,7 @@ class WrapComponent extends BasePage {
           "alignItems": "center",
           paddingLeft: Taro.pxTransform(10),
           paddingRight: Taro.pxTransform(10),
+          boxSizing: "border-box",
         }}
         >
           {application.constants.WEEK_DAY_CHINESE.map(itemString =>

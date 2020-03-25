@@ -58,6 +58,12 @@ class Application {
     get isAuntFloEnabled() {
       return storage.getAsync('isAuntFloEnabled') || false;
     },
+    set selectedViewModel(selectedViewModel) {
+      storage.setAsync('selectedViewModel', selectedViewModel);
+    },
+    get selectedViewModel() {
+      return storage.getAsync('selectedViewModel') || 'month';
+    },
     set themePrimary(themePrimary) {
       themePrimary && dva.getDispatch()(createAction('global/save')({
         themePrimary,
@@ -89,6 +95,12 @@ class Application {
   get cookiesMap() {
     return storage.getAsync('cookiesMap') || {};
   }
+  set selectedViewModel(selectedViewModel) {
+    storage.setAsync('selectedViewModel', selectedViewModel);
+  }
+  get selectedViewModel() {
+    return storage.getAsync('selectedViewModel') || 'month';
+  }
   asyncInit = storage.init;
   baseUrl = 'https://app.liuxuanping.com/public/api.php';
   constants = {
@@ -108,6 +120,7 @@ class Application {
       "猪": ['🐷','🐖'],
     },
     version: '1.4.2',
+    textPrimaryColor: '#333333',
   }
 }
 

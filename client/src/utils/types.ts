@@ -1,34 +1,23 @@
-// @ts-ignore
-interface Type {
-  translation: string,
-  rate: number,
-  synonyms:  Array<string>,
+import { CSSProperties } from 'react'
+
+export interface AtComponent {
+  className?: string
+
+  customStyle?: string | CSSProperties
 }
 
-interface Translation {
-  type: string,
-  translations: Array<Type>,
+export interface AtIconBaseProps2 extends AtComponent {
+  value: string
+
+  color?: string
 }
 
-interface LookUpResult {
-  text: string,
-  pronunciation: {
-    to: string,
-    from: string,
-    fromUrl: string,
-  }
-  translations: Array<Translation>,
-  from: {
-    value: string,
-    language: {
-      didYouMean: boolean,
-      iso: string,
-    },
-    text: {
-      autoCorrected: boolean,
-      value: string,
-      didYouMean: boolean
-    }
-  },
-  raw: string,
+export interface AtIconBaseProps extends AtComponent {
+  value: string
+
+  color?: string
+
+  prefixClass?: string
+
+  size?: number | string
 }

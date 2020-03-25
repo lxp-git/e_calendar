@@ -1,8 +1,8 @@
 import Taro  from '@tarojs/taro';
-import {Text, Button} from '@tarojs/components';
+import {Text, Button, View} from '@tarojs/components';
 import moment from "moment";
 
-export default function TimerComponent(props: { onClick: () => void }) {
+function TimerComponent(props: { onTimeClick: (data) => void }) {
   const [ _nowLocaleString, setNowLocaleString ] = Taro.useState(moment().format('YYYY/MM/DD HH:mm:ss'));
 
   Taro.useEffect(() => {
@@ -15,36 +15,34 @@ export default function TimerComponent(props: { onClick: () => void }) {
     }
   }, []);
 
-  const { onClick } = props;
   return (
     <Button
-      onLongPress={() => {
+      onLongPress={(event) => {
         Taro.navigateTo({
           url: '/pages/clock/index',
         });
       }}
-      onLongClick={() => {
+      onLongClick={(event) => {
         Taro.navigateTo({
           url: '/pages/clock/index',
         });
       }}
-      onClick={onClick} style={{ backgroundColor: '#ffffff' }}
+      onClick={props.onTimeClick}
     >
-      <Text
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          paddingLeft: Taro.pxTransform(32),
-          paddingRight: Taro.pxTransform(32),
-          paddingTop: Taro.pxTransform(32),
-          paddingBottom: Taro.pxTransform(32),
-          margin: 0,
-          backgroundColor: 'white',
-          fontSize: Taro.pxTransform(32),
-          color: "#444444",
-          borderRadius: 0,
-        }}
-      >{_nowLocaleString}</Text>
+      <View style={{ backgroundColor: 'transparent', padding: Taro.pxTransform(32) }} >
+        <Text
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            margin: 0,
+            fontSize: Taro.pxTransform(32),
+            color: "#333333",
+            borderRadius: 0,
+          }}
+        >{_nowLocaleString}</Text>
+      </View>
     </Button>
   )
 }
+
+export default TimerComponent;

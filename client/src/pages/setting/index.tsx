@@ -100,50 +100,52 @@ class Index extends BasePage<any, any> {
         }}
         title={this.config.navigationBarTitleText}
       >
-        <ListItem
-          title='大姨妈'
-          isSwitch
-          switchIsCheck={application.setting.isAuntFloEnabled}
-          onSwitchChange={(event) => {
-            application.setting.isAuntFloEnabled = event.detail.value;
-            this._fetchEvents();
-          }}
-          onClick={(event) => {
-            console.log('onClick', "大姨妈");
-          }}
-          note='开启之后，长按选择日历的某一天可以标记'
-        />
-        <ListItem
-          title='记事本'
-          isSwitch
-          switchIsCheck={application.setting.isNoteBookEnabled}
-          onSwitchChange={(event) => {
-            application.setting.isNoteBookEnabled = event.detail.value;
-            this._fetchWords();
-          }}
-          onClick={(event) => {
-            console.log('onClick', "记事本");
-          }}
-          note='开启之后，点击当日的详细可以记事'
-        />
-        <ListItem
-          title='单词本'
-          isSwitch
-          switchIsCheck={application.setting.isReviewWordsEnabled}
-          onSwitchChange={(event) => {
-            application.setting.isReviewWordsEnabled = event.detail.value;
-          }}
-          onClick={(event) => {
-            console.log('onClick', "单词本");
-          }}
-          note='开启之后，首页会显示一个您查过的单词'
-        />
-        <ListItem
-          arrow='right'
-          title='切换主题色'
-          note='可以更改全局的主色调'
-          onClick={() => dispatch(createAction('setting/save')({ isThemeModelOpened: true }))}
-        />
+        <View style={{ background: "white" }}>
+          <ListItem
+            title='大姨妈'
+            isSwitch
+            switchIsCheck={application.setting.isAuntFloEnabled}
+            onSwitchChange={(event) => {
+              application.setting.isAuntFloEnabled = event.detail.value;
+              this._fetchEvents();
+            }}
+            onClick={(event) => {
+              console.log('onClick', "大姨妈");
+            }}
+            note='开启之后，长按选择日历的某一天可以标记'
+          />
+          <ListItem
+            title='记事本'
+            isSwitch
+            switchIsCheck={application.setting.isNoteBookEnabled}
+            onSwitchChange={(event) => {
+              application.setting.isNoteBookEnabled = event.detail.value;
+              this._fetchWords();
+            }}
+            onClick={(event) => {
+              console.log('onClick', "记事本");
+            }}
+            note='开启之后，点击当日的详细可以记事'
+          />
+          <ListItem
+            title='单词本'
+            isSwitch
+            switchIsCheck={application.setting.isReviewWordsEnabled}
+            onSwitchChange={(event) => {
+              application.setting.isReviewWordsEnabled = event.detail.value;
+            }}
+            onClick={(event) => {
+              console.log('onClick', "单词本");
+            }}
+            note='开启之后，首页会显示一个您查过的单词'
+          />
+          <ListItem
+            arrow='right'
+            title='切换主题色'
+            note='可以更改全局的主色调'
+            onClick={() => dispatch(createAction('setting/save')({ isThemeModelOpened: true }))}
+          />
+        </View>
         {Taro.getEnv() === Taro.ENV_TYPE.WEAPP && <TaroButton
           openType='getUserInfo'
           style={{

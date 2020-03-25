@@ -8,11 +8,18 @@ export default {
   namespace: 'global',
   state: {
     themePrimary: application.setting.themePrimary,
+    selectedViewModel: application.setting.selectedViewModel,
   },
 
   effects: {
     * changeTheme({ payload }, { call, put, select, take }) {
 
+    },
+    * changeMainViewModel({ payload: { newViewModel }}, { call, put, select, take }) {
+      application.setting.selectedViewModel = newViewModel;
+      yield put(createAction('save')({
+        selectedViewModel: newViewModel,
+      }));
     },
     * fetchConfig({ payload }, { call, put, select, take }) {
       const apiResponse  = yield call(services.config, { version: application.constants.version });

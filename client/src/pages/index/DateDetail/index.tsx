@@ -10,9 +10,8 @@ export default function DateDetail({ children, onClick }) {
         style={{
           marginTop: Taro.pxTransform(10),
           marginBottom: Taro.pxTransform(10),
-          marginLeft: Taro.pxTransform(10),
-          marginRight: Taro.pxTransform(10),
-          backgroundColor: "white",
+          // marginLeft: Taro.pxTransform(10),
+          // marginRight: Taro.pxTransform(10),
         }}
       >
         <View
@@ -22,6 +21,7 @@ export default function DateDetail({ children, onClick }) {
             justifyContent: "center",
             alignItems: "center",
             padding: Taro.pxTransform(20),
+            background: "white",
           }}
         >
           <Text style={{ fontSize: Taro.pxTransform(32) }} selectable>{children}</Text>

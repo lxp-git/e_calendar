@@ -7,6 +7,8 @@ export default {
   namespace: 'event',
   state: {
     currentBackground: application.themes1[1].themePrimary,
+    periodEventList: [],
+    periodEventMap: {},
   },
 
   effects: {
@@ -37,6 +39,34 @@ export default {
       const result = yield call(service.post, body);
       eventMap[mapKey] = result;
       yield put(createAction('home/save')({ eventMap }));
+    },
+    * postPeriod({ payload: { periodStart, periodEnd, content }}, { call, put, select, take }) {
+      const { event: { periodEventList, periodEventMap }} = yield select(state => state);
+      const body = {
+        "period_start": periodStart,
+        "period_end": periodEnd,
+        "notify_at": moment(periodStart).subtract('30', "minute"),
+        content,
+      };
+      periodEventList.push(body);
+      periodEventMap[periodStart] = body;
+      // if (eventMap[mapKey]) {
+      //   body.id = eventMap[mapKey].id;
+      // }
+      const result = yield call(service.post, body);
+      const mapKey = periodStart;
+      periodEventMap[mapKey] = result;
+      yield put(createAction('event/save')({ periodEventMap }));
+    },
+    * destroy({ payload: { id }}, { call, put, select, take }) {
+      const result = yield call(service.destroy, id);
+      const { event: { periodEventMap } } = yield select(state => state);
+      for(const key in periodEventMap) {
+        if (periodEventMap[key] && periodEventMap[key].id === id) {
+          delete periodEventMap[key]
+        }
+      }
+      yield put(createAction('event/save')({ periodEventMap }));
     },
   },
 

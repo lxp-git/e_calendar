@@ -1,14 +1,16 @@
+import {CSSProperties} from "react";
 import {Switch, Text, View, Image, Button} from "@tarojs/components";
 import Taro from '@tarojs/taro';
 import {CommonEventFunction, ITouchEvent} from "@tarojs/components/types/common";
 import application from "../../utils/Application";
 import assets from "../../assets";
+import './index.scss';
 
 export default function ListItem(
-  { arrow, title, isSwitch, switchIsCheck, onSwitchChange, onClick, switchColor, note }: {
+  { style = {}, arrow, title, isSwitch, switchIsCheck, onSwitchChange, onClick, switchColor, note }: {
     arrow?: 'right'| 'top' | 'bottom', title?: string, isSwitch?: boolean, switchIsCheck?: boolean,
-    onSwitchChange?: CommonEventFunction<{ value: boolean }>,
-    onClick?: (event: ITouchEvent) => any, switchColor?: string, note?: string,
+    onSwitchChange?: CommonEventFunction<{ value: boolean }>, style?: CSSProperties,
+      onClick?: (event: ITouchEvent) => any, switchColor?: string, note?: string,
   }
 ) {
   const px32 = Taro.pxTransform(32);
@@ -25,8 +27,9 @@ export default function ListItem(
           padding: px32,
           width: '100%',
           boxSizing: 'border-box',
-          backgroundColor: 'white',
-          justifyContent: 'space-between'
+          backgroundColor: 'transparent',
+          justifyContent: 'space-between',
+          ...style,
         }}
       >
         <View style={{ display: 'flex', flexDirection: 'column', flex: 1, width: 0, }}>

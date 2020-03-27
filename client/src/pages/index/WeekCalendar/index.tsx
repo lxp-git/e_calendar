@@ -117,7 +117,10 @@ function WeekCalendar(props: { global: any, style: CSSProperties, event: any, di
           alignItems: 'center', paddingTop: Taro.pxTransform(20),
           paddingBottom: Taro.pxTransform(20), }}
       >
-        <View style={{ width: 0, flex: 1, textAlign: 'center', fontSize: Taro.pxTransform(24) }} >第{selectedMoment.format('ww')}周</View>
+        <View style={{ display: "flex", flexDirection: 'column', width: 0, flex: 1, textAlign: 'center', fontSize: Taro.pxTransform(24) }} >
+          <Text>{selectedMoment.month()}月</Text>
+          <Text>第{selectedMoment.format('ww')}周</Text>
+        </View>
         {application.constants.WEEK_DAY_CHINESE.map((itemString ,index) =>
           <View key={itemString} style={{ display: "flex", flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
             <Text
@@ -238,7 +241,7 @@ function WeekCalendar(props: { global: any, style: CSSProperties, event: any, di
                 >
                   <Text
                     style={{
-                      position: 'absolute', zIndex: 1, fontSize: Taro.pxTransform(20),
+                      position: 'absolute', zIndex: 1, fontSize: Taro.pxTransform(20), boxSizing: "border-box",
                       background: height ? themePrimary : 'transparent', paddingLeft: Taro.pxTransform(4),
                       left: 0, top: 0, width: '100%', textAlign: 'center', height: `${height}px`, paddingRight: Taro.pxTransform(4),
                     }}

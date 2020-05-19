@@ -53,20 +53,24 @@ function WeekCalendar(props: { global: any, style: CSSProperties, event: any, di
     // }
   }
 
+  const _onSelectYearAndMonth = (date) => {
+    date.type = "change";
+    dispatch(createAction('home/selectYearAndMonth')({ date }));
+  }
+
   const _onCalendarBodyTouchEnd = (event: ITouchEvent) => {
     if (event.type === "touchend" && this._touchStartEvent != null) {
       const startX = this._touchStartEvent.changedTouches[0].clientX;
       const endX = event.changedTouches[0].clientX;
       if (Math.abs(startX - endX) > 50) {
+        const newMoment = selectedMoment.clone();
         if (startX > endX) {
-          const newMoment = selectedMoment.clone();
           newMoment.add(1, 'week');
-          this._onSelectYearAndMonth({ type: 'change', detail: {
+          _onSelectYearAndMonth({ type: 'change', detail: {
               value: newMoment.format('YYYY-MM-DD') }});
         } else {
-          const newMoment = selectedMoment.clone();
           newMoment.subtract(1, 'week');
-          this._onSelectYearAndMonth({ type: 'change', detail: {
+          _onSelectYearAndMonth({ type: 'change', detail: {
               value: newMoment.format('YYYY-MM-DD') }});
         }
       }
@@ -206,14 +210,13 @@ function WeekCalendar(props: { global: any, style: CSSProperties, event: any, di
               let content = '';
               let height = 0;
               let periodEvent;
-              if (hourIndex % 2 === 0 && table[weekIndex]) {
-                periodEvent = periodEventMap[table[weekIndex].clone().hour(item).toISOString()];
+              if (table[weekIndex]) { /// hourIndex % 2 === 0 &&
+                periodEvent = periodEventMap[table[weekIndex].clone().hour(item).minute(hourIndex % 2 === 0 ? 0 : 30).toISOString()];
                 if (periodEvent) {
                   content = periodEvent.content;
                   height = (moment(periodEvent['period_end']).diff(moment(periodEvent['period_start'])) / 3600000) * gridItemWidth;
                 }
               }
-
               return (
                 <View
                   key={item}

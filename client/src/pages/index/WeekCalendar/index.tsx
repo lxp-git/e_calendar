@@ -244,8 +244,9 @@ function WeekCalendar(props: { global: any, style: CSSProperties, event: any, di
                 >
                   <Text
                     style={{
-                      position: 'absolute', zIndex: 1, fontSize: Taro.pxTransform(20), boxSizing: "border-box",
-                      background: height ? themePrimary : 'transparent', paddingLeft: Taro.pxTransform(4),
+                      position: 'absolute', zIndex: 1, fontSize: Taro.pxTransform(20), boxSizing: "border-box", alignSelf: "center", display: "flex",
+                      justifyContent: "center", alignItems: 'center',
+                      background: height ? themePrimary : 'transparent', paddingLeft: Taro.pxTransform(4), borderRadius: Taro.pxTransform(10),
                       left: 0, top: 0, width: '100%', textAlign: 'center', height: `${height}px`, paddingRight: Taro.pxTransform(4),
                     }}
                     onClick={(event) => {

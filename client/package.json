@@ -34,6 +34,7 @@
 		"@tarojs/components-rn": "2.1.6",
 		"@tarojs/redux": "2.1.6",
 		"@tarojs/redux-h5": "2.1.6",
+		"@tarojs/rn-runner": "^2.2.6",
 		"@tarojs/router": "2.1.6",
 		"@tarojs/taro": "2.1.6",
 		"@tarojs/taro-alipay": "2.1.6",

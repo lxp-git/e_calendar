@@ -7,16 +7,16 @@ import application from "../../../utils/Application";
 import {createAction, hexToRgbA} from "../../../utils";
 import { connect } from "@tarojs/redux";
 
-function Drawer({ dispatch, isDrawerShowed, onClose, selected = application.setting.selectedViewModel }: { isDrawerShowed: boolean, onClose: () => void, selected?: 'week' | 'month' | 'note' }) {
+function Drawer({ changeMainViewModel, isDrawerShowed, onClose, selected = application.setting.selectedViewModel }: { isDrawerShowed: boolean, onClose: () => void, selected?: 'week' | 'month' | 'note' }) {
   const systemInfo = Taro.getSystemInfoSync();
   const color = application.setting.themePrimary || '#000000';
   const onItemClick = (func) => {
     switch (func) {
       case 'month':
       case 'week':
-        dispatch(createAction('global/changeMainViewModel')({
+        changeMainViewModel({
           newViewModel: func,
-        }));
+        });
         break;
       case 'note':
         Taro.showToast({
@@ -25,7 +25,7 @@ function Drawer({ dispatch, isDrawerShowed, onClose, selected = application.sett
           icon: "none",
         });
         break;
-      case 'bigClock': Taro.navigateTo({ url: '/pages/clock/index' }) break;
+      case 'bigClock': Taro.navigateTo({ url: '/pages/clock/index' }); break;
       case 'pomodoro': Taro.navigateTo({ url: '/pages/pomodoro/index' }); break;
       default:
     }
@@ -49,4 +49,9 @@ function Drawer({ dispatch, isDrawerShowed, onClose, selected = application.sett
   )
 }
 
-export default connect(({ global })=>({ global }))(Drawer);
+export default connect(({ global })=>({ global }), (dispatch) => ({
+  changeMainViewModel: (payload) => {
+      dispatch(createAction('global/changeMainViewModel')(payload));
+    },
+  })
+)(Drawer);

@@ -17,13 +17,14 @@ function NavigationBar(props: Props) {
   const { global, style, children, title, onLeftButtonClick, isCustomLeftButton } = props;
   const { themePrimary } = global;
   const menuButtonBoundingClientRect = Taro.getMenuButtonBoundingClientRect();
-  const navigationBarHeight = (menuButtonBoundingClientRect.top - systemInfo.statusBarHeight) * 2 + menuButtonBoundingClientRect.height;
-  let color = 'white';
+  const navigationBarHeight = ((menuButtonBoundingClientRect.top - systemInfo.statusBarHeight) * 2) + menuButtonBoundingClientRect.height;
+    let color = 'white';
   let backIconUrl = 'https://cdn.liuxuanping.com/arrow_back_white-24px.svg';
   if (style && (style.background >= '#999999' || style.backgroundColor >= '#999999')) {
     color = '#333333';
     backIconUrl = 'https://cdn.liuxuanping.com/arrow_back_black-24px.svg';
   }
+  const navigationBarPxHeight = Taro.pxTransform(navigationBarHeight * 2);
   return (
     <View
       style={{
@@ -54,8 +55,8 @@ function NavigationBar(props: Props) {
         >
           <View
             style={{
-              height: Taro.pxTransform(navigationBarHeight * 2),
-              width: Taro.pxTransform(navigationBarHeight * 2),
+              height: navigationBarPxHeight,
+              width: navigationBarPxHeight,
               display: "flex",
               justifyContent: 'center',
               alignItems: 'center',
@@ -75,7 +76,7 @@ function NavigationBar(props: Props) {
           style={{
             flex: 1,
             marginLeft: Taro.pxTransform(32),
-            height: Taro.pxTransform(navigationBarHeight * 2),
+            height: navigationBarPxHeight,
             display: "flex",
             justifyContent: 'flex-start',
             alignItems: 'center',

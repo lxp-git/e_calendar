@@ -1,6 +1,8 @@
-import * as service from './service'
-import {createAction} from "../../utils";
 import moment from "moment";
+import Taro from '@tarojs/taro';
+
+import * as service from './service'
+import {createAction, isIOS} from "../../utils";
 import application from "../../utils/Application";
 
 export default {
@@ -30,7 +32,7 @@ export default {
       const mapKey = selectedDate;
       const body = {
         background: currentBackground,
-        "notify_at": (new Date(selectedDate)).toISOString(),
+        "notify_at": (new Date(isIOS() ? selectedDate.replace(/-/g, '/') : selectedDate)).toISOString(),
         content,
       };
       if (eventMap[mapKey]) {

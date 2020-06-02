@@ -1,5 +1,5 @@
 import Taro, {Config} from '@tarojs/taro';
-import {View, Text, Button} from '@tarojs/components';
+import {View, Text, Button, ScrollView} from '@tarojs/components';
 import {connect} from "@tarojs/redux";
 
 import WordCard from "../../components/WordCard";
@@ -9,6 +9,7 @@ import ExampleCard from "./ExampleCard";
 import {displayDate} from "../../utils/date_utils";
 import {createAction} from "../../utils";
 import BasePage from "../../components/BasePage";
+import PageContainer from "../../components/PageContainer";
 
 @connect(({ home, words, loading }) => ({ home, words, loading }))
 export default class Index extends BasePage<any, any> {
@@ -55,24 +56,28 @@ export default class Index extends BasePage<any, any> {
     const stability = -time_interval / Math.log(retrievability); // 相对记忆强度
     const stabilityX4 = stability * 4;
     return (
-      <View style={{ display: 'flex', width: '100%', height: '100%', flexDirection: 'column', background: 'black' }}>
-        {!!word && (
-          <WordCard
-            key={word} wordCard={wordCard}
-            style={{ background: '#212121', color: '#f4f4f4' }}
-            onClick={(event) => {
-              event.preventDefault(); event.stopPropagation();
-              Taro.setClipboardData({ data: url }).then(() => {
-                Taro.showToast({ icon: 'none', title: '已复制来源网址' }) });
-            }}
-          />)}
-        {/*<AtDivider customStyle={{ zIndex: 0 }} height={10} lineColor='transparent' />*/}
-        {!!word && (<DefinitionCard wordCard={wordCard} />)}
-        {/*<SynonymsCard />*/}
-        {!!word && (<ExampleCard wordCard={wordCard} />)}
-        {/*<TranslationCard />*/}
-        {/*<AtDivider height={140} customStyle={{ zIndex: 0 }} lineColor='#000' />*/}
-        <View style={{ display: 'flex', background: '#212121', fontSize: 12, position: 'fixed', bottom: 0,left: 0, right: 0 }}>
+      <PageContainer
+        style={{ background: 'black', overflow: 'hidden' }}
+      >
+        <ScrollView scrollY enableFlex style={{ height: 0, flex: 1 }} >
+          {!!word && (
+            <WordCard
+              key={word} wordCard={wordCard}
+              style={{ background: '#212121', color: '#f4f4f4' }}
+              onClick={(event) => {
+                event.preventDefault(); event.stopPropagation();
+                Taro.setClipboardData({ data: url }).then(() => {
+                  Taro.showToast({ icon: 'none', title: '已复制来源网址' }) });
+              }}
+            />)}
+          {/*<AtDivider customStyle={{ zIndex: 0 }} height={10} lineColor='transparent' />*/}
+          {!!word && (<DefinitionCard wordCard={wordCard} />)}
+          {/*<SynonymsCard />*/}
+          {!!word && (<ExampleCard wordCard={wordCard} />)}
+          {/*<TranslationCard />*/}
+          {/*<AtDivider height={140} customStyle={{ zIndex: 0 }} lineColor='#000' />*/}
+        </ScrollView>
+        <View style={{ display: 'flex', background: '#212121', fontSize: 12 }}>
           <Button
             style={{ flex: 1, margin: `${space} 0 ${space} ${space}`, textAlign: 'center', background: 'transparent', color: 'white', fontSize: 12 }}
             onClick={() => {
@@ -113,7 +118,7 @@ export default class Index extends BasePage<any, any> {
             </View>
           </Button>
         </View>
-      </View>
+      </PageContainer>
     );
   }
 }

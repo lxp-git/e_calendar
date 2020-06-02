@@ -322,7 +322,6 @@ function Calendar(props: any) {
                   {holiday && holiday['event'] == 'HOLIDAY'
                   && (
                     <Text
-                      selectable
                       style={{
                         "position": "absolute",
                         "top": Taro.pxTransform(8),
@@ -364,15 +363,24 @@ function Calendar(props: any) {
                       style={{
                         "position": "absolute",
                         "bottom": Taro.pxTransform(4),
-                        "right": Taro.pxTransform(32),
-                        "fontSize": Taro.pxTransform(20),
-                        width:  Taro.pxTransform((gridItemWidth - 32) * 2), // Taro.pxTransform(12),
-                        height: Taro.pxTransform(6),
-                        borderRadius: Taro.pxTransform(12),
-                        "color": "#07C160",
-                        background: isSelectedDay ? 'white' : eventMap[mapKey].background
+                        boxSizing: "border-box", width: '100%',
+                        paddingLeft: Taro.pxTransform(gridItemWidth / 1.8),
+                        paddingRight: Taro.pxTransform(gridItemWidth / 1.8),
                       }}
-                    />
+                    >
+                      <View
+                        style={{
+                          display: "flex", alignSelf: "center",
+                          // "right": Taro.pxTransform(32),
+                          "fontSize": Taro.pxTransform(20),
+                          width: "auto", // Taro.pxTransform((gridItemWidth - 32) * 2), // Taro.pxTransform(12),
+                          height: Taro.pxTransform(6),
+                          borderRadius: Taro.pxTransform(12),
+                          "color": "#07C160",
+                          background: isSelectedDay ? 'white' : eventMap[mapKey].background
+                        }}
+                      />
+                    </View>
                   )}
                 </Button>
               );

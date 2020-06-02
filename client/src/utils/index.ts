@@ -1,7 +1,7 @@
 import Taro from '@tarojs/taro';
+import {Moment} from "moment";
 
 import application from "./Application";
-import {Moment} from "moment";
 
 export const delay = time => new Promise(resolve => setTimeout(resolve, time));
 
@@ -94,4 +94,8 @@ export function formatTime(numberTime: number) {
     startMinute = 60 * Math.abs(parseInt(numberTime.toString()) - numberTime) + '';
   }
   return `${start}:${startMinute}`;
+}
+
+export const isIOS = () => {
+  return Taro.getSystemInfoSync().platform.toLowerCase() === 'ios';
 }

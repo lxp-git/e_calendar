@@ -210,7 +210,7 @@ function Calendar(props: any) {
         </Picker>
         <TimerComponent onTimeClick={_backToToday} />
       </View>
-      <View style={{ width: '100%' }}><WeekHeader themePrimary={themePrimary} /></View>
+      <View style={{ width: '100%', boxSizing: "border-box", paddingLeft: Taro.pxTransform(10), paddingRight: Taro.pxTransform(10) }}><WeekHeader themePrimary={themePrimary} /></View>
       <View
         style={{
           "paddingTop": Taro.pxTransform(10),

@@ -3,7 +3,6 @@ import {View, Text, Button, ScrollView} from '@tarojs/components';
 import {connect} from "@tarojs/redux";
 
 import WordCard from "../../components/WordCard";
-import './index.global.scss';
 import DefinitionCard from "./DefinitionCard";
 import ExampleCard from "./ExampleCard";
 import {displayDate} from "../../utils/date_utils";

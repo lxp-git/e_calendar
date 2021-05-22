@@ -1,6 +1,7 @@
-import Taro, {Component, Config} from '@tarojs/taro'
+import React, { Component } from 'react';
+import Taro, {Config} from '@tarojs/taro'
 import {Button, Editor, Image, RichText, Text, Textarea, View} from '@tarojs/components'
-import {connect} from "@tarojs/redux";
+import {connect} from "react-redux";
 
 import styles from './index.module.scss';
 import {createAction} from "../../utils";
@@ -15,24 +16,11 @@ const colorItemWidth = (systemInfo.screenWidth - (1 * 10)) / 10;
 @connect(({ event, home }) => ({ event, home }))
 export default class Index extends Component<any, any> {
 
-  /**
-   * 指定config的类型声明为: Taro.Config
-   *
-   * 由于 typescript 对于 object 类型推导只能推出 Key 的基本类型
-   * 对于像 navigationBarTextStyle: 'black' 这样的推导出的类型是 string
-   * 提示和声明 navigationBarTextStyle: 'black' | 'white' 类型冲突, 需要显示声明类型
-   */
-  config: Config = {
-    navigationBarTitleText: '记事',
-    navigationBarBackgroundColor: '#1AAD19',
-    navigationBarTextStyle: 'white',
-  }
-
   constructor() {
     super(...arguments);
     const { home } = arguments[0];
     const { eventMap } = home;
-    const { params: { date }} = this.$router;
+    const { params: { date }} = Taro.getCurrentInstance().router;
     const state = {
       lastEditedAt: new Date(),
       _text: "",
@@ -73,7 +61,7 @@ export default class Index extends Component<any, any> {
   componentDidMount() {
     // const { dispatch, home } = this.props;
     // const { eventMap } = home;
-    // const { params: { date }} = this.$router;
+    // const { params: { date }} = Taro.getCurrentInstance().router;
     // if (eventMap[date]) {
     //   dispatch(createAction('event/save')({
     //     currentBackground: eventMap[date].background,
@@ -86,7 +74,7 @@ export default class Index extends Component<any, any> {
   }
 
   componentDidShow() {
-    const { params: { date }} = this.$router;
+    const { params: { date }} = Taro.getCurrentInstance().router;
     const { home, event } = this.props;
     const { eventMap } = home;
     const { currentBackground } = event;
@@ -104,7 +92,7 @@ export default class Index extends Component<any, any> {
   }
 
   _onPost = () => {
-    const { params: { date }} = this.$router;
+    const { params: { date }} = Taro.getCurrentInstance().router;
     const {_text} = this.state;
     const { dispatch, home, event } = this.props;
     const { eventMap } = home;
@@ -124,9 +112,10 @@ export default class Index extends Component<any, any> {
   render() {
     const { dispatch, event, home } = this.props;
     const { isMorePanelShowed, isAddPanelShowed, currentBackground } = event;
+    console.log("isMorePanelShowed", isMorePanelShowed);
     const { eventMap } = home;
     const {_text} = this.state;
-    const { params: { date }} = this.$router;
+    const { params: { date }} = Taro.getCurrentInstance().router;
     const eventDetail = eventMap[date];
     const lastEditedDate = eventDetail ? (new Date(eventDetail['update_time'] * 1000)) : (new Date());
     const lastEditedAt = `${lastEditedDate.getFullYear()}-${(lastEditedDate.getMonth() + 1) >= 10 ? (lastEditedDate.getMonth() + 1) : ('0'+(lastEditedDate.getMonth()+1))}-${lastEditedDate.getDate()} ${lastEditedDate.getHours()}:${lastEditedDate.getMinutes() >= 10 ? lastEditedDate.getMinutes() : '0' + lastEditedDate.getMinutes()}:${lastEditedDate.getSeconds() >= 10 ? lastEditedDate.getSeconds() : '0' + lastEditedDate.getSeconds()}`;
@@ -165,7 +154,8 @@ export default class Index extends Component<any, any> {
           value={_text}
           // autoHeight
           autoFocus
-          focus
+          // focus
+          adjustPosition={false}
           onInput={(event) => {
             this.setState({ _text: event.detail.value }, () => {
               if (event['update_time'] <= (Math.round(Date.now()/1000) - 60)) {

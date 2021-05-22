@@ -16,3 +16,21 @@ export const displayDate = (time: number): string => {
   }
   return time + 'days';
 }
+
+export const generateMonthTable = (monthMoment) => {
+  const firstDayOfCurrentMonth = monthMoment.clone().startOf('month');
+  const dayInMonth = firstDayOfCurrentMonth.clone().weekday();
+  const firstRowStart = firstDayOfCurrentMonth.clone().subtract(dayInMonth, 'day');
+  const indexMoment = firstRowStart.clone();
+  const table = [[
+    monthMoment,
+  ]];
+  for (let week = 0; week < 5; week++) {
+    table[week] = [];
+    for (let day = 0; day < 7; day++) {
+      table[week][day] = indexMoment.clone();
+      indexMoment.add(1, 'day');
+    }
+  }
+  return table;
+}

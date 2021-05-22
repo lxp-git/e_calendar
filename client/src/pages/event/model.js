@@ -1,5 +1,5 @@
 import moment from "moment";
-import Taro from '@tarojs/taro';
+import React from 'react';
 
 import * as service from './service'
 import {createAction, isIOS} from "../../utils";

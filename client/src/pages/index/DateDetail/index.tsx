@@ -1,5 +1,6 @@
 import {Text, View} from "@tarojs/components";
 import Taro from "@tarojs/taro";
+import React from 'react';
 
 export default function DateDetail({ children, onClick }) {
   return (
@@ -24,7 +25,7 @@ export default function DateDetail({ children, onClick }) {
             background: "white",
           }}
         >
-          <Text style={{ fontSize: Taro.pxTransform(32) }} selectable>{children}</Text>
+          <Text style={{ fontSize: Taro.pxTransform(32) }}>{children}</Text>
         </View>
       </View>
     </View>

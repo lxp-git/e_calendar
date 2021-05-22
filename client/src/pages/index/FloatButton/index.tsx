@@ -1,6 +1,7 @@
+import React from 'react';
 import Taro from "@tarojs/taro";
 import {Image, View} from "@tarojs/components";
-import { connect } from "@tarojs/redux";
+import { connect } from "react-redux";
 
 import styles from "./index.module.scss";
 

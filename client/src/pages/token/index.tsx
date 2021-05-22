@@ -1,6 +1,6 @@
 import Taro, {Component, Config} from '@tarojs/taro'
 import {View} from '@tarojs/components'
-import {connect} from "@tarojs/redux";
+import {connect} from "react-redux";
 // import {AtActivityIndicator} from "taro-ui";
 
 import styles from './index.module.scss';
@@ -42,7 +42,7 @@ export default class Index extends BasePage<any, any> {
   }
 
   _qrCodeLogin = () => {
-    const { params: { scene = '0000000000000' }} = this.$router;
+    const { params: { scene = '0000000000000' }} = Taro.getCurrentInstance().router;
     const { dispatch } = this.props;
     dispatch(createAction('global/handleQrCode')({
       scene,

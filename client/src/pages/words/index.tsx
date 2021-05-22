@@ -1,6 +1,7 @@
-import Taro, {Config} from '@tarojs/taro';
+import React from 'react';
+import Taro from '@tarojs/taro';
 import {View, Text, Button, ScrollView} from '@tarojs/components';
-import {connect} from "@tarojs/redux";
+import {connect} from "react-redux";
 
 import WordCard from "../../components/WordCard";
 import DefinitionCard from "./DefinitionCard";
@@ -12,21 +13,6 @@ import PageContainer from "../../components/PageContainer";
 
 @connect(({ home, words, loading }) => ({ home, words, loading }))
 export default class Index extends BasePage<any, any> {
-
-  /**
-   * 指定config的类型声明为: Taro.Config
-   *
-   * 由于 typescript 对于 object 类型推导只能推出 Key 的基本类型
-   * 对于像 navigationBarTextStyle: 'black' 这样的推导出的类型是 string
-   * 提示和声明 navigationBarTextStyle: 'black' | 'white' 类型冲突, 需要显示声明类型
-   */
-  config: Config = {
-    navigationBarTitleText: '单词卡',
-    navigationBarBackgroundColor: '#000',
-    navigationBarTextStyle: 'white',
-    backgroundColor: '#000',
-    // disableScroll: true,
-  }
 
   componentWillMount() {
 

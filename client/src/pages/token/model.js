@@ -1,4 +1,4 @@
-import Taro from '@tarojs/taro';
+import React from 'react';
 
 import * as service from './service';
 import application from "../../utils/Application";

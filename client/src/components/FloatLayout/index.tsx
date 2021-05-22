@@ -1,5 +1,5 @@
 import classNames from 'classnames'
-import Taro, { Component } from '@tarojs/taro'
+import React, { Component } from 'react'
 import _isFunction from 'lodash/isFunction'
 import PropTypes, { InferProps } from 'prop-types'
 import { ScrollView, Text, View } from '@tarojs/components'

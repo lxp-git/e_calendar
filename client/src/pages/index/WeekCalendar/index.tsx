@@ -1,13 +1,12 @@
+import React, {CSSProperties} from 'react';
 import Taro from '@tarojs/taro';
 import {Button, Image, Input, ScrollView, Text, View} from "@tarojs/components";
-import {connect} from "@tarojs/redux";
+import {connect} from "react-redux";
 import {ITouchEvent} from "@tarojs/components/types/common";
-import {CSSProperties} from "react";
+import moment from "moment";
 
 import {createAction, isSameDay, formatTime} from "../../../utils";
-import WeekHeader from "../WeekHeader";
 import AtFloatLayout from "../../../components/FloatLayout";
-import moment from "moment";
 import application from "../../../utils/Application";
 import assets from '../../../assets';
 import styles from './index.module.scss';
@@ -29,27 +28,27 @@ const gridItemWidth = remaining / 8;
 const gridItemHalfWidth = remaining / 16;
 const gridItemWidthPx = `${gridItemWidth}px`; // Taro.pxTransform(gridItemWidth * 2);
 const gridItemHalfWidthPx = `${gridItemWidth / 2}px`; // Taro.pxTransform(gridItemWidth);
+let _touchStartEvent;
 function WeekCalendar(props: { global: any, style: CSSProperties, event: any, dispatch: any, home: any }) {
-  const { global: { themePrimary }, event: { periodEventMap }, home: { selectedMoment: tmpSelectedMoment }, style, dispatch } = props;
-  let selectedMoment = tmpSelectedMoment;
-  if (typeof tmpSelectedMoment === "string") {
-    selectedMoment = moment(tmpSelectedMoment);
+  const { global: { themePrimary }, event: { periodEventMap }, home: { selectedWeek: tmpSelectedWeek }, style, dispatch } = props;
+  let selectedWeek = tmpSelectedWeek;
+  if (typeof tmpSelectedWeek === "string") {
+    selectedWeek = moment(tmpSelectedWeek);
   }
   const _onSelectWeek = (date) => {
     date.type = "change";
-    const { dispatch } = this.props;
     dispatch(createAction('home/selectWeek')({ date }));
   }
 
   const _onCalendarBodyTouchStart = (event: ITouchEvent) => {
     if (event.type === 'touchstart') {
-      this._touchStartEvent = event;
+      _touchStartEvent = event;
     }
   }
 
   const _onCalendarBodyTouchMove = (event: ITouchEvent) => {
     // if (event.type === "touchmove") {
-    //   this._touchStartEvent = event;
+    //   _touchStartEvent = event;
     // }
   }
 
@@ -59,28 +58,29 @@ function WeekCalendar(props: { global: any, style: CSSProperties, event: any, di
   }
 
   const _onCalendarBodyTouchEnd = (event: ITouchEvent) => {
-    if (event.type === "touchend" && this._touchStartEvent != null) {
-      const startX = this._touchStartEvent.changedTouches[0].clientX;
+    if (event.type === "touchend" && _touchStartEvent != null) {
+      const startX = _touchStartEvent.changedTouches[0].clientX;
       const endX = event.changedTouches[0].clientX;
+      console.log(Math.abs(startX - endX) > 50);
       if (Math.abs(startX - endX) > 50) {
-        const newMoment = selectedMoment.clone();
+        const newMoment = selectedWeek.clone();
         if (startX > endX) {
-          newMoment.add(1, 'week');
-          _onSelectYearAndMonth({ type: 'change', detail: {
-              value: newMoment.format('YYYY-MM-DD') }});
+          dispatch(createAction("home/save")({
+            selectedWeek: newMoment.add(1, 'week'),
+          }));
         } else {
-          newMoment.subtract(1, 'week');
-          _onSelectYearAndMonth({ type: 'change', detail: {
-              value: newMoment.format('YYYY-MM-DD') }});
+          dispatch(createAction("home/save")({
+            selectedWeek: newMoment.subtract(1, 'week'),
+          }));
         }
       }
     }
-    this._touchStartEvent = null;
+    _touchStartEvent = null;
   }
 
-  const [ leftTop, setLeftTop ] = Taro.useState({ left: -1, top: -1, body: { content: '' } });
+  const [ leftTop, setLeftTop ] = React.useState({ left: -1, top: -1, body: { content: '' } });
 
-  const firstDayOfCurrentWeek = selectedMoment.clone().startOf('week');
+  const firstDayOfCurrentWeek = selectedWeek.clone().startOf('week');
   const table = [null, firstDayOfCurrentWeek];
   for (let i = 1; i < 7; i++) {
     table.push(firstDayOfCurrentWeek.clone().add(i, 'day'));
@@ -122,8 +122,8 @@ function WeekCalendar(props: { global: any, style: CSSProperties, event: any, di
           paddingBottom: Taro.pxTransform(20), }}
       >
         <View style={{ display: "flex", flexDirection: 'column', width: 0, flex: 1, textAlign: 'center', fontSize: Taro.pxTransform(24) }} >
-          <Text>{selectedMoment.month()}月</Text>
-          <Text>第{selectedMoment.format('ww')}周</Text>
+          <Text>{selectedWeek.month()+1}月</Text>
+          <Text>第{selectedWeek.format('ww')}周</Text>
         </View>
         {application.constants.WEEK_DAY_CHINESE.map((itemString ,index) =>
           <View key={itemString} style={{ display: "flex", flex: 1, flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>

@@ -1,9 +1,10 @@
+import React, { Component } from 'react';
 import classNames from 'classnames'
 import _isFunction from 'lodash/isFunction'
 import PropTypes, { InferProps } from 'prop-types'
 import { Button, Text, View } from '@tarojs/components'
 import { CommonEvent } from '@tarojs/components/types/common'
-import Taro, { Component } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 import { handleTouchScroll } from '../../utils'
 import { AtModalProps, AtModalState } from './types'
 

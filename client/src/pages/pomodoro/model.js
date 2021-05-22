@@ -1,3 +1,4 @@
+import React from 'react';
 import Taro from '@tarojs/taro';
 import moment from "moment";
 

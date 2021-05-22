@@ -1,4 +1,4 @@
-import Taro from '@tarojs/taro';
+import React from 'react';
 import {TouchableOpacity} from "react-native";
 
 function TaroButton({ onClick = () => { console.log('TaroButton') }, children, ...other }: any) {

@@ -1,6 +1,7 @@
-import Taro, { Component } from '@tarojs/taro';
+import React, {CSSProperties} from 'react';
+import Taro  from '@tarojs/taro';
 import {Button, Image, Text, View} from "@tarojs/components";
-import {connect} from "@tarojs/redux";
+import {connect} from "react-redux";
 
 // 通过查阅微信 API ，我们分别通过 wx.getSystemInfoSync 及 wx.getMenuButtonBoundingClientRect 获取到 StatusBarHeight 及 MenuButton 的布局信息。
 // NavigationBarPaddingTop = MenuButtonTop - StatusBarHeight
@@ -9,7 +10,7 @@ import {connect} from "@tarojs/redux";
 const systemInfo = Taro.getSystemInfoSync();
 
 interface Props {
-  global: any, style: object, children: any,title: any,renderLeftButton: any, onLeftButtonClick: any, isCustomLeftButton: any,
+  global: any, style?: CSSProperties, children: any,title: any,renderLeftButton: any, onLeftButtonClick: any, isCustomLeftButton: any,
 }
 
 function NavigationBar(props: Props) {
@@ -18,7 +19,7 @@ function NavigationBar(props: Props) {
   const { themePrimary } = global;
   const menuButtonBoundingClientRect = Taro.getMenuButtonBoundingClientRect();
   const navigationBarHeight = ((menuButtonBoundingClientRect.top - systemInfo.statusBarHeight) * 2) + menuButtonBoundingClientRect.height;
-    let color = 'white';
+  let color = 'white';
   let backIconUrl = 'https://cdn.liuxuanping.com/arrow_back_white-24px.svg';
   if (style && (style.background >= '#999999' || style.backgroundColor >= '#999999')) {
     color = '#333333';
@@ -63,7 +64,7 @@ function NavigationBar(props: Props) {
             }}
           >
             {isCustomLeftButton ? (
-              this.props.renderLeftButton
+              props.renderLeftButton
             ) : (Taro.getCurrentPages().length > 1 && (
               <Image
                 style={{ color: '#000000', width:Taro.pxTransform(44), height: Taro.pxTransform(44)}}
@@ -82,7 +83,7 @@ function NavigationBar(props: Props) {
             alignItems: 'center',
           }}
         >
-          {title && (<Text style={{ fontWeight: "bold", fontSize: Taro.pxTransform(36) }}>{title}</Text>)}
+          {title && ( typeof title === 'string' ? <Text style={{ fontWeight: "bold", fontSize: Taro.pxTransform(36) }}>{title}</Text> : title({ mode: (style && style.backgroundColor) >= '#999999' ? "light" : "dark" }))}
         </View>
         {/*<View*/}
         {/*  style={{*/}

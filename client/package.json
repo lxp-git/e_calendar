@@ -44,7 +44,7 @@
     "@tarojs/components": "3.1.4",
     "@tarojs/runtime": "3.1.4",
     "@tarojs/taro": "3.1.4",
-    "lodash": "4.17.15",
+    "lodash": "4.17.21",
     "@tarojs/react": "3.1.4",
     "react": "^17.0.0",
     "react-dom": "^17.0.0"

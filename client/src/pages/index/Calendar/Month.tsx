@@ -127,6 +127,10 @@ function Month(props: any) {
                 bottomText = lunarCalendar.IMonthCn;
               }
             }
+            const lunarFestival = lunarCalendar.lunarFestival;
+            if (lunarFestival) {
+              bottomText = lunarFestival;
+            }
             const localHoliday = lunarCalendar.festival;
             if (localHoliday) {
               bottomText = localHoliday;

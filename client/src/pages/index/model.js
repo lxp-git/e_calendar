@@ -60,8 +60,8 @@ export default {
         payload["selectedMonth"] = selectedMonth.clone().subtract(1, 'month');
         payload[`page${pageIndex}`] = dateUtils.generateMonthTable(selectedMonth.clone().subtract(2, 'month'));
       }
-      console.log(`当前从${currentPageIndex}页，去到第${event.detail.current}页，更新了第${pageIndex}页`);
-      console.log(payload);
+      // console.log(`当前从${currentPageIndex}页，去到第${event.detail.current}页，更新了第${pageIndex}页`);
+      // console.log(payload);
 
       if (event.detail.source === "touch") {
         payload["currentPageIndex"] = event.detail.current;

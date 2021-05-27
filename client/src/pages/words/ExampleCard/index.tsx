@@ -1,3 +1,4 @@
+import React from 'react';
 import {Image, Text, View} from "@tarojs/components";
 import Taro from "@tarojs/taro";
 // import {AtButton, AtIcon} from "taro-ui";

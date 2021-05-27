@@ -1,3 +1,4 @@
+import React from 'react';
 import {Text, View, Checkbox} from "@tarojs/components";
 import Taro from "@tarojs/taro";
 

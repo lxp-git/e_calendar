@@ -1,11 +1,9 @@
 import classNames from 'classnames'
 import PropTypes, { InferProps } from 'prop-types'
 import { View } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import React, { Component } from 'react'
 import AtListItem from '../ListItem';
 import './index.scss';
-
-import Component = Taro.Component;
 
 export default class AtDrawer extends Component<
   AtDrawerProps,

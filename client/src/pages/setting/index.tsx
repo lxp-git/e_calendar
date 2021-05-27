@@ -1,7 +1,8 @@
-import Taro, {Config} from '@tarojs/taro'
+import React from 'react';
+import Taro from '@tarojs/taro'
 import {Button, Image, Text, View} from '@tarojs/components'
 
-import {connect} from "@tarojs/redux";
+import {connect} from "react-redux";
 import application from "../../utils/Application";
 import {createAction} from "../../utils";
 import ListItem from '../../components/ListItem';
@@ -15,18 +16,6 @@ const colorItemWidth = (Taro.getSystemInfoSync().screenWidth - 100) / 4;
 
 @connect(({ global, setting }) => ({ global, setting }))
 class Index extends BasePage<any, any> {
-
-  /**
-   * 指定config的类型声明为: Taro.Config
-   *
-   * 由于 typescript 对于 object 类型推导只能推出 Key 的基本类型
-   * 对于像 navigationBarTextStyle: 'black' 这样的推导出的类型是 string
-   * 提示和声明 navigationBarTextStyle: 'black' | 'white' 类型冲突, 需要显示声明类型
-   */
-  config: Config = {
-    navigationBarTitleText: '一个日历 | 设置',
-    navigationBarTextStyle: 'white',
-  }
 
   _fetch = () => {
 
@@ -98,7 +87,7 @@ class Index extends BasePage<any, any> {
           flexDirection: "column",
           backgroundColor: "#f4f4f4",
         }}
-        title={this.config.navigationBarTitleText}
+        title='一个日历 | 设置'
       >
         <View style={{ background: "white" }}>
           <ListItem
@@ -145,58 +134,24 @@ class Index extends BasePage<any, any> {
             note='可以更改全局的主色调'
             onClick={() => dispatch(createAction('setting/save')({ isThemeModelOpened: true }))}
           />
-        </View>
-        {Taro.getEnv() === Taro.ENV_TYPE.WEAPP && <TaroButton
-          openType='getUserInfo'
-          style={{
-            position: 'relative',
-            width: "100%",
-            textAlign: "start",
-            backgroundColor: "white",
-            marginLeft: 0,
-            marginRight: 0,
-            marginBottom: 0,
-            marginTop: 0,
-            paddingTop: 0,
-            paddingBottom: 0,
-            paddingLeft: 0,
-            paddingRight: 0,
-          }}
-          onGetUserInfo={({ detail: { userInfo }}) => {
-            // const { avatarUrl, city, country, gender, nickName, province } = userInfo;
-            if (userInfo) {
-              dispatch(createAction('user/put')(userInfo));
-            }
-          }}
-          onClick={() => {
-            console.log('绑定用户信息');
-          }}
-        >
-          <ListItem arrow='right' title='绑定用户信息' note='仅仅在合适的地方展示一个你的漂亮微信头像😝' />
-        </TaroButton>}
-        <Button
-          style={{
-            width: "100%",
-            textAlign: "start",
-            backgroundColor: "white",
-            marginLeft: 0,
-            marginRight: 0,
-            marginBottom: 0,
-            marginTop: 0,
-            paddingTop: 0,
-            paddingBottom: 0,
-            paddingLeft: 0,
-            paddingRight: 0,
-          }}
-          onClick={(data) => {
+          {Taro.getEnv() === Taro.ENV_TYPE.WEAPP && <ListItem extraButtonProps={{
+            onGetUserInfo: ({ detail: { userInfo }}) => {
+              // const { avatarUrl, city, country, gender, nickName, province } = userInfo;
+              if (userInfo) {
+                dispatch(createAction('user/put')(userInfo));
+              }},
+            openType: 'getUserInfo'
+          }} arrow='right' title='绑定用户信息' note='仅仅在合适的地方展示一个你的漂亮微信头像😝'
+          />}
+          <ListItem extraButtonProps={{
+            openType: 'contact'
+          }} arrow='right' title='联系我们' onClick={(data) => {
             if (Taro.getEnv() === Taro.ENV_TYPE.RN) {
               dispatch(createAction('setting/save')({ isContactModalOpened: true }));
             }
-          }}
-          openType='contact'
-        >
-          <ListItem arrow='right' title='联系我们' note='有什么问题或者建议都可以联系我们🥳' />
-        </Button>
+          }} note='有什么问题或者建议都可以联系我们🥳'
+          />
+        </View>
         <View
           style={{
             marginTop: Taro.pxTransform(32),
@@ -209,11 +164,11 @@ class Index extends BasePage<any, any> {
         >
           <Text style={{}}>简易说明</Text>
           <Text style={{ fontSize: Taro.pxTransform(24), whiteSpace: 'pre' }}>
-            {`1.  程序所有数据均保存在微信云开发服务器，不用作其他用途\n` +
+            {`1.  程序所有数据均保存在服务器，不用作其他用途\n` +
           `2. 点击日历右上角的时间：日历回到本月并选中今天\n` +
           `3. 长按日历右上角的时间：床头钟\n` +
           `4. 左/右滑动日历：切换上一个/下一个月\n` +
-            `5. 床头钟模式如何返回：点右上角三个点然后选择回到首页\n`}</Text>
+            `5. 床头钟模式如何返回：点右上角三个点然后选择重新打开小程序\n`}</Text>
         </View>
         <Modal isOpened={isContactModalOpened}>
           <View

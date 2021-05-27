@@ -1,5 +1,5 @@
 import { View } from "@tarojs/components";
-import Taro from '@tarojs/taro';
+import React from 'react';
 
 export default function Modal({ children, isOpened }) {
   return isOpened ? (

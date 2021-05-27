@@ -1,48 +1,34 @@
-import Taro, {Config} from '@tarojs/taro'
-import {View, Image} from '@tarojs/components'
+import Taro from '@tarojs/taro'
+import React, { Component } from 'react'
+import {View, Image, Input} from '@tarojs/components'
 import moment, {Moment} from "moment";
-import {connect} from "@tarojs/redux";
+import {connect} from "react-redux";
 
 import {calendar, LunarCalendar} from "../../utils/calendar";
 import assets from '../../assets';
 import application from "../../utils/Application";
 import * as service from './service';
 import {createAction, isLogin} from "../../utils";
-import styles from './index.module.scss';
+import './index.global.scss';
 import BasePage from "../../components/BasePage";
 import PageContainer from '../../components/PageContainer';
 import WeekCalendar from './WeekCalendar';
 import Drawer from "./Drawer";
-import FloatButton from "./FloatButton";
 import Calendar from './Calendar';
+import Diary from './Diary';
 
 moment.updateLocale("zh", { week: {
     dow: 1, // 星期的第一天是星期一
     doy: 7  // 年份的第一周必须包含1月1日 (7 + 1 - 1)
   }});
 
-class WrapComponent extends BasePage<any, any> {
-
-  /**
-   * 指定config的类型声明为: Taro.Config
-   *
-   * 由于 typescript 对于 object 类型推导只能推出 Key 的基本类型
-   * 对于像 navigationBarTextStyle: 'black' 这样的推导出的类型是 string
-   * 提示和声明 navigationBarTextStyle: 'black' | 'white' 类型冲突, 需要显示声明类型
-   */
-  config: Config = {
-    navigationBarTitleText: '一个日历',
-    // navigationBarBackgroundColor: '#1AAD19',
-    navigationBarTextStyle: 'white',
-    backgroundColor: '#f4f4f4',
-    disableScroll: true,
-  }
+@connect(({ global, home, words }) => ({ global, home, words }))
+class Index extends BasePage<any, any> {
 
   state = {
     isDrawerShowed: false,
     _isFunctionsModalOpened: false,
     _table: [],
-    _holidaysMap: {}, // Taro.getStorageSync(DATA_KEY) ||
     _auntFloMap: {}, /// Taro.getStorageSync(EVENT_DATA_KEY) || {},
   }
   _timer;
@@ -61,28 +47,21 @@ class WrapComponent extends BasePage<any, any> {
   _qrCodeLogin = () => {
     if (Taro.getEnv() !== Taro.ENV_TYPE.WEAPP) return;
     const { dispatch } = this.props;
-    const { params: { scene }} = this.$router;
+    const scene  = Taro.getCurrentInstance().router?.params.scene;
     dispatch(createAction('global/handleQrCode')({
       scene,
     }));
-  }
-  _fetch = () => {
-    service.fetchHolidays().then((data) => {
-      const holidaysMap = {};
-      data.forEach(item => {
-        holidaysMap[`${item['year']}-${item['month']}-${item['date']}`] = item;
-      });
-      // Taro.setStorageSync(DATA_KEY, holidaysMap);
-      this.setState({
-        _holidaysMap: holidaysMap,
-      });
-    });
   }
 
   componentWillMount() {
   }
 
   componentDidMount() {
+    Taro.showShareMenu({
+      withShareTicket: true,
+      showShareItems: [ 'qq', 'qzone', 'wechatFriends', 'wechatMoment' ],
+    });
+
     const { dispatch } = this.props;
     dispatch(createAction('global/save')({ themePrimary: application.setting.themePrimary }));
     this._onSelectYearAndMonth({
@@ -92,7 +71,6 @@ class WrapComponent extends BasePage<any, any> {
     if (!isLogin()) {
       dispatch(createAction('home/login')({}));
     }
-    this._fetch();
     // this._fetchEvent(); // 获取大姨妈以及笔记事件，在_onSelectYearAndMonth
     this._qrCodeLogin();
     /// debug
@@ -109,11 +87,19 @@ class WrapComponent extends BasePage<any, any> {
     clearInterval(this._timer);
   }
 
-  onShareAppMessage(obj: Taro.ShareAppMessageObject): Taro.ShareAppMessageReturn {
-    console.log('obj.from', obj.from);
+
+
+  onShareAppMessage() {
+    // console.log('obj.from', obj.from);
     return {
       path: 'pages/index/index',
-      title: '一个日历，有一些简单的节假日，记事，和大姨妈功能',
+      title: '一个日历，做一个简洁实用的小程序日历工具',
+    }
+  }
+
+  onShareTimeline(obj) {
+    return {
+      title: '一个日历，做一个简洁实用的小程序日历工具',
     }
   }
 
@@ -126,7 +112,14 @@ class WrapComponent extends BasePage<any, any> {
         onLeftButtonClick={() => {
           this.setState({ isDrawerShowed: true });
         }}
-        title='一个日历'
+        title={selectedViewModel === 'diary' ? ({ mode }) => {
+          let placeholderStyle = "font-size: 14px;";
+          switch (mode) {
+            case "light": placeholderStyle += "color: #dddddd;"; break;
+            case "dark": placeholderStyle += "color: #d5d5d5;"; break;
+          }
+          return <Input placeholderStyle={placeholderStyle} placeholder='搜索你的记事...' />;
+        } : "一个日历"}
         renderLeftButton={
           <Image
             style={{
@@ -143,9 +136,17 @@ class WrapComponent extends BasePage<any, any> {
       >
         <View style={{ display: 'flex', flex: 1, height: '100%', flexDirection: 'column' }} >
           {/*<WeekCalendar style={{ display: "flex", flexDirection: "column", flex: 1 }} />*/}
-          <View className={styles.fillContent}>
+          <View
+            style={{
+              display: "flex",
+              flex: 1,
+              width: "100%",
+              height: 0,
+            }}
+          >
             { selectedViewModel === 'month' && <Calendar /> }
             { selectedViewModel === 'week' && <WeekCalendar /> }
+            { selectedViewModel === 'diary' && <Diary /> }
           </View>
         </View>
         <Drawer isDrawerShowed={isDrawerShowed} onClose={() => { this.setState({ isDrawerShowed: false }) }} />
@@ -158,18 +159,18 @@ class WrapComponent extends BasePage<any, any> {
 // Index.config['navigationBarTitleText'] = "一个日历";
 // Index.config['navigationBarTextStyle'] = "white";
 // Index.config['backgroundColor'] = "#f4f4f4";
-WrapComponent.navigationOptions = ({ navigation }) => {
-  return ({
-    title: 'Home',
-    headerStyle: {
-      backgroundColor: application.setting.themePrimary,
-      elevation: 0,
-    },
-    headerTintColor: '#fff',
-    // headerTitleStyle: {
-    //   fontWeight: 'bold',
-    //   color: '#000',
-    // },
-  });
-}
-export default connect(({ global, home, words }) => ({ global, home, words }))(WrapComponent);
+// WrapComponent.navigationOptions = ({ navigation }) => {
+//   return ({
+//     title: 'Home',
+//     headerStyle: {
+//       backgroundColor: application.setting.themePrimary,
+//       elevation: 0,
+//     },
+//     headerTintColor: '#fff',
+//     // headerTitleStyle: {
+//     //   fontWeight: 'bold',
+//     //   color: '#000',
+//     // },
+//   });
+// }
+export default Index;

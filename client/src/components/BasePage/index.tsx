@@ -1,4 +1,4 @@
-import { Component } from '@tarojs/taro';
+import React, { Component } from 'react'
 
 class BasePage<P, S> extends Component<P, S> {
 

@@ -1,15 +1,16 @@
-import Taro, {Config} from '@tarojs/taro'
+import React from 'react';
+import Taro from '@tarojs/taro'
 import {View, Text, Picker, Button, Image} from '@tarojs/components'
-import {connect} from "@tarojs/redux";
+import {connect} from "react-redux";
 
 import application from "../../utils/Application";
 import PageContainer from "../../components/PageContainer";
 
 const taskSeconds = 25 * 60;
 function WrapComponent(props) {
-  const [ seconds, setSeconds ] = Taro.useState(taskSeconds);
-  const [ timer, setTimer ] = Taro.useState();
-  // Taro.useEffect(() => {
+  const [ seconds, setSeconds ] = React.useState(taskSeconds);
+  const [ timer, setTimer ] = React.useState();
+  // React.useEffect(() => {
   //   const timer = setInterval(() => {
   //     setSeconds(seconds - 1);
   //     console.log('seconds', seconds);

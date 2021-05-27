@@ -123,7 +123,7 @@ export default function request(url, option) {
     || newOptions.method === 'PUT'
     || newOptions.method === 'DELETE'
   ) {
-    if (typeof window === 'undefined' || !(newOptions.body instanceof window.FormData)) {
+    if (typeof window === 'undefined' || !(window.FormData) || !(newOptions.body instanceof window.FormData)) {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',

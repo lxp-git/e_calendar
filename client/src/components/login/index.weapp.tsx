@@ -1,4 +1,5 @@
-import Taro, { Component } from "@tarojs/taro"
+import React, { Component } from 'react';
+import Taro from "@tarojs/taro"
 import { View, Text, Button } from "@tarojs/components"
 
 export default class Login extends Component {

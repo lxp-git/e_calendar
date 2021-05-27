@@ -16,14 +16,14 @@ const persistConfig = {
   key: 'root',
   keyPrefix: 'cache-',
   debug: true,
-  blacklist: ['dva', '@@dva', 'home.selectedMoment'],
+  blacklist: ['dva', '@@dva', 'home'],
   storage: {
     getItem(key) {
       // return new Promise(resolve => )
       // return Taro.getStorage({
       //   key,
       // });
-      return new Promise((resolve, reject) => resolve(storage.getAsync(key)));
+      return new Promise((resolve) => resolve(storage.getAsync(key)));
     },
     setItem(key, args) {
       return Taro.setStorage({

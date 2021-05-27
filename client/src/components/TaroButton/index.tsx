@@ -1,4 +1,4 @@
-import Taro, { Component } from '@tarojs/taro';
+import React from 'react';
 import {Button} from "@tarojs/components";
 import {ITouchEvent} from "@tarojs/components/types/common";
 

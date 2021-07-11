@@ -2,6 +2,7 @@ import React, {CSSProperties} from 'react';
 import Taro  from '@tarojs/taro';
 import {Button, Image, Text, View} from "@tarojs/components";
 import {connect} from "react-redux";
+import assets from '../../assets';
 
 // 通过查阅微信 API ，我们分别通过 wx.getSystemInfoSync 及 wx.getMenuButtonBoundingClientRect 获取到 StatusBarHeight 及 MenuButton 的布局信息。
 // NavigationBarPaddingTop = MenuButtonTop - StatusBarHeight
@@ -20,10 +21,10 @@ function NavigationBar(props: Props) {
   const menuButtonBoundingClientRect = Taro.getMenuButtonBoundingClientRect();
   const navigationBarHeight = ((menuButtonBoundingClientRect.top - systemInfo.statusBarHeight) * 2) + menuButtonBoundingClientRect.height;
   let color = 'white';
-  let backIconUrl = 'https://cdn.liuxuanping.com/arrow_back_white-24px.svg';
+  let backIconUrl = assets.images.iconArrowBackWhite;
   if (style && (style.background >= '#999999' || style.backgroundColor >= '#999999')) {
     color = '#333333';
-    backIconUrl = 'https://cdn.liuxuanping.com/arrow_back_black-24px.svg';
+    backIconUrl = assets.images.iconArrowBackBlack;
   }
   const navigationBarPxHeight = Taro.pxTransform(navigationBarHeight * 2);
   return (

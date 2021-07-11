@@ -4,6 +4,7 @@ import {Image, View} from "@tarojs/components";
 import { connect } from "react-redux";
 
 import styles from "./index.module.scss";
+import assets from '../../../assets';
 
 function FloatButton (props: { global: any }) {
   return (
@@ -26,8 +27,7 @@ function FloatButton (props: { global: any }) {
       onClick={() => Taro.navigateTo({ url: '/pages/setting/index' })}
     >
       <Image
-        src='https://cdn.liuxuanping.com/baseline_settings_white_18dp.png'
-        // source={{ uri: 'https://cdn.liuxuanping.com/baseline_settings_black_18dp.png' }}
+        src={assets.images.iconSetting}
         style={{
           width: Taro.pxTransform(54),
           height: Taro.pxTransform(54),

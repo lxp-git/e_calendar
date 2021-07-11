@@ -11,6 +11,9 @@ import iconMenuBlack from './menu_black-24px.svg'
 import iconCloseBlack from './close_black-24px.svg'
 import iconNotificationsActive from './notifications_active-24px.svg'
 import iconDeleteForever from './delete_forever-24px.svg'
+import iconSetting from './baseline_settings_white_18dp.png'
+import iconArrowBackWhite from './arrow_back_white-24px.svg'
+import iconArrowBackBlack from './arrow_back_black-24px.svg'
 
 export default {
   iconHeartPick,
@@ -26,4 +29,7 @@ export default {
   iconCloseBlack,
   iconNotificationsActive,
   iconDeleteForever,
+  iconSetting,
+  iconArrowBackWhite,
+  iconArrowBackBlack,
 }

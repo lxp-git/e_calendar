@@ -1,12 +1,13 @@
 import React from 'react';
 import Taro from "@tarojs/taro";
 import {Image, View} from "@tarojs/components";
+import { connect } from "react-redux";
 
 import AtDrawer from "../../../components/Drawer";
 import ListItem from "../../../components/ListItem";
 import application from "../../../utils/Application";
 import {createAction, hexToRgbA} from "../../../utils";
-import { connect } from "react-redux";
+import assets from '../../../assets';
 
 function Drawer({ changeMainViewModel, isDrawerShowed, onClose, selected = application.setting.selectedViewModel }: { isDrawerShowed: boolean, onClose: () => void, selected?: 'week' | 'month' | 'note' }) {
   const systemInfo = Taro.getSystemInfoSync();
@@ -31,7 +32,7 @@ function Drawer({ changeMainViewModel, isDrawerShowed, onClose, selected = appli
       <View style={{ display: 'flex', justifyContent: 'center', paddingTop: Taro.pxTransform(systemInfo.statusBarHeight+20), paddingBottom: Taro.pxTransform(systemInfo.statusBarHeight+20) }}>
         <Image
           style={{ width: Taro.pxTransform(44 * 2), height: Taro.pxTransform(44 * 2) }}
-          src='https://cdn.liuxuanping.com/%E4%B8%80%E4%B8%AA%E6%97%A5%E5%8E%86.jpeg'
+          src={assets.images.logo}
         />
       </View>
       <ListItem onClick={() => onItemClick('month')} style={{ background: selected === 'month' ? hexToRgbA(`${color}`, 0.3) : 'transparent' }} title='月' arrow='right' />

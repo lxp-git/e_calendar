@@ -1,0 +1,73 @@
+/* 改变主题变量，具体变量名可查看 taro-ui/dist/style/variables/default.scss 文件 */
+$color-brand: #07C160 !default;
+$color-brand-light: #07C160 !default;
+$color-brand-dark: #07C160 !default;
+$at-fab-bg-color-active: #07C160 !default;
+$at-fab-bg-color-active: #07C160 !default;
+
+/* 引入 Taro UI 默认样式 */
+//@import "~taro-ui/dist/style/index.scss";
+
+page {
+  width: 100%;
+  height: 100%;
+  background: #f4f4f4;
+}
+
+//textarea {
+//  width: 100%;
+//  height: 100%;
+//}
+//
+//.at-button {
+//  border: none;
+//  line-height: 1;
+//  height: auto;
+//  padding: 0;
+//  margin: 0;
+//  width: auto;
+//}
+//button.weui-btn, input.weui-btn {
+//  width: auto !important;
+//}
+button {
+  line-height: 1.5;
+  margin: 0 !important;
+  padding: 0; //  !important
+  font-weight: normal;
+  text-align: start;
+  //width: auto !important;
+  border: none !important;
+  border-radius: 0;
+  background: transparent;
+
+  &.button-hover {
+    background: rgba(0,0,0,0.3) !important;
+  }
+}
+//button:focus {
+//  opacity: 0.7;
+//  //background: rgba(0,0,0,0.3);
+//}
+//button:active {
+//  opacity: 0.7;
+//  //background: rgba(0,0,0,0.3);
+//}
+//button:hover {
+//  opacity: 0.7;
+//}
+button::after {
+  width: auto;
+  border: none !important;
+}
+.at-form::after {
+  border: none;
+  width: auto;
+}
+//.at-textarea {
+//  border: none;
+//  padding: 0;
+//}
+//input {
+//  min-height: 0;
+//}

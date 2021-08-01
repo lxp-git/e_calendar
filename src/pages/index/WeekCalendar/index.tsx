@@ -193,7 +193,7 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
       setTable(newTable);
       setScrollY(gridItemWidthX7);
     }, 0);
-  }, [])
+  }, [ selectedWeek ])
 
   return (
     <View
@@ -246,7 +246,8 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
               let height = 0;
               let periodEvent;
               if (table[weekIndex]) { /// hourIndex % 2 === 0 &&
-                periodEvent = periodEventMap[table[weekIndex].clone().hour(item).minute(hourIndex % 2 === 0 ? 0 : 30).toISOString()];
+                const currentIndex = table[weekIndex].clone().hour(item).minute(hourIndex % 2 === 0 ? 0 : 30).toISOString();
+                periodEvent = periodEventMap[currentIndex];
                 if (periodEvent) {
                   content = periodEvent.content;
                   height = (moment(periodEvent['period_end']).diff(moment(periodEvent['period_start'])) / 3600000) * gridItemWidth;

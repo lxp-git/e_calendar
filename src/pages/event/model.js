@@ -40,7 +40,7 @@ export default {
       }
       const result = yield call(service.post, body);
       eventMap[mapKey] = result;
-      yield put(createAction('home/save')({ eventMap }));
+      yield put(createAction('home/save')({ eventMap: { ...eventMap } }));
     },
     * postPeriod({ payload: { periodStart, periodEnd, content }}, { call, put, select, take }) {
       const { event: { periodEventList, periodEventMap }} = yield select(state => state);

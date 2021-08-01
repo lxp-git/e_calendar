@@ -32,7 +32,7 @@ const Index = connect(({ event: { isMorePanelShowed, isAddPanelShowed, currentBa
   console.log("isMorePanelShowed", isMorePanelShowed);
   const { params: { date }} = Taro.useRouter();
   // const [content, setContent] = React.useState();
-  const that = React.useRef({ content: eventMap?.date?.content });
+  const that = React.useRef({ content: date && eventMap?.[date]?.content });
 
   const _fetch = () => {
 

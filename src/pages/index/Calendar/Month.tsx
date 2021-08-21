@@ -182,7 +182,7 @@ const Month = React.memo((props: any) => {
             service.event.delete(auntFloMap[mapKey].id);
             delete auntFloMap[mapKey];
           }
-          dispatch(createAction('home/save')({ auntFloMap }));
+          dispatch(createAction('home/save')({ auntFloMap: { ...auntFloMap } }));
         },
       });
     }

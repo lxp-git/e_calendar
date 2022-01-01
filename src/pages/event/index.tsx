@@ -29,7 +29,6 @@ const styles = StyleSheet.create({
 const Index = connect(({ event: { isMorePanelShowed, isAddPanelShowed, currentBackground }, home: { eventMap } }) => ({ isMorePanelShowed, isAddPanelShowed, currentBackground, eventMap }))(React.memo((props) => {
 
   const { dispatch, isMorePanelShowed, isAddPanelShowed, currentBackground, eventMap } = props;
-  console.log("isMorePanelShowed", isMorePanelShowed);
   const { params: { date }} = Taro.useRouter();
   // const [content, setContent] = React.useState();
   const that = React.useRef({ content: date && eventMap?.[date]?.content });
@@ -70,28 +69,28 @@ const Index = connect(({ event: { isMorePanelShowed, isAddPanelShowed, currentBa
     }));
   }
 
-    React.useEffect(() => {
-      const init = () => {
-        Taro.setNavigationBarTitle({
-          title: `记事 | ${date}`,
-        });
-        if (eventMap[date]) {
-          _changeBackground(eventMap[date].background);
-        } else {
-          _changeBackground(currentBackground);
-        }
+  React.useEffect(() => {
+    const init = () => {
+      Taro.setNavigationBarTitle({
+        title: `记事 | ${date}`,
+      });
+      if (eventMap[date]) {
+        _changeBackground(eventMap[date].background);
+      } else {
+        _changeBackground(currentBackground);
       }
-      init();
-    }, [ date, eventMap, currentBackground ])
+    }
+    init();
+  }, [ date, eventMap ])
   React.useEffect(() => {
     return () => {
       _onPost();
     }
   }, [])
 
-    const eventDetail = eventMap[date];
-    const lastEditedDate = eventDetail ? (new Date(eventDetail['update_time'] * 1000)) : (new Date());
-    const lastEditedAt = `${lastEditedDate.getFullYear()}-${(lastEditedDate.getMonth() + 1) >= 10 ? (lastEditedDate.getMonth() + 1) : ('0'+(lastEditedDate.getMonth()+1))}-${lastEditedDate.getDate()} ${lastEditedDate.getHours()}:${lastEditedDate.getMinutes() >= 10 ? lastEditedDate.getMinutes() : '0' + lastEditedDate.getMinutes()}:${lastEditedDate.getSeconds() >= 10 ? lastEditedDate.getSeconds() : '0' + lastEditedDate.getSeconds()}`;
+  const eventDetail = eventMap[date];
+  const lastEditedDate = eventDetail ? (new Date(eventDetail['update_time'] * 1000)) : (new Date());
+  const lastEditedAt = `${lastEditedDate.getFullYear()}-${(lastEditedDate.getMonth() + 1) >= 10 ? (lastEditedDate.getMonth() + 1) : ('0'+(lastEditedDate.getMonth()+1))}-${lastEditedDate.getDate()} ${lastEditedDate.getHours()}:${lastEditedDate.getMinutes() >= 10 ? lastEditedDate.getMinutes() : '0' + lastEditedDate.getMinutes()}:${lastEditedDate.getSeconds() >= 10 ? lastEditedDate.getSeconds() : '0' + lastEditedDate.getSeconds()}`;
   return (
     <PageContainer
       navigationBarStyle={{ backgroundColor: currentBackground }}
@@ -162,7 +161,10 @@ const Index = connect(({ event: { isMorePanelShowed, isAddPanelShowed, currentBa
           >
             {application.themes1.map((item) => (
               <View
-                key={item.themePrimary} onClick={() => { _changeBackground(item.themePrimary) }}
+                key={item.themePrimary}
+                onClick={() => {
+                  _changeBackground(item.themePrimary);
+                }}
                 style={{
                   width: Taro.pxTransform(colorItemWidth * 2),
                   padding: Taro.pxTransform(4),

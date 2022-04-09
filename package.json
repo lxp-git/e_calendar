@@ -34,7 +34,7 @@
 		"dva-core": "^2.0.2",
 		"dva-loading": "^3.0.20",
 		"lodash": "4.17.21",
-		"moment": "^2.24.0",
+		"moment": "^2.29.2",
 		"redux-persist": "^6.0.0",
 		"@babel/runtime": "^7.7.7",
 		"@tarojs/components": "3.3.19",

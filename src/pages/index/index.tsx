@@ -1,7 +1,6 @@
 import Taro from '@tarojs/taro'
 import React from 'react'
 import {View, Image, Input} from '@tarojs/components'
-import moment from "moment";
 import {connect} from "react-redux";
 
 import assets from '../../assets';
@@ -13,6 +12,7 @@ import WeekCalendar from './WeekCalendar';
 import Drawer from "./Drawer";
 import Calendar from './Calendar';
 import Diary from './Diary';
+import { convertToYearMonthDate } from '../../utils/date_utils';
 
 const styles = StyleSheet.create({
   index: { height: '100%', overflow: 'hidden' },
@@ -21,10 +21,10 @@ const styles = StyleSheet.create({
   leftButton: { display: "flex", justifyContent: 'center', alignItems: 'center', width: Taro.pxTransform(44), height: Taro.pxTransform(44) }
 })
 
-moment.updateLocale("zh", { week: {
-    dow: 1, // 星期的第一天是星期一
-    doy: 7  // 年份的第一周必须包含1月1日 (7 + 1 - 1)
-  }});
+// moment.updateLocale("zh", { week: {
+//     dow: 1, // 星期的第一天是星期一
+//     doy: 7  // 年份的第一周必须包含1月1日 (7 + 1 - 1)
+//   }});
 
 const leftImage = (
   <Image
@@ -50,7 +50,7 @@ function Index(props) {
     dispatch(createAction('global/save')({ themePrimary: application.setting.themePrimary }));
     _onSelectYearAndMonth({
       type: 'change',
-      detail: {value: moment().format('YYYY-MM-DD')},
+      detail: {value: convertToYearMonthDate()},
     });
     if (!isLogin()) {
       dispatch(createAction('home/login')({}));

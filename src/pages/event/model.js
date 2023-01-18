@@ -1,4 +1,3 @@
-import moment from "moment";
 import React from 'react';
 
 import * as service from './service'
@@ -47,7 +46,7 @@ export default {
       const body = {
         "period_start": periodStart,
         "period_end": periodEnd,
-        "notify_at": moment(periodStart).subtract('30', "minute"),
+        "notify_at": periodStart,//  moment(periodStart).subtract('30', "minute"),
         content,
       };
       periodEventList.push(body);

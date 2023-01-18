@@ -1,5 +1,4 @@
 import Taro from '@tarojs/taro';
-import moment from "moment";
 
 import * as service from './service';
 import application from "../../utils/Application";
@@ -12,9 +11,9 @@ export default {
     firstRowStart: undefined,
     auntFloMap: {},
     eventMap: {},
-    selectedDay: moment(),
-    selectedMonth: moment(),
-    selectedWeek: moment(),
+    selectedDay: new Date(),
+    selectedMonth: new Date(),
+    selectedWeek: new Date(),
     page0: [],
     page1: [],
     page2: [],
@@ -46,19 +45,27 @@ export default {
       const { currentPageIndex, selectedMonth: tmpSelectedMonth } = yield select(state => state.home);
       let selectedMonth = tmpSelectedMonth;
       if (typeof tmpSelectedMonth === 'string') {
-        selectedMonth = moment(tmpSelectedMonth);
+        selectedMonth = new Date(tmpSelectedMonth);
       }
       const payload = {};
       let pageIndex = 0;
       if ((event.detail.current === currentPageIndex + 1) || (event.detail.current === 0 && currentPageIndex === 2)) {
         // 翻到下一月，需要更新下下个页面
         pageIndex = (event.detail.current + 1) % 3;
-        payload["selectedMonth"] = selectedMonth.clone().add(1, 'month');
-        payload[`page${pageIndex}`] = dateUtils.generateMonthTable(selectedMonth.clone().add(2, 'month'));
+        const nextCurrentMonth = new Date(selectedMonth.valueOf());
+        nextCurrentMonth.setMonth(selectedMonth.getMonth() + 1);
+        payload["selectedMonth"] = nextCurrentMonth;
+        const nextNextMonth = new Date(nextCurrentMonth.valueOf());
+        nextNextMonth.setMonth(nextNextMonth.getMonth() + 1);
+        payload[`page${pageIndex}`] = dateUtils.generateMonthTable(nextNextMonth);
       } else {
         pageIndex = (event.detail.current + 3 - 1) % 3;
-        payload["selectedMonth"] = selectedMonth.clone().subtract(1, 'month');
-        payload[`page${pageIndex}`] = dateUtils.generateMonthTable(selectedMonth.clone().subtract(2, 'month'));
+        const nextCurrentMonth = new Date(selectedMonth.valueOf());
+        nextCurrentMonth.setMonth(selectedMonth.getMonth() - 1);
+        payload["selectedMonth"] = nextCurrentMonth;
+        const lastNextCurrentMonth = new Date(nextCurrentMonth.valueOf());
+        lastNextCurrentMonth.setMonth(lastNextCurrentMonth.getMonth() - 1); 
+        payload[`page${pageIndex}`] = dateUtils.generateMonthTable(lastNextCurrentMonth);
       }
       // console.log(`当前从${currentPageIndex}页，去到第${event.detail.current}页，更新了第${pageIndex}页`);
       // console.log(payload);
@@ -75,15 +82,23 @@ export default {
     * selectYearAndMonth({ payload: { date, index }}, { call, put, select, take }) {
       if (date.type === 'change') {
         const yearMonthDay = date.detail.value.split('-');
-        const selectedNewMoment = moment().year(parseInt(yearMonthDay[0]))
-          .month(parseInt(yearMonthDay[1]) - 1)
-          .date(parseInt(yearMonthDay[2]));
+        const selectedNewDate = new Date();
+        selectedNewDate.setFullYear(parseInt(yearMonthDay[0]));
+        selectedNewDate.setMonth(parseInt(yearMonthDay[1]) - 1);
+        selectedNewDate.setDate(parseInt(yearMonthDay[2]));
         const body = {};
         const { currentPageIndex } = yield select(state => state.home);
-        body[`page${(currentPageIndex-1)%3}`] = dateUtils.generateMonthTable(selectedNewMoment.clone().subtract(1, "month"));
-        body[`page${currentPageIndex}`] = dateUtils.generateMonthTable(selectedNewMoment.clone());
-        body[`page${(currentPageIndex+1)%3}`] = dateUtils.generateMonthTable(selectedNewMoment.clone().add(1, "month"));
-        body["selectedMonth"] = selectedNewMoment;
+        const lastMonth = new Date(selectedNewDate.valueOf());
+        lastMonth.setDate(1);
+        lastMonth.setMonth(lastMonth.getMonth() - 1);
+        body[`page${(currentPageIndex-1)%3}`] = dateUtils.generateMonthTable(lastMonth);
+        body[`page${currentPageIndex}`] = dateUtils.generateMonthTable(new Date(selectedNewDate.valueOf()));
+        const nextMonth = new Date(selectedNewDate.valueOf());
+        nextMonth.setDate(1);
+        nextMonth.setMonth(nextMonth.getMonth() + 1);
+        body[`page${(currentPageIndex+1)%3}`] = dateUtils.generateMonthTable(nextMonth);
+        console.log('selectedNewDate', selectedNewDate);
+        body["selectedMonth"] = selectedNewDate;
         // console.log("body", body);
         yield put(createAction('save')(body));
         yield put(createAction('fetchEvent')({
@@ -125,8 +140,8 @@ export default {
           "end": end.toISOString()
         });
         data.forEach(item => {
-          const dayMoment = moment(item['notify_at']);
-          const mapKey = `${dayMoment.year()}-${dayMoment.month() + 1}-${dayMoment.date()}`;
+          const dayMoment = new Date(item['notify_at']);
+          const mapKey = `${dayMoment.getFullYear()}-${dayMoment.getMonth() + 1}-${dayMoment.getDate()}`;
           if (item.content === '大姨妈来了' && application.setting.isAuntFloEnabled) {
             auntFloMap[mapKey] = item;
           } else if (typeof item.content === "string") {

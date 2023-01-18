@@ -2,7 +2,6 @@ import React from 'react';
 import {Text, View, ScrollView} from "@tarojs/components";
 import {connect} from "react-redux";
 import Taro from "@tarojs/taro";
-import moment from "moment";
 
 import {StyleSheet} from "../../../utils";
 
@@ -48,8 +47,8 @@ const Diary = React.memo(({ eventMap }) => {
         {Object.keys(eventMap).map((key, index) => index % 2 ? null : (
           <View
             onClick={() => {
-              const selectedDay = moment(key);
-              Taro.navigateTo({ url: `/pages/event/index?date=${selectedDay.year()}-${selectedDay.month() + 1}-${selectedDay.date()}` });
+              const selectedDay = new Date(key);
+              Taro.navigateTo({ url: `/pages/event/index?date=${selectedDay.getFullYear()}-${selectedDay.getMonth() + 1}-${selectedDay.getDate()}` });
             }}
             style={styles.rightItem}
           >

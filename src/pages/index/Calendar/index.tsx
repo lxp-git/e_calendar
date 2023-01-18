@@ -1,7 +1,6 @@
 import React from 'react';
 import Taro from "@tarojs/taro";
 import {Image, Picker, Swiper, SwiperItem, Text, View} from "@tarojs/components";
-import moment from "moment";
 import {connect} from "react-redux";
 
 import {calendar, LunarCalendar} from "../../../utils/calendar";
@@ -18,6 +17,7 @@ import FloatButton from "../FloatButton";
 // import "./index.module.scss";
 import Month from "./Month";
 import assets from '../../../assets';
+import { convertToYearMonthDate, fillZero } from '../../../utils/date_utils';
 
 const systemInfo = Taro.getSystemInfoSync();
 const styles = StyleSheet.create({
@@ -52,17 +52,17 @@ const styles = StyleSheet.create({
 })
 
 const _momentToLunarCalendar = (dayMoment): LunarCalendar => {
-  return calendar.solar2lunar(dayMoment.year(), dayMoment.month() + 1, dayMoment.date())
+  return calendar.solar2lunar(dayMoment.getFullYear(), dayMoment.getMonth() + 1, dayMoment.getDate())
 }
 
 function Calendar(props: any) {
   const { dispatch, englishWord, page1 = [], page0 = [], page2 = [], currentPageIndex = 1, selectedDay: tmpSelectedDay, selectedMonth: tmpSelectedMonth, themePrimary  } = props;
   let selectedDay = tmpSelectedDay, selectedMonth = tmpSelectedMonth;
   if (typeof tmpSelectedDay === 'string') {
-    selectedDay = moment(tmpSelectedDay);
+    selectedDay = new Date(tmpSelectedDay);
   }
   if (typeof tmpSelectedMonth === 'string') {
-    selectedMonth = moment(tmpSelectedMonth);
+    selectedMonth = new Date(tmpSelectedMonth);
   }
   const [holidaysMap, setHolidaysMap] = React.useState({});
   const [isContentShow, setIsContentShow] = React.useState(false);
@@ -91,7 +91,7 @@ function Calendar(props: any) {
 
   const _backToToday = (event) => {
     _onSelectYearAndMonth({ type: 'change', detail: {
-        value: moment().format('YYYY-MM-DD') }});
+        value: convertToYearMonthDate() }});
   }
   const _onDateDetailClicked = () => {
     if (application.setting.isNoteBookEnabled) {
@@ -101,6 +101,10 @@ function Calendar(props: any) {
   const _onWordClicked = (event) => { event.preventDefault();event.stopPropagation(); Taro.navigateTo({ url: '/pages/words/index' }) };
 
   const _selectedLunarCalendar = _momentToLunarCalendar(selectedDay);
+  const currentDate = new Date();
+  var year = new Date(currentDate.getFullYear(), 0, 1);
+  var days = Math.floor((currentDate - year) / (24 * 60 * 60 * 1000));
+  var week = Math.ceil(( currentDate.getDay() + 1 + days) / 7);
   return (
     <View
       style={styles.index}
@@ -114,7 +118,7 @@ function Calendar(props: any) {
         <Picker
           mode='date'
           onChange={_onSelectYearAndMonth}
-          value={selectedMonth.format('YYYY-MM-DD')}
+          value={convertToYearMonthDate(selectedMonth)}
           start='1950-01-01'
           end='2099-12-31'
         >
@@ -122,7 +126,7 @@ function Calendar(props: any) {
             <View
               style={styles.selectMonth}
             >
-              <Text>{selectedMonth.format('YYYY年MM月')}</Text>
+              <Text>{`${selectedMonth.getFullYear()}年${fillZero(selectedMonth.getMonth()+1)}月`}</Text>
               <Image
                 src={assets.images.arrowDownBlack}
                 style={styles.selectMonthImage}
@@ -165,7 +169,7 @@ function Calendar(props: any) {
       <DateDetail
         onClick={_onDateDetailClicked}
       >
-        {_selectedLunarCalendar.gzYear}{application.constants.ZODIAC_SIGNS[_selectedLunarCalendar.Animal][0]}年{_selectedLunarCalendar.gzMonth}月{_selectedLunarCalendar.gzDay}日 {_selectedLunarCalendar.astro} {_selectedLunarCalendar.IMonthCn}{_selectedLunarCalendar.IDayCn} 第{selectedDay.format('ww')}周
+        {_selectedLunarCalendar.gzYear}{application.constants.ZODIAC_SIGNS[_selectedLunarCalendar.Animal][0]}年{_selectedLunarCalendar.gzMonth}月{_selectedLunarCalendar.gzDay}日 {_selectedLunarCalendar.astro} {_selectedLunarCalendar.IMonthCn}{_selectedLunarCalendar.IDayCn} 第{week}周
       </DateDetail>
       {englishWord && (
         <WordCard

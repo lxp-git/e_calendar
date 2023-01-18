@@ -3,7 +3,6 @@ import Taro from '@tarojs/taro';
 import {Button, Image, Input, ScrollView, Text, View} from "@tarojs/components";
 import {connect} from "react-redux";
 import {ITouchEvent} from "@tarojs/components/types/common";
-import moment from "moment";
 
 import {createAction, isSameDay, formatTime, StyleSheet} from "../../../utils";
 import AtFloatLayout from "../../../components/FloatLayout";
@@ -142,7 +141,7 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
   const { themePrimary, periodEventMap, selectedWeek: tmpSelectedWeek, style, dispatch } = props;
   let selectedWeek = tmpSelectedWeek;
   if (typeof tmpSelectedWeek === "string") {
-    selectedWeek = moment(tmpSelectedWeek);
+    selectedWeek = new Date(tmpSelectedWeek);
   }
 
   const _onCalendarBodyTouchStart = (event: ITouchEvent) => {
@@ -155,7 +154,6 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
     if (event.type === "touchend" && _touchStartEvent != null) {
       const startX = _touchStartEvent.changedTouches[0].clientX;
       const endX = event.changedTouches[0].clientX;
-      console.log(Math.abs(startX - endX) > 50);
       if (Math.abs(startX - endX) > 50) {
         const newMoment = selectedWeek.clone();
         if (startX > endX) {
@@ -176,7 +174,7 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
 
   const firstDayOfCurrentWeek = selectedWeek.clone().startOf('week');
 
-  const [ table, setTable ] = React.useState(null);
+  const [ table, setTable ] = React.useState<{[index: number]: Date} | undefined>();
   const [ scrollY, setScrollY ] = React.useState(0);
 
   const clickMoment = table?.[leftTop?.left];
@@ -216,10 +214,10 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
               key={itemString}
             >{itemString}</Text>
             <View
-              style={{ ...styles.headerItemDate, backgroundColor: isSameDay(table?.[index+1], moment()) ? themePrimary : 'white', }}
+              style={{ ...styles.headerItemDate, backgroundColor: isSameDay(table?.[index+1], new Date()) ? themePrimary : 'white', }}
             >
               <Text
-                style={{ ...styles.headerItemDateText, color: isSameDay(table?.[index+1], moment()) ?  'white' : application.constants.textPrimaryColor, }}
+                style={{ ...styles.headerItemDateText, color: isSameDay(table?.[index+1], new Date()) ?  'white' : application.constants.textPrimaryColor, }}
                 key={itemString}
               >{table?.[index + 1]?.date()}</Text>
             </View>
@@ -231,7 +229,7 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
             key={weekday ? weekday.date() : 'start'}
             style={{ ...styles.scrollItem, borderLeft: weekIndex === 0 ? 'none' : 'solid 1px #dddddd' }}
           >
-            {hour24dot5.map((item, hourIndex) => {
+            {hour24dot5.map((item: number, hourIndex) => {
               if (weekIndex === 0) {
                 return (
                   <View key={item} style={styles.scrollItemContent}>
@@ -246,11 +244,14 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
               let height = 0;
               let periodEvent;
               if (table[weekIndex]) { /// hourIndex % 2 === 0 &&
-                const currentIndex = table[weekIndex].clone().hour(item).minute(hourIndex % 2 === 0 ? 0 : 30).toISOString();
+                const date = new Date(table[weekIndex].valueOf());
+                date.setHours(item);
+                date.setMinutes(hourIndex % 2 === 0 ? 0 : 30);
+                const currentIndex = date.toISOString();
                 periodEvent = periodEventMap[currentIndex];
                 if (periodEvent) {
                   content = periodEvent.content;
-                  height = (moment(periodEvent['period_end']).diff(moment(periodEvent['period_start'])) / 3600000) * gridItemWidth;
+                  height = (new Date(periodEvent['period_end']).valueOf() - (new Date(periodEvent['period_start']).valueOf()) / 3600000) * gridItemWidth;
                 }
               }
               return (

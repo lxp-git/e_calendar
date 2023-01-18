@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
 import Taro from '@tarojs/taro';
 import {Text, View} from '@tarojs/components';
-import moment, {Moment} from "moment";
 import {calendar, LunarCalendar} from "../../utils/calendar";
 
 const weekMap = [
-  "一","二","三","四","五","六","日",
+  "日","一","二","三","四","五","六",
 ];
-let singleMoment = moment();
+let singleMoment = new Date();
 export default class Index extends Component {
 
   state = {
-    _hour: singleMoment.format('HH'),
-    _minute: singleMoment.format('mm'),
-    _second: singleMoment.format('ss'),
-    _hourMinute: singleMoment.format('HH:mm')
+    _hour: singleMoment.getHours(),
+    _minute: singleMoment.getMinutes(),
+    _second: singleMoment.getSeconds(),
+    _hourMinute: `${singleMoment.getHours()}:${singleMoment.getMinutes()}`,
   }
   timer;
   _lunarCalendar;
@@ -24,8 +23,7 @@ export default class Index extends Component {
   }
 
   componentWillMount() {
-    singleMoment = moment();
-    this._lunarCalendar = this._momentToLunarCalendar(singleMoment);
+    this._lunarCalendar = this._dateToLunarCalendar(singleMoment);
   }
 
   componentDidMount() {
@@ -42,12 +40,12 @@ export default class Index extends Component {
 
   componentDidShow() {
     this.timer = setInterval(() => {
-      singleMoment = moment();
+      singleMoment = new Date();
       this.setState({
-        _hour: singleMoment.format('HH'),
-        _minute: singleMoment.format('mm'),
-        _second: singleMoment.format('ss'),
-        _hourMinute: singleMoment.format('HH:mm'),
+        _hour: singleMoment.getHours(),
+        _minute: singleMoment.getMinutes(),
+        _second: singleMoment.getSeconds(),
+        _hourMinute: `${singleMoment.getHours()}:${singleMoment.getMinutes()}`,
       });
     }, 1000);
     Taro.setKeepScreenOn({
@@ -62,12 +60,13 @@ export default class Index extends Component {
     clearInterval(this.timer);
   }
 
-  _momentToLunarCalendar = (dayMoment: Moment): LunarCalendar => {
-    return calendar.solar2lunar(dayMoment.year(), dayMoment.month() + 1, dayMoment.date())
+  _dateToLunarCalendar = (dayMoment: Date): LunarCalendar => {
+    return calendar.solar2lunar(dayMoment.getFullYear(), dayMoment.getMonth() + 1, dayMoment.getDate())
   }
 
   render() {
     const { _hour, _minute, _second, _hourMinute } = this.state;
+    let date = new Date();
     return (
       <View
         style={{
@@ -84,7 +83,7 @@ export default class Index extends Component {
       >
         <Text style={{ lineHeight: 1,
           fontSize: Taro.pxTransform(28) }}
-        >{moment().format('YYYY-MM-DD')} 农历{this._lunarCalendar.IMonthCn}{this._lunarCalendar.IDayCn} 星期{weekMap[moment().weekday()]}</Text>
+        >{`${date.getFullYear()}-${date.getMonth()+1}-${date.getDate()}`} 农历{this._lunarCalendar.IMonthCn}{this._lunarCalendar.IDayCn} 星期{weekMap[date.getDay()]}</Text>
         <View
           style={{
             lineHeight: 1,

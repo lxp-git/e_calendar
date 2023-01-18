@@ -1,6 +1,5 @@
 import React from 'react';
 import Taro from '@tarojs/taro';
-import moment from "moment";
 
 import * as service from './service';
 import application from "../../utils/Application";
@@ -12,7 +11,7 @@ export default {
     firstRowStart: undefined,
     auntFloMap: {},
     eventMap: {},
-    selectedMoment: moment(),
+    selectedMoment: new Date(),
   },
 
   effects: {
@@ -38,14 +37,16 @@ export default {
     * selectYearAndMonth({ payload: { date }}, { call, put, select, take }) {
       if (date.type === 'change') {
         const yearMonthDay = date.detail.value.split('-');
-        const selectedNewMoment = moment().year(parseInt(yearMonthDay[0]))
-          .month(parseInt(yearMonthDay[1]) - 1)
-          .date(parseInt(yearMonthDay[2]));
+        const selectedNewMoment = new Date();
+        selectedNewMoment.setFullYear(parseInt(yearMonthDay[0]));
+        selectedNewMoment.setMonth(parseInt(yearMonthDay[1]) - 1);
+        selectedNewMoment.setDate(parseInt(yearMonthDay[2]));
         yield put(createAction('save')({
           selectedMoment: selectedNewMoment,
         }));
-        const firstDayOfCurrentMonth = selectedNewMoment.clone().startOf('month');
-        const dayInMonth = firstDayOfCurrentMonth.clone().weekday();
+        const firstDayOfCurrentMonth = new Date(selectedNewMoment.valueOf()); selectedNewMoment.clone().startOf('month');
+        firstDayOfCurrentMonth.setDate(1);
+        const dayInMonth = firstDayOfCurrentMonth.getDay() || 6;
         const firstRowStart = firstDayOfCurrentMonth.clone().subtract(dayInMonth, 'day');
         const table = [[
           selectedNewMoment,
@@ -77,8 +78,8 @@ export default {
         });
         const { auntFloMap, eventMap } = yield select(state => state.home);
         data.forEach(item => {
-          const dayMoment = moment(item['notify_at']);
-          const mapKey = `${dayMoment.year()}-${dayMoment.month() + 1}-${dayMoment.date()}`;
+          const dayMoment = new Date(item['notify_at']);
+          const mapKey = `${dayMoment.getFullYear()}-${dayMoment.getMonth() + 1}-${dayMoment.getDate()}`;
           if (item.content === '大姨妈来了') {
             auntFloMap[mapKey] = item;
           } else if (typeof item.content === "string") {

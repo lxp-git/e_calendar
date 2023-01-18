@@ -1,5 +1,4 @@
 import Taro from '@tarojs/taro';
-import {Moment} from "moment";
 
 import application from "./Application";
 import {CSSProperties} from "react";
@@ -70,11 +69,11 @@ export function handleTouchScroll(flag: any): void {
   }
 }
 
-export function isSameDay(day1Moment: Moment | null | undefined, day2Moment: Moment | null | undefined): boolean {
+export function isSameDay(day1Moment?: Date, day2Moment?: Date): boolean {
   if (!day1Moment || !day2Moment) {
     return false;
   }
-  return (day1Moment.year() === day2Moment.year() && day1Moment.month() === day2Moment.month() && day1Moment.date() === day2Moment.date())
+  return (day1Moment.getFullYear() === day2Moment.getFullYear() && day1Moment.getMonth() === day2Moment.getMonth() && day1Moment.getDate() === day2Moment.getDate())
 }
 
 export function formatTime(numberTime: number) {

@@ -1,14 +1,13 @@
 import React from 'react';
 import Taro from "@tarojs/taro";
 import {Button, Image, Text, View} from "@tarojs/components";
-import moment, {Moment} from "moment";
 import {connect} from "react-redux";
 
 import {calendar, LunarCalendar} from "../../../utils/calendar";
 import assets from "../../../assets";
 import * as service from "../service";
 import application from "../../../utils/Application";
-import {createAction, StyleSheet} from "../../../utils";
+import {createAction, isSameDay, StyleSheet} from "../../../utils";
 
 import "./index.global.scss";
 
@@ -128,20 +127,20 @@ const Event = {
 }
 
 const _momentToLunarCalendar = (dayMoment): LunarCalendar => {
-  return calendar.solar2lunar(dayMoment.year(), dayMoment.month() + 1, dayMoment.date())
+  return calendar.solar2lunar(dayMoment.getFullYear(), dayMoment.getMonth() + 1, dayMoment.getDate())
 }
 
 const Month = React.memo((props: any) => {
   const { selectedDay: tmpSelectedDay, auntFloMap, eventMap, table: _table = [], dispatch, holidaysMap, textPrimaryColor, themePrimary } = props;
   let selectedDay = tmpSelectedDay;
   if (typeof tmpSelectedDay === 'string') {
-    selectedDay = moment(tmpSelectedDay);
+    selectedDay = new Date(tmpSelectedDay);
   }
 
   const _onDayClick = (dayMoment) => {
     if (application.setting.isNoteBookEnabled) {
-      if (selectedDay.year() === dayMoment.year() && selectedDay.month() === dayMoment.month() && selectedDay.date() === dayMoment.date()) {
-        Taro.navigateTo({ url: `/pages/event/index?date=${selectedDay.year()}-${selectedDay.month() + 1}-${selectedDay.date()}` })
+      if (selectedDay.year() === dayMoment.getFullYear() && selectedDay.getMonth() === dayMoment.getMonth() && selectedDay.getDate() === dayMoment.getDate()) {
+        Taro.navigateTo({ url: `/pages/event/index?date=${selectedDay.getFullYear()}-${selectedDay.getMonth() + 1}-${selectedDay.getDate()}` })
         return;
       }
     }
@@ -151,14 +150,14 @@ const Month = React.memo((props: any) => {
     Taro.vibrateShort();
   }
 
-  const _onLongPressCalendar = (dayMoment: Moment) => {
+  const _onLongPressCalendar = (dayMoment: Date) => {
     if (!(application.setting.isAuntFloEnabled)) {
       return;
     }
     const actionList = [
       '✅大姨妈来了'
     ];
-    const mapKey = `${dayMoment.year()}-${dayMoment.month() + 1}-${dayMoment.date()}`;
+    const mapKey = `${dayMoment.getFullYear()}-${dayMoment.getMonth() + 1}-${dayMoment.getDate()}`;
     if (auntFloMap && auntFloMap[mapKey]) {
       actionList[0] = "❌大姨妈没来";
     }
@@ -187,7 +186,7 @@ const Month = React.memo((props: any) => {
       });
     }
   }
-  let currentMonth: Moment;
+  let currentMonth: Date;
   return (
     <View
       style={styles.index}
@@ -197,15 +196,15 @@ const Month = React.memo((props: any) => {
           style={styles.week}
           key={"week" + weekIndex}
         >
-          {row.map((dayMoment: Moment, dayIndex) => {
+          {row.map((dayMoment: Date, dayIndex) => {
             if (typeof dayMoment === 'string') {
-              dayMoment = moment(dayMoment);
+              dayMoment = new Date(dayMoment);
             }
-            if (!currentMonth && dayMoment.date() === 1) {
+            if (!currentMonth && dayMoment.getDate() === 1) {
               currentMonth = dayMoment;
             }
             const lunarCalendar: LunarCalendar = _momentToLunarCalendar(dayMoment);
-            const isSelectedDay = selectedDay.isSame(dayMoment, 'day');
+            const isSelectedDay = isSameDay(selectedDay, dayMoment); //  selectedDay.isSame(dayMoment, 'day')
             /// 优先显示节日，再显示农历日期
             let bottomText = '';
             if (lunarCalendar.IDayCn) {
@@ -222,14 +221,14 @@ const Month = React.memo((props: any) => {
             if (localHoliday) {
               bottomText = localHoliday;
             }
-            const mapKey = `${dayMoment.year()}-${dayMoment.month() + 1}-${dayMoment.date()}`;
+            const mapKey = `${dayMoment.getFullYear()}-${dayMoment.getMonth() + 1}-${dayMoment.getDate()}`;
             const holiday = holidaysMap[mapKey];
             if (holiday && holiday['festival']) {
               bottomText = holiday['festival'];
             }
             /// 日期的颜色
             let dateColor = textPrimaryColor;
-            if (dayMoment.weekday() == 5 || dayMoment.weekday() == 6) {
+            if (dayMoment.getDay() == 6 || dayMoment.getDay() == 0) {
               dateColor = themePrimary;
             }
             if (holiday) {
@@ -244,12 +243,11 @@ const Month = React.memo((props: any) => {
             if (isSelectedDay) {
               dateColor = 'white';
             }
-
             return (
               <View style={styles.day}>
                 <View
                   style={{ ...styles.dayView,
-                    opacity: (currentMonth && dayMoment.month() === currentMonth.month()) ? 1 : 0.3,
+                    opacity: (currentMonth && dayMoment.getMonth() === currentMonth.getMonth()) ? 1 : 0.3,
                     backgroundColor: isSelectedDay ? themePrimary : 'white', }}
                   onLongClick={(event) => {
                     console.log('onLongClick', event);
@@ -265,7 +263,7 @@ const Month = React.memo((props: any) => {
                     <Text
                       style={{ color: dateColor, ...styles.date }}
                     >
-                      {dayMoment.date()}
+                      {dayMoment.getDate()}
                     </Text>
                     <Text
                       style={{ ...styles.dateBottomText, color: isSelectedDay ? 'white' : 'black' }}

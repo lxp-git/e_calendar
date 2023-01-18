@@ -1,8 +1,8 @@
 import React from 'react';
 import Taro  from '@tarojs/taro';
 import {Text, Button, View} from '@tarojs/components';
-import moment from "moment";
 import {StyleSheet} from "../../../utils";
+import { convertToHHmmss, convertToYearMonthDate } from '../../../utils/date_utils';
 
 const styles = StyleSheet.create({
   index: { backgroundColor: 'transparent', padding: Taro.pxTransform(32) },
@@ -17,11 +17,11 @@ const styles = StyleSheet.create({
 });
 
 const Timer = React.memo((props: { onTimeClick: (data) => void }) => {
-  const [ _nowLocaleString, setNowLocaleString ] = React.useState(moment().format('YYYY/MM/DD HH:mm:ss'));
+  const [ _nowLocaleString, setNowLocaleString ] = React.useState(convertToYearMonthDate() + " " + convertToHHmmss());
 
   React.useEffect(() => {
     const timer = setInterval(() => {
-      setNowLocaleString(() => moment().format('YYYY/MM/DD HH:mm:ss'));
+      setNowLocaleString(() => convertToYearMonthDate() + " " + convertToHHmmss()); // moment().format('YYYY/MM/DD HH:mm:ss')
     }, 1000);
     return () => {
       clearInterval(timer);

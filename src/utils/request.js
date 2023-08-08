@@ -1,8 +1,8 @@
-import Taro from '@tarojs/taro';
+import Taro from "@tarojs/taro";
 
-import application from './Application';
+import application from "./Application";
 // import { get as getGlobalData } from './global_data';
-import { createAction } from './index'
+import { createAction } from "./index";
 
 // const codeMessage = {
 //   200: '服务器成功返回请求的数据。',
@@ -71,7 +71,7 @@ import { createAction } from './index'
  */
 export default function request(url, option) {
   // const token = Taro.getStorageSync(config.storageKeys.token);
-  if (!url.startsWith('http')) {
+  if (!url.startsWith("http")) {
     url = `${application.baseUrl}${url}`;
     // url = `https://bestshareapi.herokuapp.com/api/v1/${url}`
     // url = `https://api.bestshare.org/v1/${url}`
@@ -100,8 +100,8 @@ export default function request(url, option) {
   //   .digest('hex');
   const defaultOptions = {
     // credentials: 'include',
-    mode: 'cors',
-    method: 'GET',
+    mode: "cors",
+    method: "GET",
     headers: {
       // 'x-language': languageMap[global.language] || 'hk',
       // 'x-device-info': systemInfoJsonString,
@@ -109,31 +109,35 @@ export default function request(url, option) {
     },
   };
   if (application.cookiesMap) {
-    let cookieString = '';
-    for(const key in application.cookiesMap) {
+    let cookieString = "";
+    for (const key in application.cookiesMap) {
       cookieString = `${cookieString}${key}=${application.cookiesMap[key]}; `;
     }
     if (cookieString) {
-      defaultOptions.headers['Cookie'] = cookieString;
+      defaultOptions.headers["Cookie"] = cookieString;
     }
   }
   const newOptions = { ...defaultOptions, ...options };
   if (
-    newOptions.method === 'POST'
-    || newOptions.method === 'PUT'
-    || newOptions.method === 'DELETE'
+    newOptions.method === "POST" ||
+    newOptions.method === "PUT" ||
+    newOptions.method === "DELETE"
   ) {
-    if (typeof window === 'undefined' || !(window.FormData) || !(newOptions.body instanceof window.FormData)) {
+    if (
+      typeof window === "undefined" ||
+      !window.FormData ||
+      !(newOptions.body instanceof window.FormData)
+    ) {
       newOptions.headers = {
-        Accept: 'application/json',
-        'Content-Type': 'application/json; charset=utf-8',
+        Accept: "application/json",
+        "Content-Type": "application/json; charset=utf-8",
         ...newOptions.headers,
       };
       newOptions.body = JSON.stringify(newOptions.body);
     } else {
       // newOptions.body is FormData
       newOptions.headers = {
-        Accept: 'application/json',
+        Accept: "application/json",
         ...newOptions.headers,
       };
     }
@@ -156,83 +160,93 @@ export default function request(url, option) {
   //     }
   //   }
   // }
-  return Taro.request({ url: url, ...newOptions, header: {
-      ...newOptions.headers,
-    }, data: newOptions.body })
-    // .then(checkStatus)
-    // .then(response => cachedSave(response, hashcode))
-    .then((response) => {
-      // DELETE and 204 do not return data by default
-      // using .json will report an error.
-      // if (newOptions.method === 'DELETE' || response.status === 204) {
-      //   return response.text();
-      // }
-      // const responseJson = response.json();
-      // return responseJson;
-      // Cache-Control: "no-store, no-cache, must-revalidate"
-      // Connection: "keep-alive"
-      // Content-Type: "application/json; charset=utf-8"
-      // Date: "Sat, 15 Feb 2020 12:26:13 GMT"
-      // Expires: "Thu, 19 Nov 1981 08:52:00 GMT"
-      // Pragma: "no-cache"
-      // Server: "Tengine"
-      // Set-Cookie: "PHPSESSID=2i4qdrhbf50j75nmqguh1elpcn; path=/; HttpOnly"
-      // Transfer-Encoding: "chunked"
-      if (response.header['Set-Cookie']) {
-        const cookiesMap = application.cookiesMap;
-        const PHPSESSID = response.header['Set-Cookie'].split(';')[0].split('=')[1];
-        cookiesMap['PHPSESSID'] = PHPSESSID;
-        application.cookiesMap = cookiesMap;
-      }
-      const { statusCode, data } = response;
-      if (statusCode === 401) {
-        console.log('statusCode', statusCode);
-        application.loginUser = null;
-        application.cookiesMap = null;
-        global.dvaApp._store.dispatch(createAction('user/save')({
-          token: '',
-          profile: {},
-        }));
-        //情况本地相关的数据
-        // Taro.setStorageSync(config.storageKeys.token, null)
-        // Taro.setStorageSync(config.storageKeys.profile, null)
-        // if (Taro.getEnv() === Taro.ENV_TYPE.WEB) {
-        //   window.location.href = `https://wx.bestshare.org/api/v1/wechat/access?redirect_uri=${encodeURIComponent(window.location.href)}`;
+  return (
+    Taro.request({
+      url: url,
+      ...newOptions,
+      header: {
+        ...newOptions.headers,
+      },
+      data: newOptions.body,
+    })
+      // .then(checkStatus)
+      // .then(response => cachedSave(response, hashcode))
+      .then((response) => {
+        // DELETE and 204 do not return data by default
+        // using .json will report an error.
+        // if (newOptions.method === 'DELETE' || response.status === 204) {
+        //   return response.text();
         // }
-        // else if (Taro.getEnv() === Taro.ENV_TYPE.WEAPP) {
-        //   window.location.reload();
-        // }
-      }
-      if (statusCode >= 400) {
-        throw { statusCode, data };
-      }
-      return data;
-
-    }).catch((e) => {
-      // e.response.text().then((response) => {
-      //   console.log(url, response);
-      // });
-      const status = e.statusCode;
-      if (status === 401) {
-        // @HACK
-        /* eslint-disable no-underscore-dangle */
-        // window.g_app._store.dispatch({
-        //     type: 'login/logout',
+        // const responseJson = response.json();
+        // return responseJson;
+        // Cache-Control: "no-store, no-cache, must-revalidate"
+        // Connection: "keep-alive"
+        // Content-Type: "application/json; charset=utf-8"
+        // Date: "Sat, 15 Feb 2020 12:26:13 GMT"
+        // Expires: "Thu, 19 Nov 1981 08:52:00 GMT"
+        // Pragma: "no-cache"
+        // Server: "Tengine"
+        // Set-Cookie: "PHPSESSID=2i4qdrhbf50j75nmqguh1elpcn; path=/; HttpOnly"
+        // Transfer-Encoding: "chunked"
+        if (response.header["Set-Cookie"]) {
+          const cookiesMap = application.cookiesMap;
+          const PHPSESSID = response.header["Set-Cookie"]
+            .split(";")[0]
+            .split("=")[1];
+          cookiesMap["PHPSESSID"] = PHPSESSID;
+          application.cookiesMap = cookiesMap;
+        }
+        const { statusCode, data } = response;
+        if (statusCode === 401) {
+          console.log("statusCode", statusCode);
+          application.loginUser = null;
+          application.cookiesMap = null;
+          global.dvaApp._store.dispatch(
+            createAction("user/save")({
+              token: "",
+              profile: {},
+            })
+          );
+          //情况本地相关的数据
+          // Taro.setStorageSync(config.storageKeys.token, null)
+          // Taro.setStorageSync(config.storageKeys.profile, null)
+          // if (Taro.getEnv() === Taro.ENV_TYPE.WEB) {
+          //   window.location.href = `https://wx.bestshare.org/api/v1/wechat/access?redirect_uri=${encodeURIComponent(window.location.href)}`;
+          // }
+          // else if (Taro.getEnv() === Taro.ENV_TYPE.WEAPP) {
+          //   window.location.reload();
+          // }
+        }
+        if (statusCode >= 400) {
+          throw { statusCode, data };
+        }
+        return data;
+      })
+      .catch((e) => {
+        // e.response.text().then((response) => {
+        //   console.log(url, response);
         // });
-        return;
-      }
-      // environment should not be used
-      if (status === 403) {
-        // router.push('/exception/403');
-        return;
-      }
-      if (status <= 504 && status >= 500) {
-        // router.push('/exception/500');
-        return;
-      }
-      if (status >= 404 && status < 422) {
-        // router.push('/exception/404');
-      }
-      throw e;
-    });
+        const status = e.statusCode;
+        if (status === 401) {
+          // @HACK
+          /* eslint-disable no-underscore-dangle */
+          // window.g_app._store.dispatch({
+          //     type: 'login/logout',
+          // });
+        }
+        // environment should not be used
+        if (status === 403) {
+          // router.push('/exception/403');
+          return;
+        }
+        if (status <= 504 && status >= 500) {
+          // router.push('/exception/500');
+          return;
+        }
+        if (status >= 404 && status < 422) {
+          // router.push('/exception/404');
+        }
+        throw e;
+      })
+  );
 }

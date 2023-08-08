@@ -1,13 +1,13 @@
 import React from 'react';
 import Taro from "@tarojs/taro";
-import {Button, Image, Text, View} from "@tarojs/components";
-import {connect} from "react-redux";
+import { Button, Image, Text, View } from "@tarojs/components";
+import { connect } from "react-redux";
 
-import {calendar, LunarCalendar} from "../../../utils/calendar";
+import { calendar, LunarCalendar } from "../../../utils/calendar";
 import assets from "../../../assets";
 import * as service from "../service";
 import application from "../../../utils/Application";
-import {createAction, isSameDay, StyleSheet} from "../../../utils";
+import { createAction, isSameDay, StyleSheet } from "../../../utils";
 
 import "./index.global.scss";
 
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     width: '100%',
     boxSizing: "border-box",
     background: "white",
-    height: (systemInfo.screenWidth - 10)/7*5+10 + 'px',
+    height: (systemInfo.screenWidth - 10) / 7 * 5 + 10 + 'px',
   },
   week: {
     "width": "100%",
@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
     display: "flex",
     "borderRadius": Taro.pxTransform(8),
     marginLeft: '2px', marginRight: '2px', marginTop: '2px', marginBottom: '2px',
-    width: (gridItemWidth-4) + "px", height: (gridItemWidth-4) + "px",
+    width: (gridItemWidth - 4) + "px", height: (gridItemWidth - 4) + "px",
   },
   dayViewButton: {
     display: "flex",
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     padding: '2px !important',
     // marginLeft: '2px', marginRight: '2px', marginTop: '2px', marginBottom: '2px',
     // paddingTop: '2px',paddingBottom: '2px',
-    width: (gridItemWidth-4) + "px", height: (gridItemWidth-4) + "px",
+    width: (gridItemWidth - 4) + "px", height: (gridItemWidth - 4) + "px",
   },
   date: {
     display: 'flex',
@@ -137,9 +137,9 @@ const Month = React.memo((props: any) => {
     selectedDay = new Date(tmpSelectedDay);
   }
 
-  const _onDayClick = (dayMoment) => {
+  const _onDayClick = (dayMoment: Date) => {
     if (application.setting.isNoteBookEnabled) {
-      if (selectedDay.year() === dayMoment.getFullYear() && selectedDay.getMonth() === dayMoment.getMonth() && selectedDay.getDate() === dayMoment.getDate()) {
+      if (selectedDay.getFullYear() === dayMoment.getFullYear() && selectedDay.getMonth() === dayMoment.getMonth() && selectedDay.getDate() === dayMoment.getDate()) {
         Taro.navigateTo({ url: `/pages/event/index?date=${selectedDay.getFullYear()}-${selectedDay.getMonth() + 1}-${selectedDay.getDate()}` })
         return;
       }
@@ -164,7 +164,7 @@ const Month = React.memo((props: any) => {
     if (actionList.length > 0) {
       Taro.showActionSheet({
         itemList: actionList,
-        success: ({ tapIndex, errMsg}: { tapIndex: number, errMsg: string }) => {
+        success: ({ tapIndex, errMsg }: { tapIndex: number, errMsg: string }) => {
           if (actionList[tapIndex] === "✅大姨妈来了") {
             const data = {
               content: '大姨妈来了',
@@ -175,7 +175,7 @@ const Month = React.memo((props: any) => {
               auntFloMap[mapKey] = {
                 ...result,
               };
-            }).catch((error) => console.log("error",error));
+            }).catch((error) => console.log("error", error));
             auntFloMap[mapKey] = data;
           } else {
             service.event.delete(auntFloMap[mapKey].id);
@@ -246,9 +246,11 @@ const Month = React.memo((props: any) => {
             return (
               <View style={styles.day}>
                 <View
-                  style={{ ...styles.dayView,
+                  style={{
+                    ...styles.dayView,
                     opacity: (currentMonth && dayMoment.getMonth() === currentMonth.getMonth()) ? 1 : 0.3,
-                    backgroundColor: isSelectedDay ? themePrimary : 'white', }}
+                    backgroundColor: isSelectedDay ? themePrimary : 'white',
+                  }}
                   onLongClick={(event) => {
                     console.log('onLongClick', event);
                   }}
@@ -256,10 +258,10 @@ const Month = React.memo((props: any) => {
                     console.log("onLongPress", event);
                     _onLongPressCalendar(dayMoment);
                   }}
-                  onClick={(data) => _onDayClick(dayMoment)}
+
                   hoverClass='commonHover'
                 >
-                  <Button style={styles.dayViewButton}>
+                  <Button style={styles.dayViewButton} onClick={(data) => _onDayClick(dayMoment)}>
                     <Text
                       style={{ color: dateColor, ...styles.date }}
                     >
@@ -280,19 +282,19 @@ const Month = React.memo((props: any) => {
                       )}
                     </View>
                     {holiday && holiday['event'] == 'HOLIDAY'
-                    && (
-                      <Text
-                        style={{ ...styles.vacation, color: isSelectedDay ? 'white' : themePrimary }}
-                      >
-                        休
-                      </Text>
-                    )}
+                      && (
+                        <Text
+                          style={{ ...styles.vacation, color: isSelectedDay ? 'white' : themePrimary }}
+                        >
+                          休
+                        </Text>
+                      )}
                     {holiday && holiday['event'] == 'WORKING_DAY'
-                    && (
-                      <Text style={{ ...styles.work, color: isSelectedDay ? 'white' : textPrimaryColor }}>
-                        班
-                      </Text>
-                    )}
+                      && (
+                        <Text style={{ ...styles.work, color: isSelectedDay ? 'white' : textPrimaryColor }}>
+                          班
+                        </Text>
+                      )}
                     {auntFloMap && auntFloMap[mapKey] && (
                       <Image
                         src={isSelectedDay ? assets.images.iconHeartWhite : assets.images.iconHeartPick}

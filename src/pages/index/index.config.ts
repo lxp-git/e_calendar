@@ -1,4 +1,4 @@
-export default {
+export default definePageConfig({
   navigationBarTitleText: '一个日历',
   // navigationBarBackgroundColor: '#1AAD19',
   navigationBarTextStyle: 'white',
@@ -6,4 +6,4 @@ export default {
   disableScroll: true,
   enableShareAppMessage: true,
   enableShareTimeline: true,
-}
+})

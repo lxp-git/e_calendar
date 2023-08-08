@@ -1,11 +1,13 @@
 {
   "miniprogramRoot": "./dist",
   "projectname": "Toolset",
-  "description": "刘宣平的一个工具集",
+  "description": "一个工具集",
   "appid": "wx17ea2baa75ffe5ef",
   "setting": {
     "urlCheck": true,
     "es6": false,
+    "enhance": false,
+    "compileHotReLoad": false,
     "postcss": false,
     "minified": false
   },

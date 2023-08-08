@@ -1,7 +1,7 @@
 {
   "miniprogramRoot": "./",
-  "projectname": "TestTaro",
-  "description": "",
+  "projectname": "taro_test",
+  "description": "test",
   "appid": "touristappid",
   "setting": {
     "urlCheck": true,

@@ -1,4 +1,4 @@
-export default {
+export default defineAppConfig({
   pages: [
     'pages/index/index',
     'pages/setting/index',
@@ -6,7 +6,6 @@ export default {
     'pages/clock/index',
     'pages/token/index',
     'pages/words/index',
-
     'pages/login/index',
     'pages/pomodoro/index',
   ],
@@ -17,4 +16,4 @@ export default {
     navigationBarTextStyle: 'white',
     navigationStyle: "custom",
   },
-}
+})

@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, PropsWithChildren } from 'react'
 import { Provider } from 'react-redux'
 // import { persistStore, REHYDRATE } from 'redux-persist'
 // import { PersistGate } from 'redux-persist/lib/integration/react'
@@ -8,12 +8,6 @@ import './app.scss'
 import dva from "./dva";
 import models from './models';
 import {createAction} from "./utils";
-
-// 如果需要在 h5 环境中开启 React Devtools
-// 取消以下注释：
-if (process.env.NODE_ENV !== 'production' && process.env.TARO_ENV === 'h5')  {
-  require('nerv-devtools')
-}
 
 const dvaApp = dva.createApp({
   initialState: { },
@@ -25,7 +19,7 @@ const dvaApp = dva.createApp({
 });
 global.dvaApp = dvaApp;
 const store = global.dvaApp.getStore();
-class App extends Component {
+class App extends Component<PropsWithChildren> {
 
   componentDidMount () {
     // if (process.env.TARO_ENV === 'weapp') {

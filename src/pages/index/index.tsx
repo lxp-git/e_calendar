@@ -1,11 +1,11 @@
 import Taro from '@tarojs/taro'
 import React from 'react'
-import {View, Image, Input} from '@tarojs/components'
-import {connect} from "react-redux";
+import { View, Image, Input } from '@tarojs/components'
+import { connect } from "react-redux";
 
 import assets from '../../assets';
 import application from "../../utils/Application";
-import {createAction, isLogin, StyleSheet} from "../../utils";
+import { createAction, isLogin, StyleSheet } from "../../utils";
 import './index.global.scss';
 import PageContainer from '../../components/PageContainer';
 import WeekCalendar from './WeekCalendar';
@@ -34,23 +34,21 @@ const leftImage = (
 );
 
 function Index(props) {
-
   const { dispatch, selectedViewModel } = props;
-  const _onSelectYearAndMonth = (date) => {
+  const _onSelectYearAndMonth = React.useCallback((date) => {
     date.type = "change";
-
     dispatch(createAction('home/selectYearAndMonth')({ date }));
-  }
+  }, [dispatch]);
 
   React.useEffect(() => {
     Taro.showShareMenu({
       withShareTicket: true,
-      showShareItems: [ 'qq', 'qzone', 'wechatFriends', 'wechatMoment' ],
+      showShareItems: ['qq', 'qzone', 'wechatFriends', 'wechatMoment'],
     });
     dispatch(createAction('global/save')({ themePrimary: application.setting.themePrimary }));
     _onSelectYearAndMonth({
       type: 'change',
-      detail: {value: convertToYearMonthDate()},
+      detail: { value: convertToYearMonthDate() },
     });
     if (!isLogin()) {
       dispatch(createAction('home/login')({}));
@@ -58,7 +56,7 @@ function Index(props) {
     // this._fetchEvent(); // 获取大姨妈以及笔记事件，在_onSelectYearAndMonth
     const _qrCodeLogin = () => {
       if (Taro.getEnv() !== Taro.ENV_TYPE.WEAPP) return;
-      const scene  = Taro.getCurrentInstance().router?.params.scene;
+      const scene = Taro.getCurrentInstance().router?.params.scene;
       dispatch(createAction('global/handleQrCode')({
         scene,
       }));
@@ -66,7 +64,7 @@ function Index(props) {
     _qrCodeLogin();
     // debug
     // Taro.navigateTo({ url: '/pages/words/index' });
-  }, [])
+  }, [_onSelectYearAndMonth, dispatch])
 
   Taro.useShareTimeline(() => {
     return {
@@ -85,7 +83,7 @@ function Index(props) {
     }
   });
 
-  const [ isDrawerShowed, setIsDrawerShowed ] = React.useState(false);
+  const [isDrawerShowed, setIsDrawerShowed] = React.useState(false);
   const _onClose = () => setIsDrawerShowed(false);
   return (
     <PageContainer
@@ -109,32 +107,13 @@ function Index(props) {
         <View
           style={styles.calendar}
         >
-          { selectedViewModel === 'month' && <Calendar /> }
-          { selectedViewModel === 'week' && <WeekCalendar /> }
-          { selectedViewModel === 'diary' && <Diary /> }
+          {selectedViewModel === 'month' && <Calendar />}
+          {selectedViewModel === 'week' && <WeekCalendar />}
+          {selectedViewModel === 'diary' && <Diary />}
         </View>
       </View>
       <Drawer isDrawerShowed={isDrawerShowed} onClose={_onClose} />
     </PageContainer>
   );
 }
-// const Index = connect(({ global, home, words }) => ({ global, home, words }))(WrapComponent)
-// Index.config = {};
-// Index.config['navigationBarTitleText'] = "一个日历";
-// Index.config['navigationBarTextStyle'] = "white";
-// Index.config['backgroundColor'] = "#f4f4f4";
-// WrapComponent.navigationOptions = ({ navigation }) => {
-//   return ({
-//     title: 'Home',
-//     headerStyle: {
-//       backgroundColor: application.setting.themePrimary,
-//       elevation: 0,
-//     },
-//     headerTintColor: '#fff',
-//     // headerTitleStyle: {
-//     //   fontWeight: 'bold',
-//     //   color: '#000',
-//     // },
-//   });
-// }
 export default connect(({ global: { selectedViewModel } }) => ({ selectedViewModel }))(React.memo(Index));

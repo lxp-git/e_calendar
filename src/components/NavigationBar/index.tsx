@@ -1,32 +1,26 @@
-import React, {CSSProperties} from 'react';
-import Taro  from '@tarojs/taro';
-import {Button, Image, Text, View} from "@tarojs/components";
-import {connect} from "react-redux";
+import React, { CSSProperties } from 'react';
+import Taro from '@tarojs/taro';
+import { Button, Image, Text, View } from "@tarojs/components";
 import assets from '../../assets';
+import { useAppSelector } from '../../dva';
 
-// 通过查阅微信 API ，我们分别通过 wx.getSystemInfoSync 及 wx.getMenuButtonBoundingClientRect 获取到 StatusBarHeight 及 MenuButton 的布局信息。
-// NavigationBarPaddingTop = MenuButtonTop - StatusBarHeight
-// NavigationBarPaddingBottom = NavigationBarPaddingTop
-// NavigationBar = StatusBarHeight + NavigationBarPaddingTop + NavigationBarPaddingBottom + MenuButtonHeight
 const systemInfo = Taro.getSystemInfoSync();
+console.log("systemInfo", systemInfo)
 
 interface Props {
-  global: any, style?: CSSProperties, children: any,title: any,renderLeftButton: any, onLeftButtonClick: any, isCustomLeftButton: any,
+  global: any, style?: CSSProperties, children: any, title: any, renderLeftButton: any, onLeftButtonClick: any, isCustomLeftButton: any,
 }
 
-function NavigationBar(props: Props) {
-  // { global, children, title,left }: { children?: any, title?: string | Component, left?: any, }
-  const { global, style, children, title, onLeftButtonClick, isCustomLeftButton } = props;
-  const { themePrimary } = global;
-  const menuButtonBoundingClientRect = Taro.getMenuButtonBoundingClientRect();
-  const navigationBarHeight = ((menuButtonBoundingClientRect.top - systemInfo.statusBarHeight) * 2) + menuButtonBoundingClientRect.height;
+export default React.memo((props: Props) => {
+  const { style, title, onLeftButtonClick, isCustomLeftButton } = props;
+  const themePrimary = useAppSelector(state => state.global.themePrimary);
+  const navigationBarHeight = 38;
   let color = 'white';
   let backIconUrl = assets.images.iconArrowBackWhite;
-  if (style && (style.background >= '#999999' || style.backgroundColor >= '#999999')) {
+  if (style && ((style?.background && style?.background >= '#999999') || (style?.backgroundColor && style?.backgroundColor >= '#999999'))) {
     color = '#333333';
     backIconUrl = assets.images.iconArrowBackBlack;
   }
-  const navigationBarPxHeight = Taro.pxTransform(navigationBarHeight * 2);
   return (
     <View
       style={{
@@ -35,19 +29,22 @@ function NavigationBar(props: Props) {
         flexDirection: 'column',
         backgroundColor: themePrimary,
         color,
+        borderWidth: 10,
+        height: systemInfo.statusBarHeight + navigationBarHeight,
         ...style,
       }}
     >
       <View
         style={{
           width: '100%',
-          height: Taro.pxTransform(systemInfo.statusBarHeight * 2),
+          height: systemInfo.statusBarHeight,
         }}
       />
       <View
         style={{
           display: "flex",
           flexDirection: 'row',
+          height: navigationBarHeight,
         }}
       >
         <Button
@@ -57,8 +54,8 @@ function NavigationBar(props: Props) {
         >
           <View
             style={{
-              height: navigationBarPxHeight,
-              width: navigationBarPxHeight,
+              height: navigationBarHeight,
+              width: navigationBarHeight,
               display: "flex",
               justifyContent: 'center',
               alignItems: 'center',
@@ -68,7 +65,7 @@ function NavigationBar(props: Props) {
               props.renderLeftButton
             ) : (Taro.getCurrentPages().length > 1 && (
               <Image
-                style={{ color: '#000000', width:Taro.pxTransform(44), height: Taro.pxTransform(44)}}
+                style={{ color: '#000000', width: Taro.pxTransform(44), height: Taro.pxTransform(44) }}
                 src={backIconUrl}
               />
             ))}
@@ -78,13 +75,13 @@ function NavigationBar(props: Props) {
           style={{
             flex: 1,
             marginLeft: Taro.pxTransform(32),
-            height: navigationBarPxHeight,
+            height: navigationBarHeight,
             display: "flex",
             justifyContent: 'flex-start',
             alignItems: 'center',
           }}
         >
-          {title && ( typeof title === 'string' ? <Text style={{ fontWeight: "bold", fontSize: Taro.pxTransform(36) }}>{title}</Text> : title({ mode: (style && style.backgroundColor) >= '#999999' ? "light" : "dark" }))}
+          {title && (typeof title === 'string' ? <Text style={{ fontWeight: "bold", fontSize: Taro.pxTransform(36) }}>{title}</Text> : title({ mode: (style && style.backgroundColor && style.backgroundColor >= '#999999') ? "light" : "dark" }))}
         </View>
         {/*<View*/}
         {/*  style={{*/}
@@ -99,7 +96,4 @@ function NavigationBar(props: Props) {
       </View>
     </View>
   );
-}
-export default connect(({ global }) => ({ global }))(NavigationBar);
-
-
+})

@@ -188,17 +188,18 @@ export default function request(url, option) {
         // Server: "Tengine"
         // Set-Cookie: "PHPSESSID=2i4qdrhbf50j75nmqguh1elpcn; path=/; HttpOnly"
         // Transfer-Encoding: "chunked"
-        if (response.header["Set-Cookie"]) {
+        const cookieKey = Object.keys(response.header).find(
+          (item) => item.toLowerCase() === "set-cookie"
+        );
+        if (cookieKey) {
+          const setCookieString = response.header[cookieKey];
           const cookiesMap = application.cookiesMap;
-          const PHPSESSID = response.header["Set-Cookie"]
-            .split(";")[0]
-            .split("=")[1];
+          const PHPSESSID = setCookieString.split(";")[0].split("=")[1];
           cookiesMap["PHPSESSID"] = PHPSESSID;
           application.cookiesMap = cookiesMap;
         }
         const { statusCode, data } = response;
         if (statusCode === 401) {
-          console.log("statusCode", statusCode);
           application.loginUser = null;
           application.cookiesMap = null;
           global.dvaApp._store.dispatch(

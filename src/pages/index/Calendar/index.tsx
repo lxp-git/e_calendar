@@ -1,12 +1,12 @@
 import React from 'react';
 import Taro from "@tarojs/taro";
-import {Image, Picker, Swiper, SwiperItem, Text, View} from "@tarojs/components";
-import {connect} from "react-redux";
+import { Image, Picker, Swiper, SwiperItem, Text, View } from "@tarojs/components";
+import { connect } from "react-redux";
 
-import {calendar, LunarCalendar} from "../../../utils/calendar";
+import { calendar, LunarCalendar } from "../../../utils/calendar";
 import * as service from "../service";
 import application from "../../../utils/Application";
-import {createAction, StyleSheet} from "../../../utils";
+import { createAction, StyleSheet } from "../../../utils";
 import WeekHeader from "../WeekHeader";
 import DateDetail from "../DateDetail";
 import WordCard from "../../../components/WordCard";
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     "color": "#444444",
   },
   selectMonthImage: { width: Taro.pxTransform(32), height: Taro.pxTransform(32) },
-  body: { height: (systemInfo.screenWidth-10)/7*5+24+10 + 'px', backgroundColor: 'white' },
+  body: { height: (systemInfo.screenWidth - 10) / 7 * 5 + 24 + 10 + 'px', backgroundColor: 'white' },
   swiperContainer: { backgroundColor: "white", width: '100%', boxSizing: "border-box", paddingLeft: Taro.pxTransform(10), paddingRight: Taro.pxTransform(10) },
 
 })
@@ -56,7 +56,7 @@ const _momentToLunarCalendar = (dayMoment): LunarCalendar => {
 }
 
 function Calendar(props: any) {
-  const { dispatch, englishWord, page1 = [], page0 = [], page2 = [], currentPageIndex = 1, selectedDay: tmpSelectedDay, selectedMonth: tmpSelectedMonth, themePrimary  } = props;
+  const { dispatch, englishWord, page1 = [], page0 = [], page2 = [], currentPageIndex = 1, selectedDay: tmpSelectedDay, selectedMonth: tmpSelectedMonth, themePrimary } = props;
   let selectedDay = tmpSelectedDay, selectedMonth = tmpSelectedMonth;
   if (typeof tmpSelectedDay === 'string') {
     selectedDay = new Date(tmpSelectedDay);
@@ -65,7 +65,6 @@ function Calendar(props: any) {
     selectedMonth = new Date(tmpSelectedMonth);
   }
   const [holidaysMap, setHolidaysMap] = React.useState({});
-  const [isContentShow, setIsContentShow] = React.useState(false);
 
   React.useEffect(() => {
     const fetch = () => {
@@ -73,15 +72,12 @@ function Calendar(props: any) {
         data.forEach(item => {
           holidaysMap[`${item['year']}-${item['month']}-${item['date']}`] = item;
         });
-        setHolidaysMap({...holidaysMap});
+        setHolidaysMap({ ...holidaysMap });
 
       });
       dispatch(createAction('words/fetch')({}));
     }
     fetch();
-    setTimeout(() => {
-      setIsContentShow(true);
-    }, 0);
   }, []);
 
   const _onSelectYearAndMonth = (date) => {
@@ -90,27 +86,30 @@ function Calendar(props: any) {
   }
 
   const _backToToday = (event) => {
-    _onSelectYearAndMonth({ type: 'change', detail: {
-        value: convertToYearMonthDate() }});
+    _onSelectYearAndMonth({
+      type: 'change', detail: {
+        value: convertToYearMonthDate()
+      }
+    });
   }
   const _onDateDetailClicked = () => {
     if (application.setting.isNoteBookEnabled) {
       Taro.navigateTo({ url: `/pages/event/index?date=${selectedDay.year()}-${selectedDay.month() + 1}-${selectedDay.date()}` })
     }
   }
-  const _onWordClicked = (event) => { event.preventDefault();event.stopPropagation(); Taro.navigateTo({ url: '/pages/words/index' }) };
+  const _onWordClicked = (event) => { event.preventDefault(); event.stopPropagation(); Taro.navigateTo({ url: '/pages/words/index' }) };
 
   const _selectedLunarCalendar = _momentToLunarCalendar(selectedDay);
   const currentDate = new Date();
   var year = new Date(currentDate.getFullYear(), 0, 1);
   var days = Math.floor((currentDate - year) / (24 * 60 * 60 * 1000));
-  var week = Math.ceil(( currentDate.getDay() + 1 + days) / 7);
+  var week = Math.ceil((currentDate.getDay() + 1 + days) / 7);
   return (
     <View
       style={styles.index}
-      // onTouchStart={_onCalendarBodyTouchStart}
-      // onTouchMove={_onCalendarBodyTouchMove}
-      // onTouchEnd={_onCalendarBodyTouchEnd}
+    // onTouchStart={_onCalendarBodyTouchStart}
+    // onTouchMove={_onCalendarBodyTouchMove}
+    // onTouchEnd={_onCalendarBodyTouchEnd}
     >
       <View
         style={styles.header}
@@ -126,7 +125,7 @@ function Calendar(props: any) {
             <View
               style={styles.selectMonth}
             >
-              <Text>{`${selectedMonth.getFullYear()}年${fillZero(selectedMonth.getMonth()+1)}月`}</Text>
+              <Text>{`${selectedMonth.getFullYear()}年${fillZero(selectedMonth.getMonth() + 1)}月`}</Text>
               <Image
                 src={assets.images.arrowDownBlack}
                 style={styles.selectMonthImage}
@@ -137,34 +136,32 @@ function Calendar(props: any) {
         <TimerComponent onTimeClick={_backToToday} />
       </View>
       <View style={styles.body}>
-        {isContentShow && (
-          <Swiper
-            // autoplay
-            circular
-            current={currentPageIndex}
-            onChange={(event)=>{
-              dispatch(createAction("home/changeSwiper")({event}));
-            }}
-            onAnimationFinish={event => {
-              // console.log("onAnimationFinish", event);
-            }}
-            onTransitionEnd={event => {console.log("onTransitionEnd", event.detail.value);}}
-            style={styles.body}
-          >
-            <SwiperItem>
-              <View style={styles.swiperContainer}><WeekHeader themePrimary={themePrimary} /></View>
-              <Month holidaysMap={holidaysMap} table={page0} />
-            </SwiperItem>
-            <SwiperItem>
-              <View style={styles.swiperContainer}><WeekHeader themePrimary={themePrimary} /></View>
-              <Month holidaysMap={holidaysMap} table={page1} />
-            </SwiperItem>
-            <SwiperItem>
-              <View style={styles.swiperContainer}><WeekHeader themePrimary={themePrimary} /></View>
-              <Month holidaysMap={holidaysMap} table={page2} />
-            </SwiperItem>
-          </Swiper>
-        )}
+        <Swiper
+          // autoplay
+          circular
+          current={currentPageIndex}
+          onChange={(event) => {
+            dispatch(createAction("home/changeSwiper")({ event }));
+          }}
+          onAnimationFinish={event => {
+            // console.log("onAnimationFinish", event);
+          }}
+          onTransitionEnd={event => { console.log("onTransitionEnd", event.detail.value); }}
+          style={styles.body}
+        >
+          <SwiperItem>
+            <View style={styles.swiperContainer}><WeekHeader themePrimary={themePrimary} /></View>
+            <Month holidaysMap={holidaysMap} table={page0} />
+          </SwiperItem>
+          <SwiperItem>
+            <View style={styles.swiperContainer}><WeekHeader themePrimary={themePrimary} /></View>
+            <Month holidaysMap={holidaysMap} table={page1} />
+          </SwiperItem>
+          <SwiperItem>
+            <View style={styles.swiperContainer}><WeekHeader themePrimary={themePrimary} /></View>
+            <Month holidaysMap={holidaysMap} table={page2} />
+          </SwiperItem>
+        </Swiper>
       </View>
       <DateDetail
         onClick={_onDateDetailClicked}

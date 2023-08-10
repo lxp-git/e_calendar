@@ -1,25 +1,26 @@
-import React, {CSSProperties} from 'react';
+import React, { CSSProperties } from 'react';
 import Taro from '@tarojs/taro';
-import {Button, Image, Input, ScrollView, Text, View} from "@tarojs/components";
-import {connect} from "react-redux";
-import {ITouchEvent} from "@tarojs/components/types/common";
+import { Button, Image, Input, ScrollView, Text, View } from "@tarojs/components";
+import { connect } from "react-redux";
+import { ITouchEvent } from "@tarojs/components/types/common";
 
-import {createAction, isSameDay, formatTime, StyleSheet} from "../../../utils";
+import { createAction, isSameDay, formatTime, StyleSheet } from "../../../utils";
 import AtFloatLayout from "../../../components/FloatLayout";
 import application from "../../../utils/Application";
 import assets from '../../../assets';
+import { useAppSelector } from '../../../dva';
 
-const hour24 = [0,1,2,3,4,5,
-  6,7,8,9,10,11,
-  12,13,14,15,
-  16,17,18,
-  19,20,21,22,23
+const hour24 = [0, 1, 2, 3, 4, 5,
+  6, 7, 8, 9, 10, 11,
+  12, 13, 14, 15,
+  16, 17, 18,
+  19, 20, 21, 22, 23
 ];
-const hour24dot5 = [0,0.5,1,1.5,2,2.5,3,3.5,4,4.5,5,5.5,
-  6,6.5,7,7.5,8,8.5,9,9.5,10,10.5,11,11.5,
-  12,12.5,13,13.5,14,14.5,15,15.5,
-  16,16.5,17,17.5,18,18.5,
-  19,19.5,20,20.5,21,21.5,22,22.5,23,23.5
+const hour24dot5 = [0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5,
+  6, 6.5, 7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5,
+  12, 12.5, 13, 13.5, 14, 14.5, 15, 15.5,
+  16, 16.5, 17, 17.5, 18, 18.5,
+  19, 19.5, 20, 20.5, 21, 21.5, 22, 22.5, 23, 23.5
 ];
 const remaining = Taro.getSystemInfoSync().screenWidth - 10;
 const gridItemWidth = remaining / 8;
@@ -116,7 +117,7 @@ const styles = StyleSheet.create({
   },
   cellText: {
     position: 'absolute', zIndex: 1, fontSize: Taro.pxTransform(20), boxSizing: "border-box", alignSelf: "center",
-    justifyContent: "center", alignItems: 'center',wordBreak: 'break-all',
+    justifyContent: "center", alignItems: 'center', wordBreak: 'break-all',
     paddingLeft: Taro.pxTransform(4), borderRadius: Taro.pxTransform(10),
     left: 0, top: 0, right: 0, bottom: 0, width: '100%', textAlign: 'center', paddingRight: Taro.pxTransform(4)
   },
@@ -129,7 +130,7 @@ const styles = StyleSheet.create({
     height: gridItemWidthPx,
     width: gridItemWidthPx,
   },
-  saveView: { display: 'flex', justifyContent: 'center', alignItems: 'center',  height: Taro.pxTransform(44 * 2), paddingLeft: Taro.pxTransform(32), paddingRight: Taro.pxTransform(32) },
+  saveView: { display: 'flex', justifyContent: 'center', alignItems: 'center', height: Taro.pxTransform(44 * 2), paddingLeft: Taro.pxTransform(32), paddingRight: Taro.pxTransform(32) },
   saveText: { color: 'white' },
   dateDetail: { padding: Taro.pxTransform(32), paddingLeft: Taro.pxTransform(44 * 2) },
   float: { minHeight: 0 },
@@ -137,9 +138,13 @@ const styles = StyleSheet.create({
   floatClose: { height: Taro.pxTransform(44 * 2), width: Taro.pxTransform(44 * 2), display: 'flex', justifyContent: 'center', alignItems: 'center' },
   floatCloseImage: { width: Taro.pxTransform(44), height: Taro.pxTransform(44) },
 })
-const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperties, periodEventMap: any, dispatch: any, selectedWeek: any }) => {
-  const { themePrimary, periodEventMap, selectedWeek: tmpSelectedWeek, style, dispatch } = props;
-  let selectedWeek = tmpSelectedWeek;
+const oneDayInMS = 24 * 60 * 60 * 1000;
+export default React.memo((props: { themePrimary: any, style?: CSSProperties, periodEventMap: any, dispatch: any, selectedWeek: any }) => {
+  const { style, dispatch } = props;
+  const themePrimary = useAppSelector(state => state.global.themePrimary);
+  const periodEventMap = useAppSelector(state => state.event.periodEventMap);
+  const tmpSelectedWeek = useAppSelector(state => state.home.selectedWeek);
+  let selectedWeek: Date = tmpSelectedWeek;
   if (typeof tmpSelectedWeek === "string") {
     selectedWeek = new Date(tmpSelectedWeek);
   }
@@ -155,14 +160,13 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
       const startX = _touchStartEvent.changedTouches[0].clientX;
       const endX = event.changedTouches[0].clientX;
       if (Math.abs(startX - endX) > 50) {
-        const newMoment = selectedWeek.clone();
         if (startX > endX) {
           dispatch(createAction("home/save")({
-            selectedWeek: newMoment.add(1, 'week'),
+            selectedWeek: new Date(selectedWeek.valueOf() + 7 * oneDayInMS),
           }));
         } else {
           dispatch(createAction("home/save")({
-            selectedWeek: newMoment.subtract(1, 'week'),
+            selectedWeek: new Date(selectedWeek.valueOf() - 7 * oneDayInMS),
           }));
         }
       }
@@ -170,12 +174,12 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
     _touchStartEvent = null;
   }
 
-  const [ leftTop, setLeftTop ] = React.useState({ left: -1, top: -1, body: { content: '' } });
+  const [leftTop, setLeftTop] = React.useState({ left: -1, top: -1, body: { content: '' } });
 
-  const firstDayOfCurrentWeek = selectedWeek.clone().startOf('week');
+  const firstDayOfCurrentWeek = new Date(selectedWeek.valueOf() - (selectedWeek.getDay() - 1) * oneDayInMS);
 
-  const [ table, setTable ] = React.useState<{[index: number]: Date} | undefined>();
-  const [ scrollY, setScrollY ] = React.useState(0);
+  const [table, setTable] = React.useState<{ [index: number]: Date } | undefined>();
+  const [scrollY, setScrollY] = React.useState(0);
 
   const clickMoment = table?.[leftTop?.left];
   const start = formatTime(leftTop.top);
@@ -186,13 +190,17 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
     setTimeout(() => {
       const newTable = [null, firstDayOfCurrentWeek];
       for (let i = 1; i < 7; i++) {
-        newTable.push(firstDayOfCurrentWeek.clone().add(i, 'day'));
+        newTable.push(new Date(firstDayOfCurrentWeek.valueOf() + i * oneDayInMS));
       }
       setTable(newTable);
       setScrollY(gridItemWidthX7);
     }, 0);
-  }, [ selectedWeek ])
+  }, [firstDayOfCurrentWeek, selectedWeek])
 
+  const firstDateOfYear = new Date(selectedWeek.valueOf());
+  firstDateOfYear.setMonth(1);
+  firstDateOfYear.setDate(1);
+  const weeksFromFirstDateOfYear = (selectedWeek.valueOf() - firstDateOfYear.valueOf()) / (7 * oneDayInMS);
   return (
     <View
       style={{ ...styles.index, ...style }}
@@ -204,36 +212,36 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
         style={styles.header}
       >
         <View style={styles.headerStart} >
-          <Text>{selectedWeek.month()+1}月</Text>
-          <Text>第{selectedWeek.format('ww')}周</Text>
+          <Text>{selectedWeek.getMonth() + 1}月</Text>
+          <Text>第{weeksFromFirstDateOfYear.toFixed(0)}周</Text>
         </View>
-        {application.constants.WEEK_DAY_CHINESE.map((itemString ,index) =>
+        {application.constants.WEEK_DAY_CHINESE.map((itemString, index) =>
           <View key={itemString} style={styles.headerItem}>
             <Text
               style={styles.headerItemWeek}
               key={itemString}
             >{itemString}</Text>
             <View
-              style={{ ...styles.headerItemDate, backgroundColor: isSameDay(table?.[index+1], new Date()) ? themePrimary : 'white', }}
+              style={{ ...styles.headerItemDate, backgroundColor: isSameDay(table?.[index + 1], new Date()) ? themePrimary : 'white', }}
             >
               <Text
-                style={{ ...styles.headerItemDateText, color: isSameDay(table?.[index+1], new Date()) ?  'white' : application.constants.textPrimaryColor, }}
+                style={{ ...styles.headerItemDateText, color: isSameDay(table?.[index + 1], new Date()) ? 'white' : application.constants.textPrimaryColor, }}
                 key={itemString}
-              >{table?.[index + 1]?.date()}</Text>
+              >{table?.[index + 1]?.getDate()}</Text>
             </View>
           </View>)}
       </View>
       <ScrollView scrollTop={scrollY} scrollWithAnimation refresherEnabled enableFlex scrollY style={styles.scroll} >
         {table?.map((weekday, weekIndex) => (
           <View
-            key={weekday ? weekday.date() : 'start'}
+            key={weekday ? weekday.getDate() : 'start'}
             style={{ ...styles.scrollItem, borderLeft: weekIndex === 0 ? 'none' : 'solid 1px #dddddd' }}
           >
             {hour24dot5.map((item: number, hourIndex) => {
               if (weekIndex === 0) {
                 return (
                   <View key={item} style={styles.scrollItemContent}>
-                    <Text style={{...styles.scrollItemContentText, top: `-${gridItemHalfWidth / 2}px`}}>
+                    <Text style={{ ...styles.scrollItemContentText, top: `-${gridItemHalfWidth / 2}px` }}>
                       {(hourIndex % 2 === 0 && hourIndex !== 0) ? `${item}:00` : ''}
                     </Text>
                     {hourIndex % 2 !== 0 && hourIndex !== 47 && (<View style={styles.scrollItemContentTextLine} />)}
@@ -264,10 +272,10 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
                       body: { content: '' },
                     });
                   }}
-                  style={{...styles.cell, borderBottomWidth: hourIndex % 2 === 1 ? Taro.pxTransform(1) : 0,color: height ? 'white' : 'transparent',}}
+                  style={{ ...styles.cell, borderBottomWidth: hourIndex % 2 === 1 ? Taro.pxTransform(1) : 0, color: height ? 'white' : 'transparent', }}
                 >
                   <Text
-                    style={{...styles.cellText,background: height ? themePrimary : 'transparent', height: `${height}px`,}}
+                    style={{ ...styles.cellText, background: height ? themePrimary : 'transparent', height: `${height}px`, }}
                     onClick={(event) => {
                       event.preventDefault();
                       event.stopPropagation();
@@ -285,15 +293,15 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
             })}
           </View>
         ))}
-        {leftTop && leftTop.left >= 0 && leftTop.top >=0 && (
+        {leftTop && leftTop.left >= 0 && leftTop.top >= 0 && (
           <View
             style={{ ...styles.cellFill, borderColor: themePrimary, left: `${leftTop.left * gridItemWidth}px`, top: `${(leftTop.top * 2) * gridItemHalfWidth}px`, }}
           />
         )}
       </ScrollView>
       <AtFloatLayout
-        isOpened={leftTop && leftTop.left >= 0 && leftTop.top >=0}
-        onClose={() => setLeftTop({ left: -1, top: -1, body: { content: '' }})}
+        isOpened={leftTop && leftTop.left >= 0 && leftTop.top >= 0}
+        onClose={() => setLeftTop({ left: -1, top: -1, body: { content: '' } })}
         customStyle={styles.float}
       >
         <View style={styles.floatHeader}>
@@ -305,14 +313,14 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
                 delete periodEventMap[leftTop.body['period_start']];
                 dispatch(createAction('event/save')({ periodEventMap }));
               }
-              setLeftTop({ left: -1, top: -1, body: { content: '' }})
+              setLeftTop({ left: -1, top: -1, body: { content: '' } })
             }}
           >
             <View style={styles.floatClose}>
               <Image src={leftTop.body['period_start'] ? assets.images.iconDeleteForever : assets.images.iconCloseBlack} style={styles.floatCloseImage} />
             </View>
           </Button>
-          <Input value={leftTop.body.content} onInput={(event) => setLeftTop(prevState => ({ ...prevState, body: { ...prevState.body, content: event.detail.value, }}))} style={{ flex: 1 }} placeholder='请输入标题' />
+          <Input value={leftTop.body.content} onInput={(event) => setLeftTop(prevState => ({ ...prevState, body: { ...prevState.body, content: event.detail.value, } }))} style={{ flex: 1 }} placeholder='请输入标题' />
           <Button
             style={{ background: themePrimary, opacity: leftTop.body.content ? 1 : 0.5 }}
             disabled={!leftTop.body.content}
@@ -323,13 +331,18 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
               const endTimeArray = end.split(':');
               const endHour = endTimeArray[0];
               const endMinute = endTimeArray[1];
-
+              const periodStart = new Date(clickMoment!.valueOf());
+              periodStart.setHours(parseInt(startHour));
+              periodStart.setMinutes(parseInt(startMinute));
+              const periodEnd = new Date(clickMoment!.valueOf());
+              periodEnd.setHours(parseInt(endHour));
+              periodEnd.setMinutes(parseInt(endMinute));
               dispatch(createAction('event/postPeriod')({
-                periodStart: clickMoment.clone().hour(parseInt(startHour)).minute(parseInt(startMinute)).toISOString(),
-                periodEnd: clickMoment.clone().hour(parseInt(endHour)).minute(parseInt(endMinute)).toISOString(),
+                periodStart: periodStart.toISOString(),
+                periodEnd: periodEnd.toISOString(),
                 content: leftTop.body.content,
               }));
-              setLeftTop({ left: -1, top: -1, body: { content: '' }});
+              setLeftTop({ left: -1, top: -1, body: { content: '' } });
             }}
           >
             <View style={styles.saveView}>
@@ -346,5 +359,3 @@ const WeekCalendar = React.memo((props: { themePrimary: any, style?: CSSProperti
     </View>
   );
 });
-
-export default connect(({ global: { themePrimary }, event: { periodEventMap }, home: { selectedWeek } }) => ({ themePrimary, periodEventMap, selectedWeek }))(WeekCalendar);

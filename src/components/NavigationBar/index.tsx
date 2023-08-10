@@ -8,19 +8,22 @@ const systemInfo = Taro.getSystemInfoSync();
 console.log("systemInfo", systemInfo)
 
 interface Props {
-  global: any, style?: CSSProperties, children: any, title: any, renderLeftButton: any, onLeftButtonClick: any, isCustomLeftButton: any,
+  style?: CSSProperties, title: any, renderLeftButton: any, onLeftButtonClick: () => void, isCustomLeftButton: any,
 }
 
 export default React.memo((props: Props) => {
   const { style, title, onLeftButtonClick, isCustomLeftButton } = props;
   const themePrimary = useAppSelector(state => state.global.themePrimary);
-  const navigationBarHeight = 38;
+
   let color = 'white';
   let backIconUrl = assets.images.iconArrowBackWhite;
   if (style && ((style?.background && style?.background >= '#999999') || (style?.backgroundColor && style?.backgroundColor >= '#999999'))) {
     color = '#333333';
     backIconUrl = assets.images.iconArrowBackBlack;
   }
+  const statusBarHeight = systemInfo.statusBarHeight || 0;
+  const rect = Taro.getMenuButtonBoundingClientRect();
+  const navigationBarHeight = (rect.top - statusBarHeight) * 2 + rect.height;// 38;
   return (
     <View
       style={{
@@ -30,7 +33,7 @@ export default React.memo((props: Props) => {
         backgroundColor: themePrimary,
         color,
         borderWidth: 10,
-        height: systemInfo.statusBarHeight + navigationBarHeight,
+        height: statusBarHeight + navigationBarHeight,
         ...style,
       }}
     >

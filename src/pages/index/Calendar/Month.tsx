@@ -10,6 +10,7 @@ import application from "../../../utils/Application";
 import { createAction, isSameDay, StyleSheet } from "../../../utils";
 
 import "./index.global.scss";
+import { useAppDispatch, useAppSelector } from 'src/dva';
 
 const systemInfo = Taro.getSystemInfoSync();
 const gridItemWidth = (systemInfo.screenWidth - 10) / 7;
@@ -130,12 +131,16 @@ const _momentToLunarCalendar = (dayMoment): LunarCalendar => {
   return calendar.solar2lunar(dayMoment.getFullYear(), dayMoment.getMonth() + 1, dayMoment.getDate())
 }
 
-const Month = React.memo((props: any) => {
-  const { selectedDay: tmpSelectedDay, auntFloMap, eventMap, table: _table = [], dispatch, holidaysMap, textPrimaryColor, themePrimary } = props;
-  let selectedDay = tmpSelectedDay;
-  if (typeof tmpSelectedDay === 'string') {
-    selectedDay = new Date(tmpSelectedDay);
+export default React.memo((props: any) => {
+  const { table: _table = [], holidaysMap, textPrimaryColor } = props;
+  let selectedDay = useAppSelector(state => state.home.selectedDay);
+  if (typeof selectedDay === 'string') {
+    selectedDay = new Date(selectedDay);
   }
+  const dispatch = useAppDispatch();
+  const auntFloMap = useAppSelector(state => state.home.auntFloMap);
+  const eventMap = useAppSelector(state => state.home.eventMap);
+  const themePrimary = useAppSelector(state => state.global.themePrimary);
 
   const _onDayClick = (dayMoment: Date) => {
     if (application.setting.isNoteBookEnabled) {
@@ -159,7 +164,7 @@ const Month = React.memo((props: any) => {
     ];
     const mapKey = `${dayMoment.getFullYear()}-${dayMoment.getMonth() + 1}-${dayMoment.getDate()}`;
     if (auntFloMap && auntFloMap[mapKey]) {
-      actionList[0] = "❌大姨妈没来";
+      actionList[0] = "取消";
     }
     if (actionList.length > 0) {
       Taro.showActionSheet({
@@ -311,5 +316,3 @@ const Month = React.memo((props: any) => {
     </View>
   );
 });
-
-export default connect(({ home: { selectedDay, auntFloMap, eventMap }, global: { themePrimary }, words }) => ({ selectedDay, auntFloMap, eventMap, themePrimary }))(Month);

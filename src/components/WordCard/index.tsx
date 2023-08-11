@@ -1,10 +1,11 @@
-import React from 'react';
-import {Button, Text, View} from "@tarojs/components";
+import React, { CSSProperties } from 'react';
+import { Button, Text, View } from "@tarojs/components";
 import Taro from "@tarojs/taro";
 // import {AtIcon} from "taro-ui";
-import {ITouchEvent} from "@tarojs/components/types/common";
+import { ITouchEvent } from "@tarojs/components/types/common";
 
 import styles from './index.module.scss'
+import { useAppSelector } from '../../dva';
 
 const innerAudioContext = Taro.createInnerAudioContext();
 
@@ -14,19 +15,23 @@ function playTTS(url) {
   innerAudioContext.play();
 }
 
-const WordCard = React.memo(({ wordCard = {}, onClick = () => {}, style = { color: 'black' }}: { wordCard: any, onClick?: (event: ITouchEvent) => any, style?: any }) => {
-  const { raw = [], whole_text = '', tts }  = wordCard;
-  const [ word1 = [], types = [] ] = raw;
+export default React.memo(({ onClick = () => { }, style = { color: 'black' } }: { onClick?: (event: ITouchEvent) => void, style?: CSSProperties }) => {
+  const wordCard = useAppSelector(state => {
+    const words = state.words;
+    return words && words.list && words.list.length > 0 && words[0];
+  });
+  const { raw = [], whole_text = '', tts } = wordCard;
+  const [word1 = [], types = []] = raw;
   /// todo types为null其实说明查的是几个词
-  const[ word2 = [], pronunciation = [] ] = word1;
-  const[ to = '', from = '' ] = word2;
+  const [word2 = [], pronunciation = []] = word1;
+  const [to = '', from = ''] = word2;
   return (
     <View style={style} className={styles.card} onClick={onClick}>
       <View className={styles.selectedDetail}>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <View style={{ display: 'flex', flex: 1, flexDirection: 'row', alignItems: 'center' }}>
             <Text style={{ fontWeight: 'bold' }}>{from}</Text>
-            <Button onClick={(event) => { event.preventDefault();event.stopPropagation();playTTS(tts) }}>
+            <Button onClick={(event) => { event.preventDefault(); event.stopPropagation(); playTTS(tts) }}>
               <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', padding: Taro.pxTransform(30) }}>
                 <View className={styles.playIcon} >
                   {/*<AtIcon value='volume-plus' color={style.color} />*/}
@@ -59,5 +64,3 @@ const WordCard = React.memo(({ wordCard = {}, onClick = () => {}, style = { colo
     </View>
   );
 });
-
-export default WordCard;

@@ -18,6 +18,7 @@ import FloatButton from "../FloatButton";
 import Month from "./Month";
 import assets from '../../../assets';
 import { convertToYearMonthDate, fillZero } from '../../../utils/date_utils';
+import { useAppDispatch, useAppSelector } from '../../../dva';
 
 const systemInfo = Taro.getSystemInfoSync();
 const styles = StyleSheet.create({
@@ -47,7 +48,13 @@ const styles = StyleSheet.create({
   },
   selectMonthImage: { width: Taro.pxTransform(32), height: Taro.pxTransform(32) },
   body: { height: (systemInfo.screenWidth - 10) / 7 * 5 + 24 + 10 + 'px', backgroundColor: 'white' },
-  swiperContainer: { backgroundColor: "white", width: '100%', boxSizing: "border-box", paddingLeft: Taro.pxTransform(10), paddingRight: Taro.pxTransform(10) },
+  swiperContainer: {
+    backgroundColor: "white",
+    width: '100%',
+    boxSizing: "border-box",
+    paddingLeft: Taro.pxTransform(10),
+    paddingRight: Taro.pxTransform(10)
+  },
 
 })
 
@@ -55,30 +62,27 @@ const _momentToLunarCalendar = (dayMoment): LunarCalendar => {
   return calendar.solar2lunar(dayMoment.getFullYear(), dayMoment.getMonth() + 1, dayMoment.getDate())
 }
 
-function Calendar(props: any) {
-  const { dispatch, englishWord, page1 = [], page0 = [], page2 = [], currentPageIndex = 1, selectedDay: tmpSelectedDay, selectedMonth: tmpSelectedMonth, themePrimary } = props;
-  let selectedDay = tmpSelectedDay, selectedMonth = tmpSelectedMonth;
-  if (typeof tmpSelectedDay === 'string') {
-    selectedDay = new Date(tmpSelectedDay);
+export default React.memo(() => {
+  const dispatch = useAppDispatch();
+  const page0 = useAppSelector(state => state.home.page0);
+  const page1 = useAppSelector(state => state.home.page1);
+  const page2 = useAppSelector(state => state.home.page2);
+  const currentPageIndex = useAppSelector(state => state.home.currentPageIndex);
+  let selectedDay: Date = useAppSelector(state => state.home.selectedDay);
+  if (typeof selectedDay === 'string') {
+    selectedDay = new Date(selectedDay);
   }
-  if (typeof tmpSelectedMonth === 'string') {
-    selectedMonth = new Date(tmpSelectedMonth);
+  let selectedMonth: Date = useAppSelector(state => state.home.selectedMonth);
+  if (typeof selectedMonth === 'string') {
+    selectedMonth = new Date(selectedMonth);
   }
-  const [holidaysMap, setHolidaysMap] = React.useState({});
+  const themePrimary = useAppSelector(state => state.global.themePrimary);
+  const holidaysMap = useAppSelector(state => state.home.holidaysMap);
 
   React.useEffect(() => {
-    const fetch = () => {
-      service.fetchHolidays().then((data) => {
-        data.forEach(item => {
-          holidaysMap[`${item['year']}-${item['month']}-${item['date']}`] = item;
-        });
-        setHolidaysMap({ ...holidaysMap });
-
-      });
-      dispatch(createAction('words/fetch')({}));
-    }
-    fetch();
-  }, []);
+    dispatch(createAction('words/fetch')({}));
+    dispatch(createAction('home/fetchHolidays')({}));
+  }, [dispatch]);
 
   const _onSelectYearAndMonth = (date) => {
     date.type = "change";
@@ -94,10 +98,14 @@ function Calendar(props: any) {
   }
   const _onDateDetailClicked = () => {
     if (application.setting.isNoteBookEnabled) {
-      Taro.navigateTo({ url: `/pages/event/index?date=${selectedDay.year()}-${selectedDay.month() + 1}-${selectedDay.date()}` })
+      Taro.navigateTo({ url: `/pages/event/index?date=${selectedDay.getFullYear()}-${selectedDay.getMonth() + 1}-${selectedDay.getDate()}` })
     }
   }
-  const _onWordClicked = (event) => { event.preventDefault(); event.stopPropagation(); Taro.navigateTo({ url: '/pages/words/index' }) };
+  const _onWordClicked = React.useCallback((event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    Taro.navigateTo({ url: '/pages/words/index' })
+  }, []);
 
   const _selectedLunarCalendar = _momentToLunarCalendar(selectedDay);
   const currentDate = new Date();
@@ -168,17 +176,8 @@ function Calendar(props: any) {
       >
         {_selectedLunarCalendar.gzYear}{application.constants.ZODIAC_SIGNS[_selectedLunarCalendar.Animal][0]}年{_selectedLunarCalendar.gzMonth}月{_selectedLunarCalendar.gzDay}日 {_selectedLunarCalendar.astro} {_selectedLunarCalendar.IMonthCn}{_selectedLunarCalendar.IDayCn} 第{week}周
       </DateDetail>
-      {englishWord && (
-        <WordCard
-          onClick={_onWordClicked}
-          wordCard={englishWord}
-        />
-      )}
+      <WordCard onClick={_onWordClicked} />
       <FloatButton />
     </View>
   );
-}
-
-export default connect(({ home: { page1 = [], page0 = [], page2 = [], currentPageIndex = 1, selectedDay, selectedMonth }, global: { themePrimary }, words }) => {
-  return { page1, page0, page2, currentPageIndex, selectedDay, selectedMonth, themePrimary, englishWord: words && words.list && words.list.length > 0 && words[0] };
-})(React.memo(Calendar));
+});

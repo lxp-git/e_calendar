@@ -191,6 +191,20 @@ export default {
         );
       }
     },
+
+    *fetchHoliday({ payload }, { call, put, select, take, takeLatest }) {
+      const response = yield call(service.fetchHolidays);
+      const newHolidaysMap = {};
+      response.forEach((item) => {
+        newHolidaysMap[`${item["year"]}-${item["month"]}-${item["date"]}`] =
+          item;
+      });
+      yield put(
+        createAction("save")({
+          holidaysMap: newHolidaysMap,
+        })
+      );
+    },
   },
 
   reducers: {

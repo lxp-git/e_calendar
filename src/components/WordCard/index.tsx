@@ -25,7 +25,7 @@ export default React.memo(({ onClick = () => { }, style = { color: 'black' } }: 
   /// todo types为null其实说明查的是几个词
   const [word2 = [], pronunciation = []] = word1;
   const [to = '', from = ''] = word2;
-  return (
+  return wordCard ? (
     <View style={style} className={styles.card} onClick={onClick}>
       <View className={styles.selectedDetail}>
         <View style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
@@ -62,5 +62,5 @@ export default React.memo(({ onClick = () => { }, style = { color: 'black' } }: 
         </View>
       </View>
     </View>
-  );
+  ) : null;
 });

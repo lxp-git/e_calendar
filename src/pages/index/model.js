@@ -11,6 +11,7 @@ export default {
     firstRowStart: undefined,
     auntFloMap: {},
     eventMap: {},
+    holidaysMap: {},
     selectedDay: new Date(),
     selectedMonth: new Date(),
     selectedWeek: new Date(),

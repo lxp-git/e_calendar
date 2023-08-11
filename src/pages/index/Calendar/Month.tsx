@@ -10,7 +10,7 @@ import application from "../../../utils/Application";
 import { createAction, isSameDay, StyleSheet } from "../../../utils";
 
 import "./index.global.scss";
-import { useAppDispatch, useAppSelector } from 'src/dva';
+import { useAppDispatch, useAppSelector } from '../../../dva';
 
 const systemInfo = Taro.getSystemInfoSync();
 const gridItemWidth = (systemInfo.screenWidth - 10) / 7;
@@ -132,7 +132,7 @@ const _momentToLunarCalendar = (dayMoment): LunarCalendar => {
 }
 
 export default React.memo((props: any) => {
-  const { table: _table = [], holidaysMap, textPrimaryColor } = props;
+  const { table: _table = [], textPrimaryColor } = props;
   let selectedDay = useAppSelector(state => state.home.selectedDay);
   if (typeof selectedDay === 'string') {
     selectedDay = new Date(selectedDay);
@@ -140,6 +140,7 @@ export default React.memo((props: any) => {
   const dispatch = useAppDispatch();
   const auntFloMap = useAppSelector(state => state.home.auntFloMap);
   const eventMap = useAppSelector(state => state.home.eventMap);
+  const holidaysMap = useAppSelector(state => state.home.holidaysMap);
   const themePrimary = useAppSelector(state => state.global.themePrimary);
 
   const _onDayClick = (dayMoment: Date) => {

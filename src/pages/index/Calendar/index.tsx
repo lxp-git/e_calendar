@@ -67,7 +67,6 @@ export default React.memo(() => {
   const page0 = useAppSelector(state => state.home.page0);
   const page1 = useAppSelector(state => state.home.page1);
   const page2 = useAppSelector(state => state.home.page2);
-  const currentPageIndex = useAppSelector(state => state.home.currentPageIndex);
   let selectedDay: Date = useAppSelector(state => state.home.selectedDay);
   if (typeof selectedDay === 'string') {
     selectedDay = new Date(selectedDay);
@@ -147,7 +146,6 @@ export default React.memo(() => {
         <Swiper
           // autoplay
           circular
-          current={currentPageIndex}
           onChange={(event) => {
             dispatch(createAction("home/changeSwiper")({ event }));
           }}

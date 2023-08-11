@@ -192,7 +192,7 @@ export default {
       }
     },
 
-    *fetchHoliday({ payload }, { call, put, select, take, takeLatest }) {
+    *fetchHolidays({ payload }, { call, put, select, take, takeLatest }) {
       const response = yield call(service.fetchHolidays);
       const newHolidaysMap = {};
       response.forEach((item) => {
